@@ -9,7 +9,7 @@ static volatile unsigned long ticks = 0;
 
 struct DelayedCallbackInfoStruct {
 	DelayedCallback callback;
-	uint32_t volatile nextCallback;
+	unsigned long volatile nextCallback;
 	uint32_t millis;
 	struct DelayedCallbackInfoStruct* next;
 };
@@ -24,12 +24,17 @@ void Timer_Initialize() {
 	SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK_Div8);
 }
 
-DelayedCallbackInfo* Timer_Register(DelayedCallback callback, uint32_t millis)
-{
-	DelayedCallbackInfo* info = (DelayedCallbackInfo*)malloc(sizeof(DelayedCallbackInfo));
+DelayedCallbackInfo* Timer_Register(DelayedCallback callback, uint32_t millis) {
+	return Timer_RegisterEx(callback, millis, millis);
+}
+
+DelayedCallbackInfo* Timer_RegisterEx(DelayedCallback callback, uint32_t millis,
+		uint32_t first) {
+	DelayedCallbackInfo* info = (DelayedCallbackInfo*) malloc(
+			sizeof(DelayedCallbackInfo));
 
 	info->callback = callback;
-	info->nextCallback = ticks + millis;
+	info->nextCallback = ticks + first;
 	info->millis = millis;
 	info->next = NULL;
 
@@ -38,14 +43,17 @@ DelayedCallbackInfo* Timer_Register(DelayedCallback callback, uint32_t millis)
 	return info;
 }
 
-void Timer_Unregister(DelayedCallbackInfo* info)
+void Timer_Adjust(DelayedCallbackInfo* info, uint32_t millis)
 {
+	info->nextCallback = ticks + millis;
+}
+
+void Timer_Unregister(DelayedCallbackInfo* info) {
 	LL_DELETE(callbacks, info);
 	free(info);
 }
 
-unsigned long Timer_millis()
-{
+unsigned long Timer_millis() {
 	return ticks;
 }
 
@@ -53,16 +61,19 @@ static void CheckCallbacks() {
 
 	struct DelayedCallbackInfoStruct* callbackInfo;
 
-	LL_FOREACH(callbacks, callbackInfo)	{
-		if(ticks > callbackInfo->nextCallback)
-		{
+	LL_FOREACH(callbacks, callbackInfo)
+	{
+		if (ticks > callbackInfo->nextCallback) {
 			callbackInfo->nextCallback = ticks + callbackInfo->millis;
 			callbackInfo->callback();
 		}
 	}
+
 }
 
 void SysTick_Handler() {
 	ticks++;
-	CheckCallbacks();
+
+	if (ticks % 10 == 0)
+		CheckCallbacks();
 }

@@ -79,10 +79,11 @@ static void RX_Callback(uint8_t* id) {
 	case WAITING_SESNOR_ID:
 		if (read == session->config->sesnorId) {
 			DEBUG_TOGGLE_BLUE();
+			//TODO: send telemetry data
 			switch (session->currentValue) {
 			case 0:
 				session->tmp.Id = SENSOR_VFAS;
-				session->tmp.Value = 1108;
+				session->tmp.Value = simpleTelemtryData.battery;
 				SendPacket(session, &session->tmp);
 				break;
 			}

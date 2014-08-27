@@ -10,7 +10,6 @@
 
 #include <stdint.h>
 
-
 typedef void (*DelayedCallback)(void);
 // Use this type for the callback function.
 
@@ -19,6 +18,8 @@ typedef struct DelayedCallbackInfoStruct DelayedCallbackInfo;
 
 void Timer_Initialize();
 DelayedCallbackInfo* Timer_Register(DelayedCallback callback, uint32_t millis);
+DelayedCallbackInfo* Timer_RegisterEx(DelayedCallback callback, uint32_t millis, uint32_t first);
+void Timer_Adjust(DelayedCallbackInfo* info, uint32_t millis);
 void Timer_Unregister(DelayedCallbackInfo* info);
 unsigned long Timer_millis();
 

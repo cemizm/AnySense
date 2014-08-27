@@ -11,6 +11,7 @@
 #include "SPort.h"
 #include "utlist.h"
 #include "fifo.h"
+#include "simpletelemtry.h"
 
 #include "stm32f0xx_usart.h"
 #include "stm32f0xx_gpio.h"

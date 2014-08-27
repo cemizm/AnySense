@@ -17,39 +17,33 @@
 #include "hardware.h"
 
 //naza
+#include "naza.h"
 
 //parser e.g. frsky
 #include "SPort.h"
 
-static void test1000();
-
 // ----- main() ---------------------------------------------------------------
 
-static void configManager_Finished();
 static void start_parser(struct portParserStruct* parser,
 		const struct hardware_port_cfg* port);
 
 int main() {
 
+
+	DEBUG_INIT()
+
 	Timer_Initialize();
 
 	config_initialize();
-	config_startManager(&configManager_Finished);
+	naza_initialize();
+	config_startManager();
 
+	start_parser(&configuration.port1, &usart_port1);
+	start_parser(&configuration.port2, &usart_port2);
 	// Infinite loop
 	while (1) {
 
 	}
-}
-
-static void configManager_Finished() {
-
-	DEBUG_INIT();
-
-	Timer_Register(&test1000, 1000);
-
-	start_parser(&configuration.port1, &usart_port1);
-	start_parser(&configuration.port2, &usart_port2);
 }
 
 static void start_parser(struct portParserStruct* parser,
@@ -65,11 +59,5 @@ static void start_parser(struct portParserStruct* parser,
 		//unnmapped
 		break;
 	}
-}
-
-static void test1000() {
-
-	DEBUG_TOGGLE_RED();
-
 }
 

@@ -5,31 +5,8 @@
  *      Author: cem
  */
 
-#include <stdlib.h>
-#include <string.h>
+#include "config_priv.h"
 
-#include "stm32f0xx_flash.h"
-#include "stm32f0xx_usart.h"
-#include "stm32f0xx_gpio.h"
-
-#include "config.h"
-#include "crc.h"
-#include "timer.h"
-
-#define RETRY_TIMEOUT			5
-
-enum config_state_enum {
-	config_state_waiting_ack, config_waiting_cmd
-};
-
-enum config_state_enum state = config_state_waiting_ack;
-
-uint8_t retry = 0;
-
-static void checkConnection();
-
-ManagerFinished finish_callback;
-DelayedCallbackInfo* info;
 
 struct configStruct configuration = {
 		.port1 = {
@@ -44,19 +21,27 @@ struct configStruct configuration = {
 
 
 void config_initialize() {
-	int32_t status = config_load(&configuration);
+	int32_t status = config_load();
 	if (status == -2) {
 		//corrupted data on flash, initialize and save
-		config_save(&configuration);
+		config_save();
 	}
 }
 
-void config_startManager(ManagerFinished callback) {
-	finish_callback = callback;
+void config_startManager() {
+	DEBUG_TOGGLE_ORANGE();
+	running = 1;
 
 	//TODO: initialize PORT1
 
 	info = Timer_Register(&checkConnection, 500);
+
+	while(running);
+
+	if(info != NULL)
+		Timer_Unregister(info);
+
+	DEBUG_TOGGLE_ORANGE();
 }
 
 static void checkConnection() {
@@ -64,8 +49,7 @@ static void checkConnection() {
 
 		if(retry == RETRY_TIMEOUT)
 		{
-			Timer_Unregister(info);
-			finish_callback();
+			running = 0;
 			return;
 		}
 
@@ -76,9 +60,9 @@ static void checkConnection() {
 }
 
 
-int32_t config_load(struct configStruct* _config) {
+int32_t config_load() {
 	uint32_t len = sizeof(struct configStruct);
-	uint8_t* data = (uint8_t*) _config;
+	uint8_t* data = (uint8_t*) &configuration;
 
 // We need to write 32 bit words, so the length should have been extended
 // to an even multiple of 4 bytes, and should include 4 bytes for the 32 bit CRC.
@@ -107,9 +91,9 @@ int32_t config_load(struct configStruct* _config) {
 	return 0;
 }
 
-int32_t config_save(struct configStruct* _config) {
+int32_t config_save() {
 	uint32_t len = sizeof(struct configStruct);
-	uint8_t* data = (uint8_t*) _config;
+	uint8_t* data = (uint8_t*) &configuration;
 
 // We need to write 32 bit words, so extend the length to be an even multiple of 4 bytes,
 // and include 4 bytes for the 32 bit CRC.
