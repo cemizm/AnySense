@@ -230,6 +230,7 @@ void SystemInit(void) {
  * @retval None
  */
 void SystemCoreClockUpdate(void) {
+
 	uint32_t tmp = 0, pllmull = 0, pllsource = 0, prediv1factor = 0;
 
 	/* Get SYSCLK source -------------------------------------------------------*/
@@ -277,6 +278,7 @@ void SystemCoreClockUpdate(void) {
  * @retval None
  */
 static void SetSysClock(void) {
+
 	__IO uint32_t StartUpCounter = 0, HSI48Status = 0;
 
 	RCC->CR2 |= RCC_CR2_HSI48ON;
@@ -287,25 +289,26 @@ static void SetSysClock(void) {
 		StartUpCounter++;
 	} while ((HSI48Status == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
 
-	/* HCLK = SYSCLK */
+	/* Enable Prefetch Buffer and set Flash Latency */
+	FLASH->ACR = FLASH_ACR_PRFTBE | FLASH_ACR_LATENCY;
+	// HCLK = SYSCLK
 	RCC->CFGR |= (uint32_t) RCC_CFGR_HPRE_DIV1;
 
-	/* PCLK = HCLK */
+	// PCLK = HCLK
 	RCC->CFGR |= (uint32_t) RCC_CFGR_PPRE_DIV1;
 
 	if (HSI48Status == RCC_CR2_HSI48RDY) {
 
-		/* Select HS148 as system clock source */
+		// Select HS148 as system clock source
 		RCC->CFGR &= (uint32_t) ((uint32_t) ~(RCC_CFGR_SW));
 		RCC->CFGR |= (uint32_t) RCC_CFGR_SW_HSI48;
 
-		/* Wait till HS148 is used as system clock source */
+		// Wait till HS148 is used as system clock source
 		while ((RCC->CFGR & (uint32_t) RCC_CFGR_SWS)
 				!= (uint32_t) RCC_CFGR_SWS_HSI48) {
 		}
 	} else {
 	}
-
 }
 
 /**
