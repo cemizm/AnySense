@@ -1,13 +1,3 @@
-//
-// This file is part of the GNU ARM Eclipse distribution.
-// Copyright (c) 2014 Liviu Ionescu.
-//
-
-// ----------------------------------------------------------------------------
-
-#include <stdio.h>
-#include <stdint.h>
-#include "diag/Trace.h"
 #include "stm32f0xx.h"
 #include "stm32f0xx_conf.h"
 
@@ -22,10 +12,15 @@
 //parser e.g. frsky
 #include "SPort.h"
 
+
 // ----- main() ---------------------------------------------------------------
 
 static void start_parser(struct portParserStruct* parser,
 		const struct hardware_port_cfg* port);
+
+//int main() {
+//
+//}
 
 int main() {
 

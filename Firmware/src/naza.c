@@ -7,6 +7,21 @@
 
 #include "naza_priv.h"
 
+/*
+ * CAN ID 0x7F8 MSG ID 0x0921 LENGTH 0x000C - GPS Module Version________NOT USED
+ * CAN ID 0x7F8 MSG ID 0x0922 LENGTH 0x0000 - PMU Heartbeat ?!
+ * CAN ID 0x7F8 MSG ID 0x1003 LENGTH 0x003A - GPS DATA
+ *
+ * CAN ID 0x118 MSG ID 0x1004 LENGTH 0x0006 - Compass DATA______________NOT USED
+ *
+ * CAN ID 0x108 MSG ID 0x1000 LENGTH 0x0034 - TBD_______________________NOT USED
+ * CAN ID 0x108 MSG ID 0x1007 LENGTH 0x0000 - OSD Heartbeat ?!
+ * CAN ID 0x108 MSG ID 0x1009 LENGTH 0x00B8 - RAW IO Data
+ *
+ * CAN ID 0x090 MSG ID 0x1002 LENGTH 0x0078 - OSD Data Message
+ * CAN ID 0x090 MSG ID 0x1001 LENGTH 0x000E - RAW Gyro Data_____________NOT USED
+ */
+
 void naza_initialize() {
 	GPIO_InitTypeDef GPIO_InitStructure;
 	CAN_InitTypeDef CAN_InitStructure;
@@ -71,7 +86,7 @@ void naza_initialize() {
 	NVIC_InitTypeDef def;
 	def.NVIC_IRQChannelCmd = ENABLE;
 	def.NVIC_IRQChannel = CEC_CAN_IRQn;
-	def.NVIC_IRQChannelPriority = 3;
+	def.NVIC_IRQChannelPriority = 0;
 	NVIC_Init(&def);
 
 	nextPMUCheck = 0;
@@ -80,17 +95,18 @@ void naza_initialize() {
 	heartbeat_timer = Timer_RegisterEx(&naza_heartbeat, 2000, 100);
 
 	CAN_ITConfig(CAN, CAN_IT_FMP0, ENABLE);
+	CAN_ITConfig(CAN, CAN_IT_FOV0, ENABLE);
+	CAN_ITConfig(CAN, CAN_IT_FF0, ENABLE);
+
 }
 
-//TODO: adjust heartbeat time if receive heartbeat from osd
-//heartbeat_timer->nextCallback = Timer_millis() + 2000;
 static void naza_heartbeat() {
 
 	DEBUG_TOGGLE_RED();
 
 	unsigned long millis = Timer_millis();
 	if (millis > nextPMUCheck) { //PMU HeartBeat 3 sec ago, naza disconnected?
-		Timer_Adjust(heartbeat_timer, 1500);  //try again in 1,5 sec
+		Timer_Adjust(heartbeat_timer, 500);  //try again in 1,5 sec
 		nextPMUCheck = millis; //take account of arithmetic overflow
 		return; //no need for heartbeat
 	}
@@ -159,7 +175,8 @@ static void naza_process(CanRxMsg* msg) {
 				CHANNEL_SET_STATE(channel, Streaming);
 			} else
 				channel->header = 0;
-		}
+		} else
+			channel->header = 0;
 
 		//check footer
 		if (byte == FOOTER1) {
@@ -182,7 +199,8 @@ static void naza_process(CanRxMsg* msg) {
 				CHANNEL_SET_STATE(channel, None);
 			} else
 				channel->footer = 0;
-		}
+		} else
+			channel->footer = 0;
 	}
 
 	CAN_ITConfig(CAN, CAN_IT_FMP0, ENABLE);
@@ -299,5 +317,12 @@ void CEC_CAN_IRQHandler() {
 		CanRxMsg msg;
 		CAN_Receive(CAN, CAN_FIFO0, &msg);
 		naza_process(&msg);
+	}
+
+	if(CAN_GetITStatus(CAN, CAN_IT_FOV0) != RESET){
+		DEBUG_TOGGLE_ORANGE();
+	}
+	if(CAN_GetITStatus(CAN, CAN_IT_FF0) != RESET){
+		DEBUG_TOGGLE_ORANGE();
 	}
 }
