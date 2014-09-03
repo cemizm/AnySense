@@ -7,60 +7,30 @@
 
 #include "config_priv.h"
 
-
 struct configStruct configuration = {
+		.configVersion = CONFIG_VERSION,
 		.port1 = {
 				.type = parser_frsky,
-				.parserConfig = {},
+				.parserConfig = { 0 },
 		},
 		.port2 = {
-				.type = parser_frsky,
-				.parserConfig = {},
+				.type = parser_none,
+				.parserConfig = { 0 },
 		},
 };
 
-
-void config_initialize() {
+void config_initialize()
+{
 	int32_t status = config_load();
-	if (status == -2) {
+	if (status < 0)
+	{
 		//corrupted data on flash, initialize and save
 		config_save();
 	}
 }
 
-void config_startManager() {
-	DEBUG_TOGGLE_ORANGE();
-	running = 1;
-
-	//TODO: initialize PORT1
-
-	info = Timer_Register(&checkConnection, 500);
-
-	while(running);
-
-	if(info != NULL)
-		Timer_Unregister(info);
-
-	DEBUG_TOGGLE_ORANGE();
-}
-
-static void checkConnection() {
-	if (state == config_state_waiting_ack) {
-
-		if(retry == RETRY_TIMEOUT)
-		{
-			running = 0;
-			return;
-		}
-
-		//TODO: send ack request byte
-
-		retry++;
-	}
-}
-
-
-int32_t config_load() {
+int8_t config_load()
+{
 	uint32_t len = sizeof(struct configStruct);
 	uint8_t* data = (uint8_t*) &configuration;
 
@@ -70,7 +40,8 @@ int32_t config_load() {
 	uint32_t size = nwords * 4;
 
 // Ensure that the length is not longer than the max size.
-	if (size > CONFIG_LENGTH) {
+	if (size > CONFIG_LENGTH)
+	{
 		return -1;
 	}
 
@@ -81,8 +52,16 @@ int32_t config_load() {
 
 // Calculate a 32 bit CRC of the data.
 	uint32_t crc = crc_update(0xffffffff, base, len);
-	if (crc != crc_flash) {
+	if (crc != crc_flash)
+	{
 		return -2;
+	}
+
+	uint16_t version = *((uint16_t *) base);
+
+	if (version != CONFIG_VERSION)
+	{
+		return -3;
 	}
 
 // Read the data from flash.
@@ -91,7 +70,8 @@ int32_t config_load() {
 	return 0;
 }
 
-int32_t config_save() {
+int8_t config_save()
+{
 	uint32_t len = sizeof(struct configStruct);
 	uint8_t* data = (uint8_t*) &configuration;
 
@@ -101,7 +81,8 @@ int32_t config_save() {
 	uint32_t size = nwords * 4;
 
 // Ensure that the length is not longer than the max size.
-	if (size > CONFIG_LENGTH) {
+	if (size > CONFIG_LENGTH)
+	{
 		return -1;
 	}
 
@@ -113,15 +94,16 @@ int32_t config_save() {
 
 // See if we have to write the data.
 	if ((memcmp(data, (uint8_t *) CONFIG_BASEADRESS, len) == 0)
-			&& (memcmp((uint8_t *) &crc,
-					(uint8_t *) CONFIG_BASEADRESS + size - 4, 4) == 0)) {
+			&& (memcmp((uint8_t *) &crc, (uint8_t *) CONFIG_BASEADRESS + size - 4, 4) == 0))
+	{
 		FLASH_Lock();
 		return 0;
 	}
 
 // Erase page
 	FLASH_Status fs = FLASH_ErasePage(CONFIG_BASEADRESS);
-	if (fs != FLASH_COMPLETE) { // error
+	if (fs != FLASH_COMPLETE)
+	{ // error
 		FLASH_Lock();
 		return -2;
 	}
@@ -129,35 +111,51 @@ int32_t config_save() {
 // write 4 bytes at a time into program flash area (emulated EEPROM area)
 	uint8_t *p1 = data;
 	uint32_t *p3 = (uint32_t *) CONFIG_BASEADRESS;
-	for (uint32_t i = 0; i < size; p3++) {
+	for (uint32_t i = 0; i < size; p3++)
+	{
 		uint32_t value = 0;
 
-		if (i == (size - 4)) {
+		if (i == (size - 4))
+		{
 			// write the CRC.
 			value = crc;
 			i += 4;
-		} else {
-			if (i < len) {
+		}
+		else
+		{
+			if (i < len)
+			{
 				value |= (uint32_t) *p1++ << 0;
-			} else {
+			}
+			else
+			{
 				value |= 0x000000ff;
 			}
 			i++;
-			if (i < len) {
+			if (i < len)
+			{
 				value |= (uint32_t) *p1++ << 8;
-			} else {
+			}
+			else
+			{
 				value |= 0x0000ff00;
 			}
 			i++;
-			if (i < len) {
+			if (i < len)
+			{
 				value |= (uint32_t) *p1++ << 16;
-			} else {
+			}
+			else
+			{
 				value |= 0x00ff0000;
 			}
 			i++;
-			if (i < len) {
+			if (i < len)
+			{
 				value |= (uint32_t) *p1++ << 24;
-			} else {
+			}
+			else
+			{
 				value |= 0xff000000;
 			}
 			i++;
@@ -165,7 +163,8 @@ int32_t config_save() {
 
 		// write a 32-bit value
 		fs = FLASH_ProgramWord((uint32_t) p3, value);
-		if (fs != FLASH_COMPLETE) {
+		if (fs != FLASH_COMPLETE)
+		{
 			FLASH_Lock();
 			return -3;
 		}

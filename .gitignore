@@ -1,3 +1,7 @@
 *.b\#*
 *.s\#*
 .DS_Store
+
+*bin/
+*.suo
+*obj/

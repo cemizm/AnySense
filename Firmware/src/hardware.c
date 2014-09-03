@@ -6,8 +6,9 @@
  */
 
 #include "hardware_priv.h"
-#include <stdlib.h>
+#include "CoOS.h"
 
+#include <stdlib.h>
 
 void hardware_register_callback(const struct hardware_port_cfg* port,
 		IRQ_Callback rx_callback, IRQ_Callback tx_callback, uint8_t* id) {
@@ -48,7 +49,7 @@ void Generic_USART_IRQHandler(struct IRQ_CallbackInfoStruct* cb)
 	if(USART_GetITStatus(cb->port->port, USART_IT_RXNE) != RESET)
 	{
 		if(cb->rx_callback == NULL)
-			USART_RequestCmd(cb->port->port, USART_Request_TXFRQ, ENABLE);
+			USART_RequestCmd(cb->port->port, USART_Request_RXFRQ, ENABLE);
 		else
 			cb->rx_callback(cb->id);
 	}
@@ -63,19 +64,25 @@ void Generic_USART_IRQHandler(struct IRQ_CallbackInfoStruct* cb)
 
 void USART1_IRQHandler(void)
 {
+	CoEnterISR();
 	Generic_USART_IRQHandler(&cbInfoPort1);
+	CoExitISR();
 }
 
 void USART2_IRQHandler(void)
 {
+	CoEnterISR();
 	Generic_USART_IRQHandler(&cbInfoPort2);
+	CoExitISR();
 }
 
 #ifdef STM32F072B
 
 void USART3_4_IRQHandler(void)
 {
+	CoEnterISR();
 	Generic_USART_IRQHandler(&cbInfoPort2);
+	CoExitISR();
 }
 
 #endif

@@ -10,7 +10,9 @@
 
 #include <stdint.h>
 
-#define CONFIG_PARSER_LENGTH	512
+#define CONFIG_PARSER_LENGTH	128
+#define CONFIG_VERSION			1
+#define FIRMWARE_VERSION		0x0006
 
 typedef enum parserTypeEnum {
 	parser_none = 0, parser_frsky = 1, parser_mavlink = 2, parser_hott = 3, parser_jeti = 4,
@@ -22,6 +24,7 @@ struct portParserStruct {
 };
 
 struct configStruct {
+	uint16_t configVersion;
 	struct portParserStruct port1;
 	struct portParserStruct port2;
 };
@@ -29,7 +32,8 @@ struct configStruct {
 struct configStruct configuration;
 
 void config_initialize();
-void config_startManager();
 
+int8_t config_load();
+int8_t config_save();
 
 #endif /* CONFIG_H_ */

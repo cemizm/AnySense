@@ -338,11 +338,6 @@ SECTIONS
         *(.eb3rodata.*)
     } >EXTMEMB3
    
-   
-   .config :
-   {
-   		*(.config)
-   } >CONFIG
 
     /* After that there are only debugging sections. */
     

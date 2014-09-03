@@ -1,58 +1,29 @@
-#include "stm32f0xx.h"
-#include "stm32f0xx_conf.h"
-
-//libs
-#include "config.h"
-#include "timer.h"
-#include "hardware.h"
-
-//naza
+#include "CoOS.h"
 #include "naza.h"
+#include "modules.h"
+#include "hardware.h"
+#include "simpletelemtry.h"
 
-//parser e.g. frsky
-#include "SPort.h"
-
-
-// ----- main() ---------------------------------------------------------------
-
-static void start_parser(struct portParserStruct* parser,
-		const struct hardware_port_cfg* port);
-
-//int main() {
-//
-//}
 
 int main() {
+ 	CoInitOS();
 
+	DEBUG_INIT();
 
-	DEBUG_INIT()
-
-	Timer_Initialize();
-
-	config_initialize();
+	//initialize
+	simpleTelemetry_initialize();
 	naza_initialize();
-	config_startManager();
+	modules_initialize();
 
-	start_parser(&configuration.port1, &usart_port1);
-	start_parser(&configuration.port2, &usart_port2);
-	// Infinite loop
-	while (1) {
+	//start tasks
+	naza_start();
+	modules_start();
 
-	}
-}
 
-static void start_parser(struct portParserStruct* parser,
-		const struct hardware_port_cfg* port) {
-	switch (parser->type) {
-	case parser_frsky:
-		sport_start(port, parser->parserConfig);
-		break;
-	case parser_mavlink:
-		//mavlink
-		break;
-	default:
-		//unnmapped
-		break;
+	CoStartOS();
+
+	while(1){
+
 	}
 }
 

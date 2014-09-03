@@ -5,12 +5,13 @@
  *      Author: cem
  */
 
-#ifndef SPORT_H_
-#define SPORT_H_
+#ifndef MODULE_SPORT_H_
+#define MODULE_SPORT_H_
 
 #include "hardware.h"
 
+void sport_initializeConfig(void* config);
 void sport_start(const struct hardware_port_cfg* port, uint8_t* config);
 
 
-#endif /* SPORT_H_ */
+#endif /* MODULE_SPORT_H_ */

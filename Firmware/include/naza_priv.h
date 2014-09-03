@@ -8,9 +8,8 @@
 #ifndef NAZA_PRIV_H_
 #define NAZA_PRIV_H_
 
+#include "CoOS.h"
 #include "naza.h"
-#include "timer.h"
-#include "utlist.h"
 #include "hardware.h"
 #include "simpletelemtry.h"
 
@@ -21,43 +20,35 @@
 #include <string.h>
 #include <math.h>
 
-#define CHANNEL_SIZE 		256
+#define CHANNEL_COUNT					6
+#define CHANNEL_SIZE 					256
+#define MAIN_TASK_STACK_SIZE			128
 
 #define HEADER1 			0x55
 #define HEADER2				0xAA
 #define FOOTER1				0x66
 #define FOOTER2				0xCC
 
-static CanTxMsg Heartbeat1 = { 0x108, 0, CAN_Id_Standard, CAN_RTR_Data, 8, {
-		0x55, 0xAA, 0x55, 0xAA, 0x07, 0x10, 0x00, 0x00 } };
-static CanTxMsg Heartbeat2 = { 0x108, 0, CAN_Id_Standard, CAN_RTR_Data, 4, {
-		0x66, 0xCC, 0x66, 0xCC } };
-
-enum channel_state {
-	None = 0, Streaming = 1
+enum channel_state
+{
+	None = 0, InUse = 1, Streaming = 2, Processing = 3
 };
 
-struct naza_header {
+struct naza_header
+{
 	uint16_t id;
 	uint16_t length;
 }__attribute__((packed));
 
-union naza_message {
+union naza_message
+{
 	uint8_t bytes[CHANNEL_SIZE];
 	struct naza_header header;
 };
 
-struct naza_channel {
-	uint32_t id;
-	enum channel_state state;
-	uint16_t buffer_position;
-	uint8_t header;
-	uint8_t footer;
-	union naza_message msg;
-	struct naza_channel* next;
-};
-
-struct msg_osd {
+struct msg_osd
+{
+	struct naza_header header;
 	double lon;           // longitude (radians)
 	double lat;           // lattitude (radians)
 	float altGps;        // altitude from GPS (meters)
@@ -82,7 +73,9 @@ struct msg_osd {
 	uint16_t seqNum;       // sequence number - increases with every message
 }__attribute__((packed));
 
-struct msg_gps {
+struct msg_gps
+{
+	struct naza_header header;
 	uint32_t dateTime;      // date/time
 	uint32_t lon;           // longitude (x10^7, degree decimal)
 	uint32_t lat;           // lattitude (x10^7, degree decimal)
@@ -106,7 +99,9 @@ struct msg_gps {
 	uint16_t seqNum;   // sequence number - increases with every message
 }__attribute__((packed));
 
-struct msg_raw_io {
+struct msg_raw_io
+{
+	struct naza_header header;
 	uint8_t unk1[4];
 	uint16_t motorOut[8];  // motor output (M1/M2/M3/M4/M5/M6/F1/F2)
 	uint8_t unk2[4];
@@ -141,25 +136,52 @@ struct msg_raw_io {
 	float pitch;        // pitch angle (radians)
 }__attribute__((packed));
 
-struct naza_channel* channels;
+struct naza_channel
+{
+	uint32_t id;
+	enum channel_state state;
+	uint16_t buffer_position;
+	uint8_t header;
+	uint8_t footer;
+	union naza_message msg;
+};
 
-DelayedCallbackInfo* heartbeat_timer;
+struct naza_channel chans[CHANNEL_COUNT];
 
-#define CHANNEL_BUFFER(channel, byte)	 channel->msg.bytes[channel->buffer_position++] = byte
-#define CHANNEL_SET_STATE(channel, newstate) 	\
-	channel->state = newstate;					\
+#define CHANNEL_FREE(channel) \
+	channel->header = 0;	\
+	channel->footer = 0;	\
+	channel->buffer_position = 0; \
+	channel->id = 0;			\
+	channel->state = None;
+
+#define CHANNEL_CLEAR(channel)	\
 	channel->header = 0;						\
 	channel->footer = 0;						\
 	channel->buffer_position = 0;				\
+	channel->state = InUse;					\
 
-unsigned long nextPMUCheck;
-unsigned long nextOSDCheck;
+#define CHANNEL_MAP(channel, chanId) \
+	channel->header = 0;	\
+	channel->footer = 0;	\
+	channel->buffer_position = 0; \
+	channel->id = chanId;			\
+	channel->state = InUse;
 
-float tmpPitchRad;   // pitch in radians
-float tmpRollRad;    // roll in radians
+#define CHANNEL_STATE(channel, newstate) 	\
+	channel->header = 0;						\
+	channel->footer = 0;						\
+	channel->buffer_position = 0;				\
+	channel->state = newstate;					\
 
-static void naza_heartbeat();
-static void naza_process(CanRxMsg* buffer);
-static void naza_process_data(uint8_t* channel);
+
+OS_STK naza_main_task_stk[MAIN_TASK_STACK_SIZE];
+
+OS_EventID naza_msg_box_id;
+void* naza_msg_queue[CHANNEL_COUNT];
+
+OS_TID naza_main_task_id;
+
+static void naza_main_task(void* pData);
 
 #endif /* NAZA_PRIV_H_ */

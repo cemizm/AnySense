@@ -24,16 +24,4 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 		<nature>org.eclipse.cdt.core.ccnature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>mavlink</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>mavlink/configManager.xml</name>
-			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/mavlink/message_definitions/v1.0/configManager.xml</locationURI>
-		</link>
-	</linkedResources>
 </projectDescription>

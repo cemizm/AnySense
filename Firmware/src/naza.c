@@ -3,11 +3,7 @@
  *
  *  Created on: 25.08.2014
  *      Author: cem
- */
-
-#include "naza_priv.h"
-
-/*
+ *
  * CAN ID 0x7F8 MSG ID 0x0921 LENGTH 0x000C - GPS Module Version________NOT USED
  * CAN ID 0x7F8 MSG ID 0x0922 LENGTH 0x0000 - PMU Heartbeat ?!
  * CAN ID 0x7F8 MSG ID 0x1003 LENGTH 0x003A - GPS DATA
@@ -22,7 +18,10 @@
  * CAN ID 0x090 MSG ID 0x1001 LENGTH 0x000E - RAW Gyro Data_____________NOT USED
  */
 
-void naza_initialize() {
+#include "naza_priv.h"
+
+void naza_initialize()
+{
 	GPIO_InitTypeDef GPIO_InitStructure;
 	CAN_InitTypeDef CAN_InitStructure;
 	CAN_FilterInitTypeDef CAN_FilterInitStructure;
@@ -88,241 +87,346 @@ void naza_initialize() {
 	def.NVIC_IRQChannel = CEC_CAN_IRQn;
 	def.NVIC_IRQChannelPriority = 0;
 	NVIC_Init(&def);
+}
 
-	nextPMUCheck = 0;
-	nextOSDCheck = 0;
+void naza_start()
+{
 
-	heartbeat_timer = Timer_RegisterEx(&naza_heartbeat, 2000, 100);
+	naza_msg_box_id = CoCreateQueue(naza_msg_queue, CHANNEL_COUNT,
+	EVENT_SORT_TYPE_PRIO);
+
+	assert_param(naza_msg_box_id != E_CREATE_FAIL);
+
+	naza_main_task_id = CoCreateTask(naza_main_task, NULL, 0, &naza_main_task_stk[MAIN_TASK_STACK_SIZE- 1], MAIN_TASK_STACK_SIZE);
+
+	assert_param(naza_main_task_id != E_CREATE_FAIL);
 
 	CAN_ITConfig(CAN, CAN_IT_FMP0, ENABLE);
 	CAN_ITConfig(CAN, CAN_IT_FOV0, ENABLE);
-	CAN_ITConfig(CAN, CAN_IT_FF0, ENABLE);
-
 }
 
-static void naza_heartbeat() {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+//Naza main task... Handling incoming messages
+static void naza_main_task(void* pData)
+{
 
-	DEBUG_TOGGLE_RED();
-
-	unsigned long millis = Timer_millis();
-	if (millis > nextPMUCheck) { //PMU HeartBeat 3 sec ago, naza disconnected?
-		Timer_Adjust(heartbeat_timer, 500);  //try again in 1,5 sec
-		nextPMUCheck = millis; //take account of arithmetic overflow
-		return; //no need for heartbeat
-	}
-
-	CAN_Transmit(CAN, (CanTxMsg*) &Heartbeat1);
-	CAN_Transmit(CAN, (CanTxMsg*) &Heartbeat2);
-
-}
-
-static void naza_process(CanRxMsg* msg) {
-
-	CAN_ITConfig(CAN, CAN_IT_FMP0, DISABLE);
-
+	StatusType status;
 	struct naza_channel* channel;
 
-	LL_FOREACH(channels, channel)
+	U64 nextOSDHeartbeat = CoGetOSTime();
+	U64 tmpTick = 0;
+
+	CanTxMsg Heartbeat1 =
+	{ 0x108, 0, CAN_Id_Standard, CAN_RTR_Data, 8,
+	{ 0x55, 0xAA, 0x55, 0xAA, 0x07, 0x10, 0x00, 0x00 } };
+	CanTxMsg Heartbeat2 =
+	{ 0x108, 0, CAN_Id_Standard, CAN_RTR_Data, 4,
+	{ 0x66, 0xCC, 0x66, 0xCC } };
+
+	float cosRoll = 0;
+	float sinRoll = 0;
+	float cosPitch = 0;
+	float sinPitch = 0;
+	float magCalX = 0;
+	float magCalY = 0;
+	float magCalZ = 0;
+	float magCompX = 0;
+	float magCompY = 0;
+
+	float nVel = 0;
+	float eVel = 0;
+
+	float ndop = 0;
+	float edop = 0;
+
+	while (1)
 	{
-		if (channel->id == msg->StdId)
-			break;
-	}
-	if (!channel) {
-		channel = malloc(sizeof(struct naza_channel));
 
-		channel->id = msg->StdId;
-		CHANNEL_SET_STATE(channel, None);
-		channel->next = NULL;
+		channel = CoPendQueueMail(naza_msg_box_id, 200, &status);
 
-		LL_APPEND(channels, channel);
-	}
+		tmpTick = CoGetOSTime();
+		if (tmpTick < simpleTelemtryData.lastHeartbeat + 3000)
+		{ //PMU available
 
-	uint8_t byte = 0;
+			if (tmpTick > nextOSDHeartbeat)
+			{ //No OSD available, fake OSD Heartbeat
 
-	for (uint8_t i = 0; i < msg->DLC; i++) {
+				CAN_Transmit(CAN, &Heartbeat1);
+				CAN_Transmit(CAN, &Heartbeat2);
 
-		byte = msg->Data[i];
-
-		if (channel->state == Streaming) {
-			CHANNEL_BUFFER(channel, byte);
-
-			// Cannot exceed Buffer Size
-			if (channel->buffer_position == CHANNEL_SIZE) {
-				CHANNEL_SET_STATE(channel, None);
-			}
-
-			// Check if received data exceeds announced length
-			if (channel->buffer_position > 3
-					&& channel->buffer_position
-							> channel->msg.header.length + 8) {
-				CHANNEL_SET_STATE(channel, None);
-
+				nextOSDHeartbeat = tmpTick + 2000; //next heartbeat in 2 sec
 			}
 		}
 
-		//check header
-		if (byte == HEADER1) {
-			if (channel->header == 0)
-				channel->header = 1;
-			else if (channel->header == 2)
-				channel->header = 3;
-			else
-				channel->header = 0;
-		} else if (byte == HEADER2) {
-			if (channel->header == 1)
-				channel->header = 2;
-			else if (channel->header == 3) {
-				CHANNEL_SET_STATE(channel, Streaming);
-			} else
-				channel->header = 0;
-		} else
-			channel->header = 0;
+		if (status == E_OK)
+		{
 
-		//check footer
-		if (byte == FOOTER1) {
-			if (channel->footer == 0)
-				channel->footer = 1;
-			else if (channel->footer == 2)
-				channel->footer = 3;
-			else
-				channel->footer = 0;
-		} else if (byte == FOOTER2) {
-			if (channel->footer == 1)
-				channel->footer = 2;
-			else if (channel->footer == 3) {
+			if (channel->msg.header.id == 0x1002)
+			{ //osd
+				struct msg_osd* osd = (struct msg_osd*) &channel->msg.bytes;
 
-				if (channel->buffer_position
-						== channel->msg.header.length + 8) {
-					naza_process_data(channel->msg.bytes);
+				cosRoll = cosf(simpleTelemtryData.roll);
+				sinRoll = sinf(simpleTelemtryData.roll);
+				cosPitch = cosf(simpleTelemtryData.pitch);
+				sinPitch = sinf(simpleTelemtryData.pitch);
+				magCalX = osd->magCalX;
+				magCalY = osd->magCalY;
+				magCalZ = osd->magCalZ;
+				magCompX = magCalX * cosPitch + magCalZ * sinPitch;
+				magCompY = magCalX * sinRoll * sinPitch + magCalY * cosRoll - magCalZ * sinRoll * cosPitch;
+
+				simpleTelemtryData.headingNc = atan2f(magCalY, magCalX) / M_PI * 180.0;
+				if (simpleTelemtryData.headingNc < 0)
+					simpleTelemtryData.headingNc += 360.0;
+
+				simpleTelemtryData.heading = atan2f(magCompY, magCompX) / M_PI * 180.0;
+				if (simpleTelemtryData.heading < 0)
+					simpleTelemtryData.heading += 360.0;
+
+				simpleTelemtryData.numSat = osd->numSat;
+				simpleTelemtryData.gpsAlt = osd->altGps;
+				simpleTelemtryData.lat = osd->lat / M_PI * 180.0;
+				simpleTelemtryData.lon = osd->lon / M_PI * 180.0;
+				simpleTelemtryData.alt = osd->altBaro;
+
+				nVel = osd->northVelocity;
+				eVel = osd->eastVelocity;
+
+				simpleTelemtryData.speed = sqrtf(nVel * nVel + eVel * eVel);
+				simpleTelemtryData.cog = atan2f(eVel, nVel) / M_PI * 180;
+				if (simpleTelemtryData.cog < 0)
+					simpleTelemtryData.cog += 360.0;
+				simpleTelemtryData.vsi = -osd->downVelocity;
+
+			}
+			else if (channel->msg.header.id == 0x1003)
+			{ //gps
+
+				struct msg_gps* gps = (struct msg_gps*) &channel->msg.bytes;
+
+				uint32_t dateTime = gps->dateTime;
+				simpleTelemtryData.second = dateTime & 0b00111111;
+				dateTime >>= 6;
+				simpleTelemtryData.minute = dateTime & 0b00111111;
+				dateTime >>= 6;
+				simpleTelemtryData.hour = dateTime & 0b00001111;
+				dateTime >>= 4;
+				simpleTelemtryData.day = dateTime & 0b00011111;
+				dateTime >>= 5;
+				if (simpleTelemtryData.hour > 7)
+					simpleTelemtryData.day++;
+				simpleTelemtryData.month = dateTime & 0b00001111;
+				dateTime >>= 4;
+				simpleTelemtryData.year = dateTime & 0b01111111;
+				simpleTelemtryData.gpsVsi = -gps->downVelocity;
+				simpleTelemtryData.vdop = (float) gps->vdop / 100;
+				ndop = (float) gps->ndop / 100;
+				edop = (float) gps->edop / 100;
+				simpleTelemtryData.hdop = sqrtf(ndop * ndop + edop * edop);
+
+				switch (gps->fixType)
+				{
+				case 2:
+					simpleTelemtryData.fixType = fixType_2D;
+					break;
+				case 3:
+					simpleTelemtryData.fixType = fixType_3D;
+					break;
+				default:
+					simpleTelemtryData.fixType = fixType_No;
+					break;
+				}
+				if ((simpleTelemtryData.fixType != fixType_No) && (gps->fixStatus & 0x02))
+					simpleTelemtryData.fixType = fixType_DGPS;
+
+			}
+			else if (channel->msg.header.id == 0x1009)
+			{ //raw io
+				struct msg_raw_io* raw_io = (struct msg_raw_io*) &channel->msg.bytes;
+				simpleTelemtryData.battery = raw_io->batVolt;
+
+				for (uint8_t j = 0; j < 10; j++)
+				{
+					simpleTelemtryData.rcIn[j] = raw_io->rcIn[j];
 				}
 
-				CHANNEL_SET_STATE(channel, None);
-			} else
-				channel->footer = 0;
-		} else
-			channel->footer = 0;
-	}
+				simpleTelemtryData.battery = raw_io->batVolt;
+				simpleTelemtryData.roll = raw_io->roll;
+				simpleTelemtryData.pitch = raw_io->pitch;
+				simpleTelemtryData.mode = (enum flightMode) raw_io->flightMode;
+				simpleTelemtryData.throttle = raw_io->actThroIn;
 
-	CAN_ITConfig(CAN, CAN_IT_FMP0, ENABLE);
-}
+			}
+			else if (channel->msg.header.id == 0x0922)
+			{ //PMU Heartbeat
+				simpleTelemtryData.lastHeartbeat = CoGetOSTime();
+			}
+			else if (channel->msg.header.id == 0x1007)
+			{ //osd heartbeat available
+				nextOSDHeartbeat = CoGetOSTime() + 3000;
+			}
 
-static void naza_process_data(uint8_t* data) {
-	//TODO: Process Telemetry Data
-
-	uint16_t* id = (uint16_t*) data;
-	uint16_t* length = id + 1;
-	uint8_t* bytes = (uint8_t*) (length + 1);
-
-	if (*id == 0x1002) { //osd
-		struct msg_osd* osd = (struct msg_osd*) bytes;
-
-		float cosRoll = cos(tmpRollRad);
-		float sinRoll = sin(tmpRollRad);
-		float cosPitch = cos(tmpPitchRad);
-		float sinPitch = sin(tmpPitchRad);
-		float magCalX = osd->magCalX;
-		float magCalY = osd->magCalY;
-		float magCalZ = osd->magCalZ;
-		float magCompX = magCalX * cosPitch + magCalZ * sinPitch;
-		float magCompY = magCalX * sinRoll * sinPitch + magCalY * cosRoll
-				- magCalZ * sinRoll * cosPitch;
-
-		simpleTelemtryData.headingNc = atan2(magCalY, magCalX) / M_PI * 180.0;
-		if (simpleTelemtryData.headingNc < 0)
-			simpleTelemtryData.headingNc += 360.0;
-
-		simpleTelemtryData.heading = atan2(magCompY, magCompX) / M_PI * 180.0;
-		if (simpleTelemtryData.heading < 0)
-			simpleTelemtryData.heading += 360.0;
-
-		simpleTelemtryData.numSat = osd->numSat;
-		simpleTelemtryData.gpsAlt = osd->altGps;
-		simpleTelemtryData.lat = osd->lat / M_PI * 180.0;
-		simpleTelemtryData.lon = osd->lon / M_PI * 180.0;
-		simpleTelemtryData.alt = osd->altBaro;
-		float nVel = osd->northVelocity;
-		float eVel = osd->eastVelocity;
-		simpleTelemtryData.speed = sqrt(nVel * nVel + eVel * eVel);
-		simpleTelemtryData.cog = atan2(eVel, nVel) / M_PI * 180;
-		if (simpleTelemtryData.cog < 0)
-			simpleTelemtryData.cog += 360.0;
-		simpleTelemtryData.vsi = -osd->downVelocity;
-
-	} else if (*id == 0x1003) { //gps
-
-		struct msg_gps* gps = (struct msg_gps*) bytes;
-
-		uint32_t dateTime = gps->dateTime;
-		simpleTelemtryData.second = dateTime & 0b00111111;
-		dateTime >>= 6;
-		simpleTelemtryData.minute = dateTime & 0b00111111;
-		dateTime >>= 6;
-		simpleTelemtryData.hour = dateTime & 0b00001111;
-		dateTime >>= 4;
-		simpleTelemtryData.day = dateTime & 0b00011111;
-		dateTime >>= 5;
-		if (simpleTelemtryData.hour > 7)
-			simpleTelemtryData.day++;
-		simpleTelemtryData.month = dateTime & 0b00001111;
-		dateTime >>= 4;
-		simpleTelemtryData.year = dateTime & 0b01111111;
-		simpleTelemtryData.gpsVsi = -gps->downVelocity;
-		simpleTelemtryData.vdop = (double) gps->vdop / 100;
-		double ndop = (double) gps->ndop / 100;
-		double edop = (double) gps->edop / 100;
-		simpleTelemtryData.hdop = sqrt(ndop * ndop + edop * edop);
-
-		switch (gps->fixType) {
-		case 2:
-			simpleTelemtryData.fixType = fixType_2D;
-			break;
-		case 3:
-			simpleTelemtryData.fixType = fixType_3D;
-			break;
-		default:
-			simpleTelemtryData.fixType = fixType_No;
-			break;
-		}
-		if ((simpleTelemtryData.fixType != fixType_No)
-				&& (gps->fixStatus & 0x02))
-			simpleTelemtryData.fixType = fixType_DGPS;
-
-	} else if (*id == 0x1009) { //raw io
-		struct msg_raw_io* raw_io = (struct msg_raw_io*) bytes;
-		simpleTelemtryData.battery = raw_io->batVolt;
-
-		for (uint8_t j = 0; j < 10; j++) {
-			simpleTelemtryData.rcIn[j] = raw_io->rcIn[j];
+			CHANNEL_FREE(channel);
 		}
 
-		simpleTelemtryData.battery = raw_io->batVolt;
-		tmpRollRad = raw_io->roll;
-		tmpPitchRad = raw_io->pitch;
-		simpleTelemtryData.roll = (int8_t) (tmpRollRad * 180.0 / M_PI);
-		simpleTelemtryData.pitch = (int8_t) (tmpPitchRad * 180.0 / M_PI);
-		simpleTelemtryData.mode = (enum flightMode) raw_io->flightMode;
-
-	} else if (*id == 0x0922) { //PMU Heartbeat
-		DEBUG_TOGGLE_GREEN();
-		nextPMUCheck = Timer_millis() + 3000;
-	} else if (*id == 0x1007) { //osd heartbeat available
-		Timer_Adjust(heartbeat_timer, 5000); //check again in 5sec
 	}
-
 }
 
-void CEC_CAN_IRQHandler() {
-	if (CAN_GetITStatus(CAN, CAN_IT_FMP0) != RESET) {
+#pragma GCC diagnostic pop
+
+void CEC_CAN_IRQHandler()
+{
+	CoEnterISR();
+
+	if (CAN_GetITStatus(CAN, CAN_IT_FMP0) != RESET)
+	{
 		//new message...
 		CanRxMsg msg;
 		CAN_Receive(CAN, CAN_FIFO0, &msg);
-		naza_process(&msg);
+
+		struct naza_channel* channel = NULL;
+
+		uint8_t byte = 0;
+
+		for (uint8_t i = 0; i < msg.DLC; i++)
+		{
+			if (channel == NULL)
+			{
+				for (int chId = 0; chId < CHANNEL_COUNT; chId++)
+				{
+					if (chans[chId].state != Processing && chans[chId].id == msg.StdId)
+					{
+						channel = &chans[chId];
+						break;
+					}
+				}
+				if (channel == NULL)
+				{
+					for (int chId = 0; chId < CHANNEL_COUNT; chId++)
+					{
+						if (chans[chId].state == None)
+						{
+							channel = &chans[chId];
+							CHANNEL_MAP(channel, msg.StdId);
+							break;
+						}
+					}
+				}
+				if (channel == NULL) //No Channels left, drop packet...
+				{
+					simpleTelemtryData.packets_drop += 1;
+					break;
+				}
+			}
+
+			byte = msg.Data[i];
+
+			if (channel->state == Streaming)
+			{
+				channel->msg.bytes[channel->buffer_position++] = byte;
+
+				// Cannot exceed Buffer Size
+				if (channel->buffer_position == CHANNEL_SIZE)
+				{
+					CHANNEL_CLEAR(channel);
+					simpleTelemtryData.packets_corrupted += 1;
+				}
+
+				// Check if received data exceeds announced length
+				if (channel->buffer_position > 3 && channel->buffer_position > channel->msg.header.length + 8)
+				{
+					CHANNEL_CLEAR(channel);
+					simpleTelemtryData.packets_corrupted += 1;
+				}
+			}
+
+			//check header
+			if (byte == HEADER1)
+			{
+				if (channel->header == 0)
+					channel->header = 1;
+				else if (channel->header == 2)
+					channel->header = 3;
+				else
+					channel->header = 0;
+			}
+			else if (byte == HEADER2)
+			{
+				if (channel->header == 1)
+					channel->header = 2;
+				else if (channel->header == 3)
+				{
+					CHANNEL_STATE(channel, Streaming);
+				}
+				else
+					channel->header = 0;
+			}
+			else
+				channel->header = 0;
+
+			//check footer
+			if (byte == FOOTER1)
+			{
+				if (channel->footer == 0)
+					channel->footer = 1;
+				else if (channel->footer == 2)
+					channel->footer = 3;
+				else
+					channel->footer = 0;
+			}
+			else if (byte == FOOTER2)
+			{
+				if (channel->footer == 1)
+					channel->footer = 2;
+				else if (channel->footer == 3)
+				{
+
+					if (channel->buffer_position == channel->msg.header.length + 8)
+					{
+
+						if (channel->msg.header.id == 0x1002 || channel->msg.header.id == 0x1003
+								|| channel->msg.header.id == 0x1009 || channel->msg.header.id == 0x1007
+								|| channel->msg.header.id == 0x0922)
+						{
+							channel->state = Processing;
+
+							StatusType t = isr_PostQueueMail(naza_msg_box_id, channel);
+
+							if (t == E_QUEUE_FULL)
+							{
+								CHANNEL_CLEAR(channel);
+								simpleTelemtryData.packets_drop += 1;
+							}
+							else
+								channel = NULL;
+						}
+						else
+						{
+							CHANNEL_CLEAR(channel);
+						}
+
+					}
+					else
+					{
+						CHANNEL_CLEAR(channel);
+						simpleTelemtryData.packets_corrupted += 1;
+					}
+
+				}
+				else
+					channel->footer = 0;
+			}
+			else
+				channel->footer = 0;
+		}
 	}
 
-	if(CAN_GetITStatus(CAN, CAN_IT_FOV0) != RESET){
-		DEBUG_TOGGLE_ORANGE();
+	if (CAN_GetITStatus(CAN, CAN_IT_FOV0) != RESET)
+	{
+		simpleTelemtryData.packets_lost += 1;
 	}
-	if(CAN_GetITStatus(CAN, CAN_IT_FF0) != RESET){
-		DEBUG_TOGGLE_ORANGE();
-	}
+
+	CoExitISR();
 }
+

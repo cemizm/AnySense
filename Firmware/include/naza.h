@@ -9,6 +9,6 @@
 #define NAZA_H_
 
 void naza_initialize();
-
+void naza_start();
 
 #endif /* NAZA_H_ */
