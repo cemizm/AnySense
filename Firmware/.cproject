@@ -17,7 +17,7 @@
 				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" cleanCommand="${cross_rm} -rf" description="" id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.2013518697" name="Debug" parent="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug">
 					<folderInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.2013518697." name="/" resourcePath="">
 						<toolChain id="ilg.gnuarmeclipse.managedbuild.cross.toolchain.elf.debug.1228436444" name="Cross ARM GCC" superClass="ilg.gnuarmeclipse.managedbuild.cross.toolchain.elf.debug">
-							<option id="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.level.1582477582" name="Optimization Level" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.level" value="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.level.debug" valueType="enumerated"/>
+							<option id="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.level.1582477582" name="Optimization Level" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.level" value="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.level.most" valueType="enumerated"/>
 							<option id="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.messagelength.1315398810" name="Message length (-fmessage-length=0)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.messagelength" value="true" valueType="boolean"/>
 							<option id="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.signedchar.281807345" name="'char' is signed (-fsigned-char)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.signedchar" value="true" valueType="boolean"/>
 							<option id="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.functionsections.1046980960" name="Function sections (-ffunction-sections)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.functionsections" value="true" valueType="boolean"/>
@@ -51,15 +51,16 @@
 							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.1351861096" name="Cross ARM GNU Assembler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler">
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.usepreprocessor.1447376918" name="Use preprocessor" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.usepreprocessor" value="true" valueType="boolean"/>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.include.paths.150082639" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/CoOS}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/CoOS/kernel}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/CoOS/portable}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/system/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/system/include/cmsis}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/system/include/stm32f0-stdperiph}&quot;"/>
-									<listOptionValue builtIn="false" value="../../shared/mavlink/onboard/"/>
-									<listOptionValue builtIn="false" value="../../shared/mavlink/onboard/common"/>
-									<listOptionValue builtIn="false" value="../../shared/mavlink/onboard/UniAdapter"/>
+									<listOptionValue builtIn="false" value="&quot;/Users/cem/xeniC/embedded/Projects/Universal Naza CAN Bus Telemetrie Adapter/shared/mavlink/onboard&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;/Users/cem/xeniC/embedded/Projects/Universal Naza CAN Bus Telemetrie Adapter/shared/mavlink/onboard/common&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;/Users/cem/xeniC/embedded/Projects/Universal Naza CAN Bus Telemetrie Adapter/shared/mavlink/onboard/UniAdapter&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs.340395614" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="DEBUG"/>
@@ -76,14 +77,16 @@
 							</tool>
 							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.964130985" name="Cross ARM C Compiler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler">
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.include.paths.799107372" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/CoOS}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/CoOS/kernel}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/CoOS/portable}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/system/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/system/include/cmsis}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/system/include/stm32f0-stdperiph}&quot;"/>
-									<listOptionValue builtIn="false" value="../../shared/mavlink/onboard/"/>
-									<listOptionValue builtIn="false" value="../../shared/mavlink/onboard/common"/>
+									<listOptionValue builtIn="false" value="&quot;/Users/cem/xeniC/embedded/Projects/Universal Naza CAN Bus Telemetrie Adapter/shared/mavlink/onboard&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;/Users/cem/xeniC/embedded/Projects/Universal Naza CAN Bus Telemetrie Adapter/shared/mavlink/onboard/common&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;/Users/cem/xeniC/embedded/Projects/Universal Naza CAN Bus Telemetrie Adapter/shared/mavlink/onboard/UniAdapter&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs.374470649" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="DEBUG"/>
@@ -100,14 +103,16 @@
 							</tool>
 							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.2063748087" name="Cross ARM C++ Compiler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler">
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.include.paths.1090849614" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/CoOS}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/CoOS/kernel}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/CoOS/portable}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/system/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/system/include/cmsis}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/system/include/stm32f0-stdperiph}&quot;"/>
-									<listOptionValue builtIn="false" value="../../shared/mavlink/onboard/"/>
-									<listOptionValue builtIn="false" value="../../shared/mavlink/onboard/common"/>
+									<listOptionValue builtIn="false" value="&quot;/Users/cem/xeniC/embedded/Projects/Universal Naza CAN Bus Telemetrie Adapter/shared/mavlink/onboard&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;/Users/cem/xeniC/embedded/Projects/Universal Naza CAN Bus Telemetrie Adapter/shared/mavlink/onboard/common&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;/Users/cem/xeniC/embedded/Projects/Universal Naza CAN Bus Telemetrie Adapter/shared/mavlink/onboard/UniAdapter&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.noexceptions.1489310039" name="Do not use exceptions (-fno-exceptions)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.noexceptions" useByScannerDiscovery="true" value="true" valueType="boolean"/>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.nortti.257845814" name="Do not use RTTI (-fno-rtti)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.nortti" useByScannerDiscovery="true" value="true" valueType="boolean"/>
@@ -201,7 +206,7 @@
 				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" cleanCommand="${cross_rm} -rf" description="" id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.126287125" name="Release" parent="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release">
 					<folderInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.126287125." name="/" resourcePath="">
 						<toolChain id="ilg.gnuarmeclipse.managedbuild.cross.toolchain.elf.release.673283865" name="Cross ARM GCC" superClass="ilg.gnuarmeclipse.managedbuild.cross.toolchain.elf.release">
-							<option id="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.level.488527481" name="Optimization Level" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.level" value="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.level.size" valueType="enumerated"/>
+							<option id="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.level.488527481" name="Optimization Level" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.level" value="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.level.more" valueType="enumerated"/>
 							<option id="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.messagelength.70532815" name="Message length (-fmessage-length=0)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.messagelength" value="true" valueType="boolean"/>
 							<option id="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.signedchar.1426341831" name="'char' is signed (-fsigned-char)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.signedchar" value="true" valueType="boolean"/>
 							<option id="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.functionsections.1876937446" name="Function sections (-ffunction-sections)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.optimization.functionsections" value="true" valueType="boolean"/>
@@ -230,23 +235,16 @@
 							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.333165713" name="Cross ARM GNU Assembler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler">
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.usepreprocessor.1723120768" name="Use preprocessor" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.usepreprocessor" value="true" valueType="boolean"/>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.include.paths.1318389028" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.include.paths" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;../include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../system/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../system/include/cmsis&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../system/include/stm32f0-stdperiph&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/CoOS}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/CoOS/kernel}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/CoOS/portable}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/mavlink}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/mavlink/include/UniAdapter}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/mavlink/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/mavlink/include/common}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/system/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/system/include/cmsis}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/system/include/stm32f0-stdperiph}&quot;"/>
-									<listOptionValue builtIn="false" value="../../shared/mavlink/onboard/"/>
-									<listOptionValue builtIn="false" value="../../shared/mavlink/onboard/common"/>
+									<listOptionValue builtIn="false" value="&quot;/Users/cem/xeniC/embedded/Projects/Universal Naza CAN Bus Telemetrie Adapter/shared/mavlink/onboard&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;/Users/cem/xeniC/embedded/Projects/Universal Naza CAN Bus Telemetrie Adapter/shared/mavlink/onboard/common&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;/Users/cem/xeniC/embedded/Projects/Universal Naza CAN Bus Telemetrie Adapter/shared/mavlink/onboard/UniAdapter&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs.634571952" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.assembler.defs" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="OS_USE_TRACE_SEMIHOSTING_DEBUG"/>
@@ -259,23 +257,16 @@
 							</tool>
 							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.884355702" name="Cross ARM C Compiler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler">
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.include.paths.247360277" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;../include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../system/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../system/include/cmsis&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../system/include/stm32f0-stdperiph&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/CoOS}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/CoOS/kernel}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/CoOS/portable}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/mavlink}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/mavlink/include/UniAdapter}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/mavlink/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/mavlink/include/common}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/system/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/system/include/cmsis}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/system/include/stm32f0-stdperiph}&quot;"/>
-									<listOptionValue builtIn="false" value="../../shared/mavlink/onboard/"/>
-									<listOptionValue builtIn="false" value="../../shared/mavlink/onboard/common"/>
+									<listOptionValue builtIn="false" value="&quot;/Users/cem/xeniC/embedded/Projects/Universal Naza CAN Bus Telemetrie Adapter/shared/mavlink/onboard&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;/Users/cem/xeniC/embedded/Projects/Universal Naza CAN Bus Telemetrie Adapter/shared/mavlink/onboard/common&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;/Users/cem/xeniC/embedded/Projects/Universal Naza CAN Bus Telemetrie Adapter/shared/mavlink/onboard/UniAdapter&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs.1278630119" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="OS_USE_TRACE_SEMIHOSTING_DEBUG"/>
@@ -288,23 +279,16 @@
 							</tool>
 							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.2037489463" name="Cross ARM C++ Compiler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler">
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.include.paths.93008340" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.include.paths" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="&quot;../include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../system/include&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../system/include/cmsis&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;../system/include/stm32f0-stdperiph&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/CoOS}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/CoOS/kernel}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/CoOS/portable}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/mavlink}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/mavlink/include/UniAdapter}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/mavlink/include}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/mavlink/include/common}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/system/include}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/system/include/cmsis}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/UNCTelemetrie/system/include/stm32f0-stdperiph}&quot;"/>
-									<listOptionValue builtIn="false" value="../../shared/mavlink/onboard/"/>
-									<listOptionValue builtIn="false" value="../../shared/mavlink/onboard/common"/>
+									<listOptionValue builtIn="false" value="&quot;/Users/cem/xeniC/embedded/Projects/Universal Naza CAN Bus Telemetrie Adapter/shared/mavlink/onboard&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;/Users/cem/xeniC/embedded/Projects/Universal Naza CAN Bus Telemetrie Adapter/shared/mavlink/onboard/common&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;/Users/cem/xeniC/embedded/Projects/Universal Naza CAN Bus Telemetrie Adapter/shared/mavlink/onboard/UniAdapter&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.noexceptions.500524483" name="Do not use exceptions (-fno-exceptions)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.noexceptions" useByScannerDiscovery="true" value="true" valueType="boolean"/>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.nortti.2084857013" name="Do not use RTTI (-fno-rtti)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.nortti" useByScannerDiscovery="true" value="true" valueType="boolean"/>
