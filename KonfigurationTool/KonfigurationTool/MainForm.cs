@@ -51,8 +51,11 @@ namespace KonfigurationTool
         private void serialPort_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
         {
             List<byte> bytes = new List<byte>();
-            while (serialPort.BytesToRead > 0)
-                bytes.Add((byte)serialPort.ReadByte());
+            while (serialPort.IsOpen && serialPort.BytesToRead > 0)
+            {
+                if (serialPort.IsOpen)
+                    bytes.Add((byte)serialPort.ReadByte());
+            }
 
             mavlink.ParseBytes(bytes.ToArray());
         }
@@ -104,6 +107,10 @@ namespace KonfigurationTool
 
                         MessageBox.Show(this, string.Format("Error while saving Configuration for Port {0}", msg_control.param1), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
+                        break;
+                    case CONFIG_COMMAND.CONFIG_COMMAND_BOOTLOADER:
+                        serialPort.Close();
+                        StateMachineUpdate(StateMachineStep.None);
                         break;
                     default:
                         break;
@@ -202,7 +209,11 @@ namespace KonfigurationTool
                 tsFWVersion.Text = string.Format("{0}.{1}", (byte)msg_version.fw_version >> 8, (byte)msg_version.fw_version);
                 lblPort1.Text = ((ProtocolType)msg_version.port1).ToString();
                 lblPort2.Text = ((ProtocolType)msg_version.port2).ToString();
+#if DEBUG
+                btnUpdate.Visible = true;
+#else
                 btnUpdate.Visible = FIRMWARE_VERSION > msg_version.fw_version;
+#endif
                 btnPort1Configure.Enabled = FIRMWARE_VERSION == msg_version.fw_version;
                 btnPort2Configure.Enabled = FIRMWARE_VERSION == msg_version.fw_version;
             }
@@ -400,7 +411,7 @@ namespace KonfigurationTool
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(this, "Error while open serial port:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(this, "Error while communication:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -554,6 +565,53 @@ namespace KonfigurationTool
                 }
             });
 
+        }
+
+        private void btnUpdate_Click(object sender, EventArgs e)
+        {
+            if (tsLoading.Visible)
+                return;
+
+            //TODO: Enable Update...
+
+            /*
+            string path = string.Empty;
+
+#if DEBUG
+            using (OpenFileDialog dlg = new OpenFileDialog())
+            {
+                dlg.Filter = "HEX Files|*.hex";
+                dlg.CheckFileExists = true;
+
+                if (dlg.ShowDialog() == DialogResult.OK)
+                    path = dlg.FileName;
+            }
+#else
+            //TODO: copy to tmp folder from assembly
+#endif
+
+            if (string.IsNullOrEmpty(path))
+                return;
+            */
+
+            try
+            {
+                Msg_configuration_control msg = new Msg_configuration_control();
+                msg.command = (byte)CONFIG_COMMAND.CONFIG_COMMAND_BOOTLOADER;
+                mavlink_packet.Message = msg;
+                byte[] bytes = mavlink.Send(mavlink_packet);
+                serialPort.Write(bytes, 0, bytes.Length);
+
+                serialPort.Close();
+                StateMachineUpdate(StateMachineStep.None);
+
+                //TODO: Connect after reset
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, "Error while communication:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
 

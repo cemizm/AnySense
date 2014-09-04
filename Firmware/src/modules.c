@@ -34,8 +34,7 @@ void modules_initialize()
 	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
 	USART_InitStructure.USART_StopBits = USART_StopBits_1;
 	USART_InitStructure.USART_Parity = USART_Parity_No;
-	USART_InitStructure.USART_HardwareFlowControl =
-	USART_HardwareFlowControl_None;
+	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
 	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
 
 	USART_Init(usart_port2.port, &USART_InitStructure);
@@ -47,6 +46,8 @@ void modules_initialize()
 	def.NVIC_IRQChannel = usart_port2.nvic_ch;
 	def.NVIC_IRQChannelPriority = 1;
 	NVIC_Init(&def);
+
+	FIFO_init(tx_buffer);
 }
 
 void modules_initialize_config(struct portParserStruct* parser)
@@ -81,6 +82,13 @@ void modules_start()
 
 	hardware_register_callback(&usart_port2, &RX_Callback, &TX_Callback, 0);
 
+	FIFO64_write(tx_buffer, 0xCE);
+	FIFO64_write(tx_buffer, 0xFF);
+	FIFO64_write(tx_buffer, 0xCE);
+	FIFO64_write(tx_buffer, 0xFF);
+
+	USART_ITConfig(usart_port2.port, USART_IT_TXE, ENABLE);
+
 	USART_ITConfig(usart_port2.port, USART_IT_RXNE, ENABLE);
 }
 
@@ -89,6 +97,7 @@ void modules_start()
 
 void configManager_task(void* pdata)
 {
+	DEBUG_TOGGLE_ORANGE();
 
 	U64 exitIn = CoGetOSTime() + 2100;
 	U64 ticks = 0;
@@ -98,16 +107,14 @@ void configManager_task(void* pdata)
 
 	StatusType status;
 
-	struct mavlink_rx_buffer* buffer;
+	struct mavlink_rx_buffer* buffer = NULL;
 
 	mavlink_message_t msg_tmp;
 	uint8_t mavlink_tmp_buf[MAVLINK_MAX_PACKET_LEN];
-	uint16_t msg_len;
-	uint16_t tx_len;
+	uint16_t msg_len = 0;
+	uint16_t tx_len = 0;
 
 	uint8_t currentValue = 0;
-
-	DEBUG_TOGGLE_ORANGE();
 
 	while (!exit)
 	{
@@ -135,7 +142,8 @@ void configManager_task(void* pdata)
 				switch (cmd)
 				{
 				case CONFIG_COMMAND_BOOTLOADER:
-					//TODO: reboot into bootloader;
+					*((unsigned long *) 0x20003FE0) = 0xDEADBEEF;
+					NVIC_SystemReset();
 					break;
 				case CONFIG_COMMAND_EXIT:
 					exit = 1;
@@ -191,9 +199,6 @@ void configManager_task(void* pdata)
 			{
 				tx_len = mavlink_msg_to_send_buffer(mavlink_tmp_buf, &msg_tmp);
 
-				if (!FIFO_available(tx_buffer))
-					DEBUG_TOGGLE_BLUE();
-
 				for (int i = 0; i < tx_len; i++)
 					FIFO512_write(tx_buffer, mavlink_tmp_buf[i]);
 
@@ -216,9 +221,6 @@ void configManager_task(void* pdata)
 			if (msg_len > 0)
 			{
 				tx_len = mavlink_msg_to_send_buffer(mavlink_tmp_buf, &msg_tmp);
-
-				if (FIFO_available(tx_buffer))
-					DEBUG_TOGGLE_BLUE();
 
 				for (int i = 0; i < tx_len; i++)
 					FIFO512_write(tx_buffer, mavlink_tmp_buf[i]);
@@ -254,6 +256,7 @@ void configManager_task(void* pdata)
 	DEBUG_TOGGLE_ORANGE();
 
 	CoExitTask();
+
 }
 
 void configManager_start(struct portParserStruct* parser, const struct hardware_port_cfg* port)
@@ -301,7 +304,6 @@ static void RX_Callback(uint8_t* id)
 		if (t == E_QUEUE_FULL)
 		{
 			buffer->inUse = 0;
-			DEBUG_TOGGLE_BLUE();
 		}
 	}
 

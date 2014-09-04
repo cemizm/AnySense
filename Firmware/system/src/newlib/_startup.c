@@ -30,6 +30,7 @@
 
 #include <stdint.h>
 #include <sys/types.h>
+#include "stm32f0xx.h"
 
 // ----------------------------------------------------------------------------
 
@@ -74,8 +75,7 @@ void
 _start(void);
 
 void
-__initialize_data(unsigned int* from, unsigned int* section_begin,
-    unsigned int* section_end);
+__initialize_data(unsigned int* from, unsigned int* section_begin, unsigned int* section_end);
 
 void
 __initialize_bss(unsigned int* section_begin, unsigned int* section_end);
@@ -93,25 +93,24 @@ __initialize_hardware(void);
 
 inline void
 __attribute__((always_inline))
-__initialize_data(unsigned int* from, unsigned int* section_begin,
-    unsigned int* section_end)
+__initialize_data(unsigned int* from, unsigned int* section_begin, unsigned int* section_end)
 {
-  // Iterate and copy word by word.
-  // It is assumed that the pointers are word aligned.
-  unsigned int *p = section_begin;
-  while (p < section_end)
-    *p++ = *from++;
+	// Iterate and copy word by word.
+	// It is assumed that the pointers are word aligned.
+	unsigned int *p = section_begin;
+	while (p < section_end)
+		*p++ = *from++;
 }
 
 inline void
 __attribute__((always_inline))
 __initialize_bss(unsigned int* section_begin, unsigned int* section_end)
 {
-  // Iterate and clear word by word.
-  // It is assumed that the pointers are word aligned.
-  unsigned int *p = section_begin;
-  while (p < section_end)
-    *p++ = 0;
+	// Iterate and clear word by word.
+	// It is assumed that the pointers are word aligned.
+	unsigned int *p = section_begin;
+	while (p < section_end)
+		*p++ = 0;
 }
 
 // These magic symbols are provided by the linker.
@@ -133,21 +132,21 @@ inline void
 __attribute__((always_inline))
 __run_init_array(void)
 {
-  int count;
-  int i;
+	int count;
+	int i;
 
-  count = __preinit_array_end - __preinit_array_start;
-  for (i = 0; i < count; i++)
-    __preinit_array_start[i]();
+	count = __preinit_array_end - __preinit_array_start;
+	for (i = 0; i < count; i++)
+		__preinit_array_start[i]();
 
-  // If you need to run the code in the .init section, please use
-  // the startup files, since this requires the code in crti.o and crtn.o
-  // to add the function prologue/epilogue.
-  //_init(); // DO NOT ENABE THIS!
+	// If you need to run the code in the .init section, please use
+	// the startup files, since this requires the code in crti.o and crtn.o
+	// to add the function prologue/epilogue.
+	//_init(); // DO NOT ENABE THIS!
 
-  count = __init_array_end - __init_array_start;
-  for (i = 0; i < count; i++)
-    __init_array_start[i]();
+	count = __init_array_end - __init_array_start;
+	for (i = 0; i < count; i++)
+		__init_array_start[i]();
 }
 
 // Run all the cleanup routines (mainly static destructors).
@@ -155,17 +154,17 @@ inline void
 __attribute__((always_inline))
 __run_fini_array(void)
 {
-  int count;
-  int i;
+	int count;
+	int i;
 
-  count = __fini_array_end - __fini_array_start;
-  for (i = count; i > 0; i--)
-    __fini_array_start[i - 1]();
+	count = __fini_array_end - __fini_array_start;
+	for (i = count; i > 0; i--)
+		__fini_array_start[i - 1]();
 
-  // If you need to run the code in the .fini section, please use
-  // the startup files, since this requires the code in crti.o and crtn.o
-  // to add the function prologue/epilogue.
-  //_fini(); // DO NOT ENABE THIS!
+	// If you need to run the code in the .fini section, please use
+	// the startup files, since this requires the code in crti.o and crtn.o
+	// to add the function prologue/epilogue.
+	//_fini(); // DO NOT ENABE THIS!
 }
 
 #if defined(DEBUG) && defined(OS_INCLUDE_STARTUP_GUARD_CHECKS)
@@ -192,71 +191,88 @@ __data_end_guard = DATA_END_GUARD_VALUE;
 
 #endif // defined(DEBUG) && defined(OS_INCLUDE_STARTUP_GUARD_CHECKS)
 
+#define BOOTLOADER_ADDRESS			0x1FFFC800
+typedef void (*pFunction)(void);
+pFunction Jump_To_Application;
+uint32_t jumpAddress;
+
 // This is the place where Cortex-M core will go immediately after reset,
 // via a call or jump from the Reset_Handler
 void __attribute__ ((section(".after_vectors"),noreturn))
 _start(void)
 {
 
-  // Use Old Style Data and BSS section initialisation,
-  // that will initialise a single BSS sections.
+	if (*((unsigned long *) 0x20003FE0) == 0xDEADBEEF)
+	{
+		*((unsigned long *) 0x20003FE0) = 0;
+
+
+		__set_MSP(*(__IO uint32_t*) BOOTLOADER_ADDRESS);
+
+		jumpAddress = *(__IO uint32_t*) (BOOTLOADER_ADDRESS + 4);
+		Jump_To_Application = (pFunction)  jumpAddress;
+		Jump_To_Application();
+	}
+
+	// Use Old Style Data and BSS section initialisation,
+	// that will initialise a single BSS sections.
 
 #if defined(DEBUG) && defined(OS_INCLUDE_STARTUP_GUARD_CHECKS)
-  __bss_begin_guard = BSS_GUARD_BAD_VALUE;
-  __bss_end_guard = BSS_GUARD_BAD_VALUE;
+	__bss_begin_guard = BSS_GUARD_BAD_VALUE;
+	__bss_end_guard = BSS_GUARD_BAD_VALUE;
 #endif
 
-  // Zero fill the bss segment
-  __initialize_bss(&__bss_start__, &__bss_end__);
+	// Zero fill the bss segment
+	__initialize_bss(&__bss_start__, &__bss_end__);
 
 #if defined(DEBUG) && defined(OS_INCLUDE_STARTUP_GUARD_CHECKS)
-  if ((__bss_begin_guard != 0) || (__bss_end_guard != 0))
-    {
-      for (;;)
-        ;
-    }
+	if ((__bss_begin_guard != 0) || (__bss_end_guard != 0))
+	{
+		for (;;)
+			;
+	}
 #endif
 
 #if defined(DEBUG) && defined(OS_INCLUDE_STARTUP_GUARD_CHECKS)
-  __data_begin_guard = DATA_GUARD_BAD_VALUE;
-  __data_end_guard = DATA_GUARD_BAD_VALUE;
+	__data_begin_guard = DATA_GUARD_BAD_VALUE;
+	__data_end_guard = DATA_GUARD_BAD_VALUE;
 #endif
 
-  // Copy the data segment from Flash to RAM.
-  // When using startup files, this code is executed via the preinit array.
-  __initialize_data(&_sidata, &_sdata, &_edata);
+	// Copy the data segment from Flash to RAM.
+	// When using startup files, this code is executed via the preinit array.
+	__initialize_data(&_sidata, &_sdata, &_edata);
 
 #if defined(DEBUG) && defined(OS_INCLUDE_STARTUP_GUARD_CHECKS)
-  if ((__data_begin_guard != DATA_BEGIN_GUARD_VALUE) || (__data_end_guard != __data_end_guard))
-    {
-      for (;;)
-        ;
-    }
+	if ((__data_begin_guard != DATA_BEGIN_GUARD_VALUE) || (__data_end_guard != __data_end_guard))
+	{
+		for (;;)
+			;
+	}
 #endif
 
-  __initialize_hardware();
+	__initialize_hardware();
 
-  // Get the args (useful in semihosting configurations).
-  int argc;
-  char** argv;
-  __initialize_args(&argc, &argv);
+	// Get the args (useful in semihosting configurations).
+	int argc;
+	char** argv;
+	__initialize_args(&argc, &argv);
 
-  // Call the standard library initialisation (mandatory for C++ to
-  // execute the constructors for the static objects).
-  __run_init_array();
+	// Call the standard library initialisation (mandatory for C++ to
+	// execute the constructors for the static objects).
+	__run_init_array();
 
-  // Call the main entry point, and save the exit code.
-  int code = main(argc, argv);
+	// Call the main entry point, and save the exit code.
+	int code = main(argc, argv);
 
-  // Run the C++ static destructors.
-  __run_fini_array();
+	// Run the C++ static destructors.
+	__run_fini_array();
 
-  _exit(code);
+	_exit(code);
 
-  // Should never reach this, _exit() should have already
-  // performed a reset.
-  for (;;)
-    ;
+	// Should never reach this, _exit() should have already
+	// performed a reset.
+	for (;;)
+		;
 }
 
 // ----------------------------------------------------------------------------

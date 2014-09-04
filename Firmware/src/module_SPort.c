@@ -60,6 +60,8 @@ void sport_start(const struct hardware_port_cfg* port, uint8_t* config)
 	session->currentValue = 0;
 	session->tmp.Header = SPORT_DATAFRAME;
 
+	FIFO_init(session->send_buffer);
+
 	LL_APPEND(sessions, session);
 
 	/* Initialize & Enable Interrupts */
@@ -193,7 +195,6 @@ static void RX_Callback(uint8_t* id)
 		{
 			if (session->config->map[session->currentValue] != tv_none)
 			{
-				DEBUG_TOGGLE_BLUE();
 				session->tmp.Id = mapping[session->currentValue];
 
 				if (session->tmp_length == 0)
