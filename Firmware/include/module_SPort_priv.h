@@ -8,16 +8,11 @@
 #ifndef MODULE_SPORT_PRIV_H_
 #define MODULE_SPORT_PRIV_H_
 
-#include "stm32f0xx_usart.h"
-#include "stm32f0xx_gpio.h"
-#include "stm32f0xx_misc.h"
-#include "stm32f0xx.h"
-
-#include "config.h"
 #include "module_SPort.h"
+#include "simpletelemtry.h"
+
 #include "utlist.h"
 #include "fifo.h"
-#include "simpletelemtry.h"
 #include "CoOS.h"
 
 #include <stdlib.h>
