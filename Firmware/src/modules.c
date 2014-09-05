@@ -63,6 +63,7 @@ void modules_initialize_config(struct portParserStruct* parser)
 	case parser_jeti:
 		break;
 	case parser_mavlink:
+		mavlink_initializeConfig(parser->parserConfig);
 		break;
 	default:
 		break;
@@ -82,12 +83,6 @@ void modules_start()
 
 	hardware_register_callback(&usart_port2, &RX_Callback, &TX_Callback, 0);
 
-	FIFO64_write(tx_buffer, 0xCE);
-	FIFO64_write(tx_buffer, 0xFF);
-	FIFO64_write(tx_buffer, 0xCE);
-	FIFO64_write(tx_buffer, 0xFF);
-
-	USART_ITConfig(usart_port2.port, USART_IT_TXE, ENABLE);
 
 	USART_ITConfig(usart_port2.port, USART_IT_RXNE, ENABLE);
 }
@@ -127,7 +122,6 @@ void configManager_task(void* pdata)
 
 		if (status == E_OK)
 		{
-			established = 1;
 
 			if (buffer->message.msgid == MAVLINK_MSG_ID_REQUEST_DATA_STREAM)
 			{
@@ -135,6 +129,7 @@ void configManager_task(void* pdata)
 			}
 			else if (buffer->message.msgid == MAVLINK_MSG_ID_CONFIGURATION_CONTROL)
 			{
+				established = 1;
 
 				CONFIG_COMMAND cmd = mavlink_msg_configuration_control_get_command(&buffer->message);
 				uint16_t param1 = mavlink_msg_configuration_control_get_param1(&buffer->message);
@@ -195,16 +190,6 @@ void configManager_task(void* pdata)
 
 			buffer->inUse = 0;
 
-			if (msg_len > 0)
-			{
-				tx_len = mavlink_msg_to_send_buffer(mavlink_tmp_buf, &msg_tmp);
-
-				for (int i = 0; i < tx_len; i++)
-					FIFO512_write(tx_buffer, mavlink_tmp_buf[i]);
-
-				USART_ITConfig(usart_port2.port, USART_IT_TXE, ENABLE);
-			}
-
 		}
 		else if (established)
 		{
@@ -217,16 +202,6 @@ void configManager_task(void* pdata)
 			}
 			else
 				msg_len = mavlink_pack_nextData(&msg_tmp, &currentValue);
-
-			if (msg_len > 0)
-			{
-				tx_len = mavlink_msg_to_send_buffer(mavlink_tmp_buf, &msg_tmp);
-
-				for (int i = 0; i < tx_len; i++)
-					FIFO512_write(tx_buffer, mavlink_tmp_buf[i]);
-
-				USART_ITConfig(usart_port2.port, USART_IT_TXE, ENABLE);
-			}
 		}
 		else
 		{
@@ -234,7 +209,18 @@ void configManager_task(void* pdata)
 				exit = 1;
 		}
 
+		if (msg_len > 0)
+		{
+			tx_len = mavlink_msg_to_send_buffer(mavlink_tmp_buf, &msg_tmp);
+
+			for (int i = 0; i < tx_len; i++)
+				FIFO512_write(tx_buffer, mavlink_tmp_buf[i]);
+
+			USART_ITConfig(usart_port2.port, USART_IT_TXE, ENABLE);
+		}
+
 	}
+	CoDelQueue(command_box_id, OPT_DEL_ANYWAY);
 
 	USART_ITConfig(usart_port2.port, USART_IT_RXNE, DISABLE);
 	USART_ITConfig(usart_port2.port, USART_IT_TXE, DISABLE);
@@ -243,6 +229,7 @@ void configManager_task(void* pdata)
 
 	USART_Cmd(usart_port2.port, DISABLE);
 	USART_DeInit(usart_port2.port);
+	NVIC_DisableIRQ(usart_port2.nvic_ch);
 
 	CoSchedLock();
 
@@ -272,6 +259,7 @@ void configManager_start(struct portParserStruct* parser, const struct hardware_
 	case parser_jeti:
 		break;
 	case parser_mavlink:
+		mavlink_start(port, parser->parserConfig);
 		break;
 	default:
 		break;
