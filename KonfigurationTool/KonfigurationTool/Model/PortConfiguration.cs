@@ -27,6 +27,8 @@ namespace KonfigurationTool
                             Configuration = null;
                             break;
                         case ProtocolType.Mavlink:
+                            Configuration = null;
+                            break;
                         case ProtocolType.HOTT:
                         case ProtocolType.Jeti:
                         default:

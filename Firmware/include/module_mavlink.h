@@ -9,7 +9,7 @@
 #define MODULE_MAVLINK_H_
 
 #include "common/mavlink.h"
-#include "simpletelemtry.h"
+#include "hardware.h"
 
 #define MAVLINK_TX_BUFFER_SIZE					3
 #define MAVLINK_TX_BUFFER_SENDING				0b001
@@ -30,20 +30,9 @@ struct mavlink_rx_buffer
 	uint8_t inUse;
 };
 
-struct mavlink_tx_buffer
-{
-	uint8_t flag;
-	uint16_t size;
-	uint8_t read;
-	uint8_t write;
-	uint8_t byte[MAVLINK_MAX_PACKET_LEN];
-};
-
-struct mavlink_tx_buffer_collection
-{
-	struct mavlink_tx_buffer items[MAVLINK_TX_BUFFER_SIZE];
-};
-
 uint16_t mavlink_pack_nextData(mavlink_message_t* msg, uint8_t* currentValue);
+
+void mavlink_initializeConfig(void* config);
+void mavlink_start(const struct hardware_port_cfg* port, uint8_t* config);
 
 #endif /* MODULE_MAVLINK_H_ */
