@@ -1001,7 +1001,8 @@
             this.Controls.Add(this.pnlTop);
             this.Controls.Add(this.groupGPS);
             this.MaximizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(682, 450);
+            this.MaximumSize = new System.Drawing.Size(682, 525);
+            this.MinimumSize = new System.Drawing.Size(682, 525);
             this.Name = "MainForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "UniAdapter 0.6 Konfiguration Manager";

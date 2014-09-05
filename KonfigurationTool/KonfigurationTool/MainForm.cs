@@ -287,7 +287,7 @@ namespace KonfigurationTool
                 lblAltitude.Text = vfr.alt.ToString("0.00 m");
                 lblSpeed.Text = vfr.groundspeed.ToString("0.00 m/s");
                 lblHeading.Text = vfr.heading.ToString("0 °");
-                lblThrottle.Text = vfr.throttle.ToString("0 %");
+                lblThrottle.Text = vfr.throttle.ToString() + " %";
 
             }
             else if (t == typeof(Msg_attitude))
