@@ -15,7 +15,7 @@ namespace KonfigurationTool
         private const int MAX_RETRY = 16;
 
         private const int MAV_SYSTEM_ID = 0xCE;
-        private const int FIRMWARE_VERSION = 0x0006;
+        private const int FIRMWARE_VERSION = 0x0008;
 
         private int retry;
         private StateMachineStep currentStep = StateMachineStep.None;
@@ -46,6 +46,7 @@ namespace KonfigurationTool
             if (cmbPort.Items.Count > 0)
                 cmbPort.SelectedIndex = 0;
 
+            Text = string.Format("UniAdapter {0}.{1} - Konfiguration Manager", (byte)FIRMWARE_VERSION >> 8, (byte)FIRMWARE_VERSION);
         }
 
         private void serialPort_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
