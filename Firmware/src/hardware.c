@@ -62,6 +62,24 @@ void Generic_USART_IRQHandler(struct IRQ_CallbackInfoStruct* cb)
 	}
 }
 
+#ifdef STM32F072B
+
+void USART1_IRQHandler(void)
+{
+	CoEnterISR();
+	Generic_USART_IRQHandler(&cbInfoPort2);
+	CoExitISR();
+}
+
+void USART3_4_IRQHandler(void)
+{
+	CoEnterISR();
+	Generic_USART_IRQHandler(&cbInfoPort1);
+	CoExitISR();
+}
+
+#else
+
 void USART1_IRQHandler(void)
 {
 	CoEnterISR();
@@ -70,15 +88,6 @@ void USART1_IRQHandler(void)
 }
 
 void USART2_IRQHandler(void)
-{
-	CoEnterISR();
-	Generic_USART_IRQHandler(&cbInfoPort2);
-	CoExitISR();
-}
-
-#ifdef STM32F072B
-
-void USART3_4_IRQHandler(void)
 {
 	CoEnterISR();
 	Generic_USART_IRQHandler(&cbInfoPort2);

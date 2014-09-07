@@ -10,38 +10,42 @@
 
 #include "hardware.h"
 
-const struct hardware_port_cfg usart_port1 = {
+
+
+#ifdef STM32F072B
+
+const struct hardware_port_cfg usart_port2 = {
 		.port = USART1,
-		.af = GPIO_AF_0,
+		.af = GPIO_AF_1,
 		.nvic_ch = USART1_IRQn,
 		.tx = {
-				.gpio = GPIOB,
-				.pin_source = GPIO_PinSource6,
+				.gpio = GPIOA,
+				.pin_source = GPIO_PinSource9,
 				.init = {
 						.GPIO_Mode = GPIO_Mode_AF,
 						.GPIO_Speed = GPIO_Speed_Level_3,
 						.GPIO_OType = GPIO_OType_PP,
 						.GPIO_PuPd = GPIO_PuPd_DOWN,
-						.GPIO_Pin = GPIO_Pin_6,
+						.GPIO_Pin = GPIO_Pin_9,
 				},
 				.clock = {
 						.cmd = RCC_AHBPeriphClockCmd,
-						.periph = RCC_AHBPeriph_GPIOB,
+						.periph = RCC_AHBPeriph_GPIOA,
 				},
 		}, .
 		rx = {
-				.gpio = GPIOB,
-				.pin_source = GPIO_PinSource7,
+				.gpio = GPIOA,
+				.pin_source = GPIO_PinSource10,
 				.init = {
 						.GPIO_Mode = GPIO_Mode_AF,
 						.GPIO_Speed = GPIO_Speed_Level_3,
 						.GPIO_OType = GPIO_OType_PP,
 						.GPIO_PuPd = GPIO_PuPd_DOWN,
-						.GPIO_Pin = GPIO_Pin_7,
+						.GPIO_Pin = GPIO_Pin_10,
 				},
 				.clock = {
 						.cmd = RCC_AHBPeriphClockCmd,
-						.periph = RCC_AHBPeriph_GPIOB,
+						.periph = RCC_AHBPeriph_GPIOA,
 				},
 		},
 		.clock = {
@@ -50,10 +54,7 @@ const struct hardware_port_cfg usart_port1 = {
 		},
 };
 
-
-#ifdef STM32F072B
-
-const struct hardware_port_cfg usart_port2 = {
+const struct hardware_port_cfg usart_port1 = {
 		.port = USART3,
 		.af = GPIO_AF_1,
 		.nvic_ch = USART3_4_IRQn,
@@ -94,6 +95,46 @@ const struct hardware_port_cfg usart_port2 = {
 };
 
 #else
+
+const struct hardware_port_cfg usart_port1 = {
+		.port = USART1,
+		.af = GPIO_AF_0,
+		.nvic_ch = USART1_IRQn,
+		.tx = {
+				.gpio = GPIOB,
+				.pin_source = GPIO_PinSource6,
+				.init = {
+						.GPIO_Mode = GPIO_Mode_AF,
+						.GPIO_Speed = GPIO_Speed_Level_3,
+						.GPIO_OType = GPIO_OType_PP,
+						.GPIO_PuPd = GPIO_PuPd_DOWN,
+						.GPIO_Pin = GPIO_Pin_6,
+				},
+				.clock = {
+						.cmd = RCC_AHBPeriphClockCmd,
+						.periph = RCC_AHBPeriph_GPIOB,
+				},
+		}, .
+		rx = {
+				.gpio = GPIOB,
+				.pin_source = GPIO_PinSource7,
+				.init = {
+						.GPIO_Mode = GPIO_Mode_AF,
+						.GPIO_Speed = GPIO_Speed_Level_3,
+						.GPIO_OType = GPIO_OType_PP,
+						.GPIO_PuPd = GPIO_PuPd_DOWN,
+						.GPIO_Pin = GPIO_Pin_7,
+				},
+				.clock = {
+						.cmd = RCC_AHBPeriphClockCmd,
+						.periph = RCC_AHBPeriph_GPIOB,
+				},
+		},
+		.clock = {
+				.cmd = RCC_APB2PeriphClockCmd,
+				.periph = RCC_APB2Periph_USART1,
+		},
+};
 
 const struct hardware_port_cfg usart_port2 = {
 		.port = USART2,
