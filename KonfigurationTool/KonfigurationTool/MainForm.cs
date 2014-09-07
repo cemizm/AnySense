@@ -27,6 +27,7 @@ namespace KonfigurationTool
 
         public MainForm()
         {
+
             InitializeComponent();
 
             StateMachineUpdate(StateMachineStep.None);
@@ -76,6 +77,9 @@ namespace KonfigurationTool
                 return;
 
             Type t = msg.GetType();
+
+            if (currentStep != StateMachineStep.Connected && t != typeof(Msg_configuration_version))
+                return;
 
             if (t == typeof(Msg_configuration_control))
             {
@@ -386,34 +390,43 @@ namespace KonfigurationTool
         private void btnConnect_Click(object sender, EventArgs e)
         {
             if (!serialPort.IsOpen)
-            {
-                try
-                {
-                    serialPort.Open();
-                    StateMachineUpdate(StateMachineStep.Open);
-
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(this, "Error while open serial port:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
+                Connect();
             else
+                Disconnect(true);
+        }
+
+        private void Connect()
+        {
+            try
             {
-                try
+                serialPort.Open();
+                StateMachineUpdate(StateMachineStep.Open);
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, "Error while open serial port:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void Disconnect(bool notifyDevice)
+        {
+            try
+            {
+                if (notifyDevice)
                 {
                     Msg_configuration_control msg = new Msg_configuration_control();
                     msg.command = (byte)CONFIG_COMMAND.CONFIG_COMMAND_EXIT;
                     mavlink_packet.Message = msg;
                     byte[] bytes = mavlink.Send(mavlink_packet);
                     serialPort.Write(bytes, 0, bytes.Length);
-                    serialPort.Close();
-                    StateMachineUpdate(StateMachineStep.None);
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(this, "Error while communication:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                serialPort.Close();
+                StateMachineUpdate(StateMachineStep.None);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, "Error while communication:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -573,27 +586,20 @@ namespace KonfigurationTool
             if (tsLoading.Visible)
                 return;
 
-            //TODO: Enable Update...
 
-            /*
             string path = string.Empty;
 
-#if DEBUG
+
+#if DEBUG  
             using (OpenFileDialog dlg = new OpenFileDialog())
             {
-                dlg.Filter = "HEX Files|*.hex";
+                dlg.Filter = "Binary Files|*.bin";
                 dlg.CheckFileExists = true;
 
                 if (dlg.ShowDialog() == DialogResult.OK)
                     path = dlg.FileName;
             }
-#else
-            //TODO: copy to tmp folder from assembly
 #endif
-
-            if (string.IsNullOrEmpty(path))
-                return;
-            */
 
             try
             {
@@ -603,16 +609,16 @@ namespace KonfigurationTool
                 byte[] bytes = mavlink.Send(mavlink_packet);
                 serialPort.Write(bytes, 0, bytes.Length);
 
-                serialPort.Close();
-                StateMachineUpdate(StateMachineStep.None);
+                Disconnect(false);
 
-                //TODO: Connect after reset
-
+                UpdateForm.ShowDialog(this, serialPort.PortName, path);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(this, "Error while communication:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            Connect();
         }
 
 

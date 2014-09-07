@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KonfigurationTool", "KonfigurationTool\KonfigurationTool.csproj", "{0B564A45-B948-476F-9E96-4DD8B41EC64F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KonfigurationManager", "KonfigurationTool\KonfigurationManager.csproj", "{0B564A45-B948-476F-9E96-4DD8B41EC64F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
