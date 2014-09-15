@@ -13,6 +13,9 @@
 #include "stm32f0xx_gpio.h"
 #include "stm32f0xx_rcc.h"
 
+#define delay_ms(ms) ms
+#define delay_sec(sec) delay_ms(sec * 1000)
+
 #ifdef STM32F072B
 
 #define DEBUG_INIT() 			GPIO_InitTypeDef GPIO_InitStructure; 					\
@@ -29,6 +32,7 @@
 #define DEBUG_TOGGLE_BLUE()				DEBUG_TOGGLE(GPIO_Pin_7)
 #define DEBUG_TOGGLE_ORANGE()			DEBUG_TOGGLE(GPIO_Pin_8)
 #define DEBUG_TOGGLE_GREEN()			DEBUG_TOGGLE(GPIO_Pin_9)
+
 
 /*  NAZA_CAN RX Pin Definitions */
 #define NAZA_CAN_GPIO_RX_Pin				GPIO_Pin_8
