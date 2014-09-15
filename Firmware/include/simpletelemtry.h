@@ -26,6 +26,9 @@ struct simpleTelemetry
 	double lat; //latitude in degree decimal
 	double lon; //longitude in degree decimal
 	float alt; //altitude in m (from barometric sensor)
+	double homeLat;      // home lattitude (radians)
+	double homeLon;      // home longitude (radians)
+	float homeAltBaro; // home altitude from barometric sensor plus 20m (meters)
 	float gpsAlt; //altitude in m (from GPS)
 	float speed; //speed in m/s
 	enum fixType fixType; //fix type (see fixType enum)

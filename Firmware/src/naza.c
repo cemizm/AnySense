@@ -143,10 +143,10 @@ static void naza_main_task(void* pData)
 	while (1)
 	{
 
-		channel = CoPendQueueMail(naza_msg_box_id, 200, &status);
+		channel = CoPendQueueMail(naza_msg_box_id, delay_ms(200), &status);
 
 		tmpTick = CoGetOSTime();
-		if (tmpTick < simpleTelemtryData.lastHeartbeat + 3000)
+		if (tmpTick < simpleTelemtryData.lastHeartbeat + delay_sec(3))
 		{ //PMU available
 
 			if (tmpTick > nextOSDHeartbeat)
@@ -155,7 +155,7 @@ static void naza_main_task(void* pData)
 				CAN_Transmit(CAN, &Heartbeat1);
 				CAN_Transmit(CAN, &Heartbeat2);
 
-				nextOSDHeartbeat = tmpTick + 2000; //next heartbeat in 2 sec
+				nextOSDHeartbeat = tmpTick + delay_sec(2); //next heartbeat in 2 sec
 			}
 		}
 
@@ -257,6 +257,9 @@ static void naza_main_task(void* pData)
 				simpleTelemtryData.mode = (enum flightMode) raw_io->flightMode;
 				simpleTelemtryData.throttle = raw_io->actThroIn;
 
+				simpleTelemtryData.homeLat = raw_io->homeLat / M_PI * 180.0;
+				simpleTelemtryData.homeLon = raw_io->homeLon / M_PI * 180.0;
+				simpleTelemtryData.homeAltBaro = raw_io->homeAltBaro;
 			}
 			else if (channel->msg.header.id == 0x0922)
 			{ //PMU Heartbeat
@@ -264,7 +267,7 @@ static void naza_main_task(void* pData)
 			}
 			else if (channel->msg.header.id == 0x1007)
 			{ //osd heartbeat available
-				nextOSDHeartbeat = CoGetOSTime() + 3000;
+				nextOSDHeartbeat = CoGetOSTime() + delay_sec(3);
 			}
 
 			CHANNEL_FREE(channel);
