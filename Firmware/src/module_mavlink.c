@@ -57,22 +57,21 @@ uint16_t mavlink_pack_sys_status(mavlink_message_t* msg)
 
 uint16_t mavlink_pack_gps(mavlink_message_t* msg)
 {
-	//TODO: fix missing values
 	return mavlink_msg_gps_raw_int_pack(MAVLINK_SYSTEM_ID, MAVLINK_COMP_ID, msg, 0, simpleTelemtryData.fixType,
-			simpleTelemtryData.lat * 10000000, simpleTelemtryData.lon * 10000000, simpleTelemtryData.alt * 1000,
-			simpleTelemtryData.hdop * 100, simpleTelemtryData.vdop * 100, simpleTelemtryData.speed * 100,
-			simpleTelemtryData.cog * 100, simpleTelemtryData.numSat);
+			simpleTelemtryData.lat * 10000000, simpleTelemtryData.lon * 10000000,
+			(simpleTelemtryData.homeAltBaro - simpleTelemtryData.alt) * 1000, simpleTelemtryData.hdop * 100,
+			simpleTelemtryData.vdop * 100, simpleTelemtryData.speed * 100, simpleTelemtryData.cog * 100,
+			simpleTelemtryData.numSat);
 }
 uint16_t mavlink_pack_vfr_hud(mavlink_message_t* msg)
 {
-	//TODO: fix missing values
 	return mavlink_msg_vfr_hud_pack(MAVLINK_SYSTEM_ID, MAVLINK_COMP_ID, msg, 0, simpleTelemtryData.speed,
-			simpleTelemtryData.heading, (simpleTelemtryData.throttle + 1000) / 20, simpleTelemtryData.alt, simpleTelemtryData.vsi);
+			simpleTelemtryData.heading, (simpleTelemtryData.throttle + 1000) / 20,
+			(simpleTelemtryData.homeAltBaro - simpleTelemtryData.alt), simpleTelemtryData.vsi);
 }
 
 uint16_t mavlink_pack_attitude(mavlink_message_t* msg)
 {
-	//TODO: fix missing values
 	return mavlink_msg_attitude_pack(MAVLINK_SYSTEM_ID, MAVLINK_COMP_ID, msg, 0, simpleTelemtryData.roll,
 			simpleTelemtryData.pitch, simpleTelemtryData.heading * M_PI / 180, 0, 0, 0);
 }
@@ -124,7 +123,7 @@ void mavlink_start(const struct hardware_port_cfg* port, uint8_t* config)
 	session->config = config;
 	FIFO_init(session->tx_buffer);
 
-	for(int i=0; i<MODULE_MAVLINK_RX_QUEUE_SIZE;i++)
+	for (int i = 0; i < MODULE_MAVLINK_RX_QUEUE_SIZE; i++)
 		session->rx_buffer[i].inUse = 0;
 
 	USART_Init(port->port, &USART_InitStructure);
@@ -164,7 +163,7 @@ void module_mavlink_task(void* pData)
 
 	while (1)
 	{
-		buffer = CoPendQueueMail(session->event_id, 100, &status);
+		buffer = CoPendQueueMail(session->event_id, delay_ms(100), &status);
 
 		msg_len = 0;
 
@@ -224,7 +223,6 @@ static void RX_Callback(uint8_t* id)
 			buffer->inUse = 0;
 		}
 	}
-
 
 }
 

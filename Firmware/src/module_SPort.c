@@ -94,7 +94,7 @@ void sport_getValue(enum telemetryValue val, int32_t * result, uint8_t* len)
 		*len = 2;
 		break;
 	case tv_alt:
-		result[0] = simpleTelemtryData.alt * 100;
+		result[0] = (simpleTelemtryData.homeAltBaro - simpleTelemtryData.alt) * 100;
 		*len = 1;
 		break;
 	case tv_gpsAlt:
@@ -162,7 +162,7 @@ void sport_getValue(enum telemetryValue val, int32_t * result, uint8_t* len)
 		*len = 1;
 		break;
 	case tv_lastHeartbeat:
-		result[0] = (CoGetOSTime() - simpleTelemtryData.lastHeartbeat) / 1000;
+		result[0] = (CoGetOSTime() - simpleTelemtryData.lastHeartbeat) / CFG_SYSTICK_FREQ;
 		*len = 1;
 		break;
 	case tv_gpsTime:
