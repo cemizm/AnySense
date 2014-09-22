@@ -1005,7 +1005,7 @@
             this.MinimumSize = new System.Drawing.Size(682, 525);
             this.Name = "MainForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            this.Text = "UniAdapter 0.6 Konfiguration Manager";
+            this.Text = "fac";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.pnlTop.ResumeLayout(false);
             this.groupRC.ResumeLayout(false);

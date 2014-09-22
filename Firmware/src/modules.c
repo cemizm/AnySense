@@ -59,6 +59,7 @@ void modules_initialize_config(struct portParserStruct* parser)
 		sport_initializeConfig(parser->parserConfig);
 		break;
 	case parser_hott:
+		hott_initializeConfig(parser->parserConfig);
 		break;
 	case parser_jeti:
 		break;
@@ -94,7 +95,7 @@ void configManager_task(void* pdata)
 {
 	DEBUG_TOGGLE_ORANGE();
 
-	U64 exitIn = CoGetOSTime() + 2100;
+	U64 exitIn = CoGetOSTime() + delay_ms(2100);
 	U64 ticks = 0;
 	U64 lastNazaHeartbeatSend = 0;
 	uint8_t established = 0;
@@ -114,7 +115,7 @@ void configManager_task(void* pdata)
 	while (!exit)
 	{
 
-		buffer = CoPendQueueMail(command_box_id, established ? 100 : 500, &status);
+		buffer = CoPendQueueMail(command_box_id, established ? delay_ms(100) : delay_ms(500), &status);
 
 		msg_len = 0;
 
@@ -255,6 +256,7 @@ void configManager_start(struct portParserStruct* parser, const struct hardware_
 		sport_start(port, parser->parserConfig);
 		break;
 	case parser_hott:
+		hott_start(port, parser->parserConfig);
 		break;
 	case parser_jeti:
 		break;

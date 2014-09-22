@@ -30,6 +30,8 @@ namespace KonfigurationTool
                             Configuration = null;
                             break;
                         case ProtocolType.HOTT:
+                            Configuration = new ProtocolHoTTConfiguration();
+                            break;
                         case ProtocolType.Jeti:
                         default:
                             throw new NotImplementedException(string.Format("Protocol {0} not implemented yet.", value));

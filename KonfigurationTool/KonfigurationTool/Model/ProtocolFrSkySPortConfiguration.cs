@@ -10,14 +10,11 @@ namespace KonfigurationTool
 
     internal class ProtocolFrSkySPortConfiguration : ProtocolConfiguration
     {
-        private MavLink.FrameworkBitConverter converter;
 
         private const UInt16 CONFIG_VERSION = 0x0001;
 
         public ProtocolFrSkySPortConfiguration()
         {
-            converter = new MavLink.FrameworkBitConverter();
-            converter.SetDataIsLittleEndian(MavLink.MavlinkSettings.IsLittleEndian);
 
             Version = CONFIG_VERSION;
 
@@ -38,7 +35,7 @@ namespace KonfigurationTool
         public override void DeSerialize(byte[] data)
         {
             SensorId = (FrSkySensorId)data[0];
-            Version = converter.ToUInt16(data, 1);
+            Version = Converter.ToUInt16(data, 1);
 
             if (Version != CONFIG_VERSION)
             {
@@ -74,7 +71,7 @@ namespace KonfigurationTool
             byte[] data = new byte[128];
 
             data[0] = (byte)SensorId;
-            converter.GetBytes(Version, data, 1);
+            Converter.GetBytes(Version, data, 1);
 
             int offset = 3;
             data[offset++] = (byte)T1;

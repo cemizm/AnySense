@@ -27,6 +27,7 @@ namespace KonfigurationTool
                 configuration = value;
                 cmbProtocol.SelectedItem = configuration.Protocol;
                 protocolConfiguration.SelectedObject = configuration.Configuration;
+                //protocolConfiguration.ExpandAllGridItems();
             }
         }
 
@@ -38,6 +39,7 @@ namespace KonfigurationTool
                 {
                     configuration.Protocol = (ProtocolType)cmbProtocol.SelectedItem;
                     protocolConfiguration.SelectedObject = configuration.Configuration;
+                    //protocolConfiguration.ExpandAllGridItems();
                 }
                 catch (NotImplementedException ex)
                 {

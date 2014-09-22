@@ -59,6 +59,7 @@
     <Compile Include="Enums\FixType.cs" />
     <Compile Include="Enums\FlightMode.cs" />
     <Compile Include="Enums\FrSkySensorIds.cs" />
+    <Compile Include="Enums\HoTTAlarmTone.cs" />
     <Compile Include="Enums\ProtocolType.cs" />
     <Compile Include="Enums\TelemetryValue.cs" />
     <Compile Include="Extensions\TaskExtensions.cs" />
@@ -69,6 +70,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\PortConfiguration.cs" />
+    <Compile Include="Model\ProtocolHoTTConfiguration.cs" />
     <Compile Include="PortConfigurationForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -123,6 +125,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
