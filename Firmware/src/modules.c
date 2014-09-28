@@ -14,6 +14,8 @@ void modules_initialize()
 	modules_initialize_config(&configuration.port1);
 	modules_initialize_config(&configuration.port2);
 
+	config_save();
+
 	USART_InitTypeDef USART_InitStructure;
 
 	usart_port2.rx.clock.cmd(usart_port2.rx.clock.periph, ENABLE);
@@ -83,7 +85,6 @@ void modules_start()
 	assert_param(configManager_task_id != E_CREATE_FAIL);
 
 	hardware_register_callback(&usart_port2, &RX_Callback, &TX_Callback, 0);
-
 
 	USART_ITConfig(usart_port2.port, USART_IT_RXNE, ENABLE);
 }
@@ -185,6 +186,8 @@ void configManager_task(void* pdata)
 					result = mavlink_msg_configuration_port_get_data(&buffer->message, configuration.port2.parserConfig);
 				}
 
+				config_save();
+
 				msg_len = mavlink_msg_configuration_control_pack(MAVLINK_SYSTEM_ID, MAVLINK_COMP_ID, &msg_tmp,
 						result ? CONFIG_COMMAND_ACK : CONFIG_COMMAND_NACK, portNum, parserType);
 			}
@@ -233,8 +236,6 @@ void configManager_task(void* pdata)
 	NVIC_DisableIRQ(usart_port2.nvic_ch);
 
 	CoSchedLock();
-
-	config_save();
 
 	configManager_start(&configuration.port1, &usart_port1);
 	configManager_start(&configuration.port2, &usart_port2);
