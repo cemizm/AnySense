@@ -468,7 +468,7 @@ void module_hott_task(void* pData)
 							{
 								msg.gps.warning_beeps = distance_alarms[exec_alarm].alarm->tone;
 
-								distance_nextTone = ticks + distance_alarms[exec_alarm].alarm->interval;
+								distance_nextTone = ticks + delay_sec(distance_alarms[exec_alarm].alarm->interval);
 
 								if (distance_alarms[exec_alarm].alarm->repeat > 0)
 									distance_alarms[exec_alarm].count++;
@@ -497,7 +497,7 @@ void module_hott_task(void* pData)
 						{
 							msg.gam.warning_beeps = alarms[exec_alarm].alarm->tone;
 
-							alarm_nextTone = ticks + alarms[exec_alarm].alarm->interval;
+							alarm_nextTone = ticks + delay_sec(alarms[exec_alarm].alarm->interval);
 
 							if (alarms[exec_alarm].alarm->repeat > 0)
 								alarms[exec_alarm].count++;
@@ -667,19 +667,22 @@ __inline__ double calculateAngle(double long1, double lat1, double long2, double
 
 int hott_cmp_alarm_distance(const void * a, const void * b)
 {
-	struct hott_distance_alarm_exec* av1 = (struct hott_distance_alarm_exec*) a;
-	struct hott_distance_alarm_exec* av2 = (struct hott_distance_alarm_exec*) b;
+	struct hott_distance_alarm_exec* ae1 = (struct hott_distance_alarm_exec*) a;
+	struct hott_distance_alarm_exec* ae2 = (struct hott_distance_alarm_exec*) b;
 
-	if (av1->alarm->level == av2->alarm->level)
+	volatile struct hott_distance_alarm da1 = *(ae1->alarm);
+	volatile struct hott_distance_alarm da2 = *(ae2->alarm);
+
+	if (da1.level == da2.level)
 		return 0;
 
-	if (av1->alarm->level == 0)
+	if (da1.level == 0)
 		return 1;
 
-	if (av2->alarm->level == 0)
+	if (da2.level == 0)
 		return -1;
 
-	return av2->alarm->level - av1->alarm->level;
+	return da2.level - da1.level;
 
 }
 
