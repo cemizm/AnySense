@@ -176,13 +176,8 @@ static void naza_main_task(void* pData)
 				magCompX = magCalX * cosPitch + magCalZ * sinPitch;
 				magCompY = magCalX * sinRoll * sinPitch + magCalY * cosRoll - magCalZ * sinRoll * cosPitch;
 
-				simpleTelemtryData.headingNc = atan2f(magCalY, magCalX) / M_PI * 180.0;
-				if (simpleTelemtryData.headingNc < 0)
-					simpleTelemtryData.headingNc += 360.0;
-
-				simpleTelemtryData.heading = atan2f(magCompY, magCompX) / M_PI * 180.0;
-				if (simpleTelemtryData.heading < 0)
-					simpleTelemtryData.heading += 360.0;
+				simpleTelemtryData.headingNc = (atan2f(magCalY, magCalX) / M_PI * 180.0) + 180;
+				simpleTelemtryData.heading = (atan2f(magCompY, magCompX) / M_PI * 180.0) + 180;
 
 				simpleTelemtryData.numSat = osd->numSat;
 				simpleTelemtryData.gpsAlt = osd->altGps;
@@ -194,9 +189,8 @@ static void naza_main_task(void* pData)
 				eVel = osd->eastVelocity;
 
 				simpleTelemtryData.speed = sqrtf(nVel * nVel + eVel * eVel);
-				simpleTelemtryData.cog = atan2f(eVel, nVel) / M_PI * 180;
-				if (simpleTelemtryData.cog < 0)
-					simpleTelemtryData.cog += 360.0;
+				simpleTelemtryData.cog = (atan2f(eVel, nVel) / M_PI * 180) + 180;
+
 				simpleTelemtryData.vsi = -osd->downVelocity;
 
 			}
