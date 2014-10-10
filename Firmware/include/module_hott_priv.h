@@ -227,7 +227,7 @@ struct hott_voltage_alarm
 	uint8_t interval;				//interval in seconds repeating tone
 	uint8_t repeat;					//repeating tone (0=infinite)
 	uint8_t invert;					//should text be inverterd (0=no invert)
-};
+}__attribute__((packed, aligned(1)));
 
 struct hott_distance_alarm
 {
@@ -236,7 +236,7 @@ struct hott_distance_alarm
 	uint8_t interval;				//interval in seconds repeating tone
 	uint8_t repeat;					//repeating tone (0=infinite)
 	uint8_t invert;					//should text be inverterd (0=no invert)
-};
+}__attribute__((packed, aligned(1)));
 
 enum simulate_sensor
 {
@@ -250,7 +250,7 @@ struct hott_config
 	enum simulate_sensor active_sensors;			//bitmask for sensors
 	struct hott_voltage_alarm voltage_alarm[MODULE_HOTT_VOLTAGE_ALARMS];
 	struct hott_distance_alarm distance_alarm[MODULE_HOTT_DISTANCE_ALARMS];
-};
+}__attribute__((packed, aligned(1)));
 
 enum hott_session_state
 {

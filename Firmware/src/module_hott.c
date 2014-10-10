@@ -384,9 +384,9 @@ void module_hott_task(void* pData)
 
 					//															        012345678901234567890
 					snprintf((char *) &msg.text.text[0], MODULE_HOTT_TEXT_COLUMNS + 1, " UniAdapter GPS    <>");
-					snprintf((char *) &msg.text.text[1], MODULE_HOTT_TEXT_COLUMNS + 1, " HDOP    :%3d.%02dcm",
+					snprintf((char *) &msg.text.text[1], MODULE_HOTT_TEXT_COLUMNS + 1, " HDOP    :%3d.%02d",
 							(uint16_t) simpleTelemtryData.hdop, getFraction(simpleTelemtryData.hdop, 2));
-					snprintf((char *) &msg.text.text[2], MODULE_HOTT_TEXT_COLUMNS + 1, " VDOP    :%3d.%02dcm",
+					snprintf((char *) &msg.text.text[2], MODULE_HOTT_TEXT_COLUMNS + 1, " VDOP    :%3d.%02d",
 							(uint16_t) simpleTelemtryData.vdop, getFraction(simpleTelemtryData.vdop, 2));
 					snprintf((char *) &msg.text.text[3], MODULE_HOTT_TEXT_COLUMNS + 1, " Roll    :%3d.%02d",
 							(int16_t) (simpleTelemtryData.roll * 180.0 / M_PI),
@@ -670,19 +670,16 @@ int hott_cmp_alarm_distance(const void * a, const void * b)
 	struct hott_distance_alarm_exec* ae1 = (struct hott_distance_alarm_exec*) a;
 	struct hott_distance_alarm_exec* ae2 = (struct hott_distance_alarm_exec*) b;
 
-	volatile struct hott_distance_alarm da1 = *(ae1->alarm);
-	volatile struct hott_distance_alarm da2 = *(ae2->alarm);
-
-	if (da1.level == da2.level)
+	if (ae1->alarm->level == ae2->alarm->level)
 		return 0;
 
-	if (da1.level == 0)
+	if (ae1->alarm->level == 0)
 		return 1;
 
-	if (da2.level == 0)
+	if (ae2->alarm->level == 0)
 		return -1;
 
-	return da2.level - da1.level;
+	return ae2->alarm->level - ae1->alarm->level;
 
 }
 

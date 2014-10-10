@@ -663,9 +663,9 @@
             this.lblAltitudeLabel.Location = new System.Drawing.Point(6, 21);
             this.lblAltitudeLabel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblAltitudeLabel.Name = "lblAltitudeLabel";
-            this.lblAltitudeLabel.Size = new System.Drawing.Size(42, 13);
+            this.lblAltitudeLabel.Size = new System.Drawing.Size(67, 13);
             this.lblAltitudeLabel.TabIndex = 6;
-            this.lblAltitudeLabel.Text = "Altitude";
+            this.lblAltitudeLabel.Text = "Baro Altitude";
             // 
             // lblAltitude
             // 
