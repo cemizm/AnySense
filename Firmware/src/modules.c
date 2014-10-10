@@ -146,7 +146,7 @@ void configManager_task(void* pdata)
 					exit = 1;
 					break;
 				case CONFIG_COMMAND_GET_VERSION:
-					msg_len = mavlink_msg_configuration_version_pack(MAVLINK_SYSTEM_ID, MAVLINK_COMP_ID, &msg_tmp,
+					msg_len = mavlink_msg_configuration_version2_pack(MAVLINK_SYSTEM_ID, MAVLINK_COMP_ID, &msg_tmp,
 					FIRMWARE_VERSION, configuration.port1.type, configuration.port2.type);
 					break;
 				case CONFIG_COMMAND_GET_CONFIGURATION:

@@ -11,7 +11,6 @@ using System;
     
 using System.Reflection;    
     
-
     namespace MavLink
 {
 
@@ -1956,6 +1955,30 @@ namespace MavLink
         public override int Serialize(byte[] bytes, ref int offset)
             {
                 return MavLinkSerializer.Serialize_CONFIGURATION_PORT(this, bytes, ref offset);
+            }        
+	}
+
+	public class Msg_configuration_version2 : MavlinkMessage
+    {
+
+		/// <summary>
+		/// Firmware Version
+		/// </summary>
+		public UInt32 fw_version;
+
+		/// <summary>
+		/// Protocol used on Port 1
+		/// </summary>
+		public byte port1;
+
+		/// <summary>
+		/// Protocol used on Port 2
+		/// </summary>
+		public byte port2;
+
+        public override int Serialize(byte[] bytes, ref int offset)
+            {
+                return MavLinkSerializer.Serialize_CONFIGURATION_VERSION2(this, bytes, ref offset);
             }        
 	}
 

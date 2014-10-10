@@ -15,7 +15,7 @@ namespace KonfigurationTool
         private const int MAX_RETRY = 16;
 
         private const int MAV_SYSTEM_ID = 0xCE;
-        private const int FIRMWARE_VERSION = 0x0009;
+        private const uint FIRMWARE_VERSION = 0x00000901;
 
         private int retry;
         private StateMachineStep currentStep = StateMachineStep.None;
@@ -47,7 +47,9 @@ namespace KonfigurationTool
             if (cmbPort.Items.Count > 0)
                 cmbPort.SelectedIndex = 0;
 
-            Text = string.Format("UniAdapter {0}.{1} - Konfiguration Manager", (byte)FIRMWARE_VERSION >> 8, (byte)FIRMWARE_VERSION);
+            byte[] ver = BitConverter.GetBytes(FIRMWARE_VERSION);
+
+            Text = string.Format("UniAdapter {0}.{1}.{2} - Konfiguration Manager", ver[2], ver[1], ver[0]);
         }
 
         private void serialPort_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
@@ -78,7 +80,7 @@ namespace KonfigurationTool
 
             Type t = msg.GetType();
 
-            if (currentStep != StateMachineStep.Connected && t != typeof(Msg_configuration_version))
+            if (currentStep != StateMachineStep.Connected && t != typeof(Msg_configuration_version) &&  t != typeof(Msg_configuration_version2))
                 return;
 
             if (t == typeof(Msg_configuration_control))
@@ -206,21 +208,37 @@ namespace KonfigurationTool
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            else if (t == typeof(Msg_configuration_version))
+            else if (t == typeof(Msg_configuration_version) || t == typeof(Msg_configuration_version2))
             {
                 StateMachineUpdate(StateMachineStep.Connected);
 
-                Msg_configuration_version msg_version = (msg as Msg_configuration_version);
-                tsFWVersion.Text = string.Format("{0}.{1}", (byte)msg_version.fw_version >> 8, (byte)msg_version.fw_version);
-                lblPort1.Text = ((ProtocolType)msg_version.port1).ToString();
-                lblPort2.Text = ((ProtocolType)msg_version.port2).ToString();
-#if DEBUG
-                btnUpdate.Visible = true;
-#else
-                btnUpdate.Visible = FIRMWARE_VERSION > msg_version.fw_version;
-#endif
-                btnPort1Configure.Enabled = FIRMWARE_VERSION == msg_version.fw_version;
-                btnPort2Configure.Enabled = FIRMWARE_VERSION == msg_version.fw_version;
+                uint version = 0;
+
+                if (t == typeof(Msg_configuration_version))
+                {
+                    //0x0009
+                    Msg_configuration_version msg_version = (msg as Msg_configuration_version);
+                    lblPort1.Text = ((ProtocolType)msg_version.port1).ToString();
+                    lblPort2.Text = ((ProtocolType)msg_version.port2).ToString();
+                    
+                    version = msg_version.fw_version;
+                    version =  version << 8;
+                }
+                else
+                {
+                    //0x00000901
+                    Msg_configuration_version2 msg_version = (msg as Msg_configuration_version2);
+                    version = msg_version.fw_version;
+
+                    lblPort1.Text = ((ProtocolType)msg_version.port1).ToString();
+                    lblPort2.Text = ((ProtocolType)msg_version.port2).ToString();
+                }
+
+                tsFWVersion.Text = string.Format("{0}.{1}.{2}", (byte)(version >> 16), (byte)(version>>8), (byte)version);
+
+                btnUpdate.Visible = FIRMWARE_VERSION > version;
+                btnPort1Configure.Enabled = FIRMWARE_VERSION == version;
+                btnPort2Configure.Enabled = FIRMWARE_VERSION == version;
             }
             else if (t == typeof(Msg_heartbeat))
             {
@@ -277,8 +295,8 @@ namespace KonfigurationTool
                 lblCOG.Text = (gps.cog / 100f).ToString("0.00 °");
                 lblAltitude.Text = (gps.alt / 1000f).ToString("0.00 m");
                 lblGPSFix.Text = ((FixType)gps.fix_type).ToString();
-                lblHDOP.Text = (gps.eph / 100f).ToString("0.00 cm");
-                lblVDOP.Text = (gps.epv / 100f).ToString("0.00 cm");
+                lblHDOP.Text = (gps.eph / 100f).ToString("0.00");
+                lblVDOP.Text = (gps.epv / 100f).ToString("0.00");
                 lblLatitude.Text = (gps.lat / 10000000.0f).ToString("0.000000");
                 lblLongitude.Text = (gps.lon / 10000000.0f).ToString("0.000000");
                 lblSpeed.Text = (gps.vel / 100f).ToString("0.00 m/s");
@@ -621,6 +639,11 @@ namespace KonfigurationTool
             Connect();
         }
 
+        private void MainForm_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (currentStep == StateMachineStep.Connected && e.KeyCode == Keys.U)
+                btnUpdate.Visible = true;
+        }
 
     }
 }

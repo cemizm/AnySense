@@ -1000,6 +1000,7 @@
             this.Controls.Add(this.groupTelemetry);
             this.Controls.Add(this.pnlTop);
             this.Controls.Add(this.groupGPS);
+            this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(682, 525);
             this.MinimumSize = new System.Drawing.Size(682, 525);
@@ -1007,6 +1008,7 @@
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "fac";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyUp);
             this.pnlTop.ResumeLayout(false);
             this.groupRC.ResumeLayout(false);
             this.groupRC.PerformLayout();

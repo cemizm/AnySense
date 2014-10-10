@@ -53,6 +53,7 @@ namespace MavLink
 			{181, new MavPacketInfo(Deserialize_CONFIGURATION_VERSION, 61)},
 			{182, new MavPacketInfo(Deserialize_CONFIGURATION_NAZA_HEARTBEAT, 21)},
 			{183, new MavPacketInfo(Deserialize_CONFIGURATION_PORT, 186)},
+			{184, new MavPacketInfo(Deserialize_CONFIGURATION_VERSION2, 175)},
 			{0, new MavPacketInfo(Deserialize_HEARTBEAT, 50)},
 			{1, new MavPacketInfo(Deserialize_SYS_STATUS, 124)},
 			{2, new MavPacketInfo(Deserialize_SYSTEM_TIME, 137)},
@@ -198,6 +199,16 @@ namespace MavLink
 				port = bytes[offset + 0],
 				protocol = bytes[offset + 1],
 				data =  ByteArrayUtil.ToUInt8(bytes, offset + 2, 128),
+			};
+		}
+
+		internal static MavlinkMessage Deserialize_CONFIGURATION_VERSION2(byte[] bytes, int offset)
+		{
+			return new Msg_configuration_version2
+			{
+				fw_version = bitconverter.ToUInt32(bytes, offset + 0),
+				port1 = bytes[offset + 4],
+				port2 = bytes[offset + 5],
 			};
 		}
 
@@ -1762,6 +1773,15 @@ namespace MavLink
 			ByteArrayUtil.ToByteArray(msg.data, bytes, offset + 2, 128);
 			offset += 130;
 			return 183;
+		}
+
+		internal static int Serialize_CONFIGURATION_VERSION2(this Msg_configuration_version2 msg, byte[] bytes, ref int offset)
+		{
+			bitconverter.GetBytes(msg.fw_version, bytes, offset + 0);
+			bytes[offset + 4] = msg.port1;
+			bytes[offset + 5] = msg.port2;
+			offset += 6;
+			return 184;
 		}
 
 		internal static int Serialize_HEARTBEAT(this Msg_heartbeat msg, byte[] bytes, ref int offset)
