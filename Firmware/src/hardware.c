@@ -67,14 +67,14 @@ void Generic_USART_IRQHandler(struct IRQ_CallbackInfoStruct* cb)
 void USART1_IRQHandler(void)
 {
 	CoEnterISR();
-	Generic_USART_IRQHandler(&cbInfoPort2);
+	Generic_USART_IRQHandler(&cbInfoPort1);
 	CoExitISR();
 }
 
 void USART3_4_IRQHandler(void)
 {
 	CoEnterISR();
-	Generic_USART_IRQHandler(&cbInfoPort1);
+	Generic_USART_IRQHandler(&cbInfoPort2);
 	CoExitISR();
 }
 

@@ -14,7 +14,7 @@
 
 #ifdef STM32F072B
 
-const struct hardware_port_cfg usart_port2 = {
+const struct hardware_port_cfg usart_port1 = {
 		.port = USART1,
 		.af = GPIO_AF_1,
 		.nvic_ch = USART1_IRQn,
@@ -54,7 +54,7 @@ const struct hardware_port_cfg usart_port2 = {
 		},
 };
 
-const struct hardware_port_cfg usart_port1 = {
+const struct hardware_port_cfg usart_port2 = {
 		.port = USART3,
 		.af = GPIO_AF_1,
 		.nvic_ch = USART3_4_IRQn,
