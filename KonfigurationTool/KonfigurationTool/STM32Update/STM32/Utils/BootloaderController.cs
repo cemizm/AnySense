@@ -46,12 +46,13 @@ namespace xeniC.Embedded.Utils.STM32
         public void Connect()
         {
             port.Open();
+            port.DiscardInBuffer();
 
             port.Write(new byte[] { ((byte)Command.Init) }, 0, 1);
             Command res = (Command)port.ReadByte();
 
             if (res != Command.Ack)
-                throw new InvalidOperationException("Failed to get init ACK from device!");
+                throw new InvalidOperationException(string.Format("Failed to get init ACK from device! Code:{0}", (byte)res));
 
             if (!SendCommand(Command.GetVersion))
                 throw new InvalidOperationException("Failed to get version and supported Commands from device!");
@@ -366,8 +367,8 @@ namespace xeniC.Embedded.Utils.STM32
         {
             try
             {
-                if (port != null && port.IsOpen)
-                    port.Close();
+                if (port != null)
+                    port.Dispose();
             }
             catch { }
         }
