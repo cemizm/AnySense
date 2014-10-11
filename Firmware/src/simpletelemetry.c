@@ -14,7 +14,7 @@ void simpleTelemetry_initialize()
 	simpleTelemtryData.alt = 0;
 	simpleTelemtryData.homeLat = 0;
 	simpleTelemtryData.homeLon = 0;
-	simpleTelemtryData.homeAltBaro = 0;
+	simpleTelemtryData.homeAltBaro = 20;
 	simpleTelemtryData.gpsAlt = 0;
 	simpleTelemtryData.speed = 0;
 	simpleTelemtryData.fixType = fixType_No;

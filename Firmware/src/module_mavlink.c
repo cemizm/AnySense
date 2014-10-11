@@ -59,7 +59,7 @@ uint16_t mavlink_pack_gps(mavlink_message_t* msg)
 {
 	return mavlink_msg_gps_raw_int_pack(MAVLINK_SYSTEM_ID, MAVLINK_COMP_ID, msg, 0, simpleTelemtryData.fixType,
 			simpleTelemtryData.lat * 10000000, simpleTelemtryData.lon * 10000000,
-			(simpleTelemtryData.homeAltBaro - simpleTelemtryData.alt) * 1000, simpleTelemtryData.hdop * 100,
+			(simpleTelemtryData.alt - (simpleTelemtryData.homeAltBaro - 20)) * 1000, simpleTelemtryData.hdop * 100,
 			simpleTelemtryData.vdop * 100, simpleTelemtryData.speed * 100, simpleTelemtryData.cog * 100,
 			simpleTelemtryData.numSat);
 }
@@ -67,7 +67,7 @@ uint16_t mavlink_pack_vfr_hud(mavlink_message_t* msg)
 {
 	return mavlink_msg_vfr_hud_pack(MAVLINK_SYSTEM_ID, MAVLINK_COMP_ID, msg, 0, simpleTelemtryData.speed,
 			simpleTelemtryData.heading, (simpleTelemtryData.throttle + 1000) / 20,
-			(simpleTelemtryData.homeAltBaro - simpleTelemtryData.alt), simpleTelemtryData.vsi);
+			(simpleTelemtryData.alt - (simpleTelemtryData.homeAltBaro - 20)), simpleTelemtryData.vsi);
 }
 
 uint16_t mavlink_pack_attitude(mavlink_message_t* msg)
