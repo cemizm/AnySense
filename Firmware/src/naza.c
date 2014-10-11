@@ -117,12 +117,8 @@ static void naza_main_task(void* pData)
 	U64 nextOSDHeartbeat = CoGetOSTime();
 	U64 tmpTick = 0;
 
-	CanTxMsg Heartbeat1 =
-	{ 0x108, 0, CAN_Id_Standard, CAN_RTR_Data, 8,
-	{ 0x55, 0xAA, 0x55, 0xAA, 0x07, 0x10, 0x00, 0x00 } };
-	CanTxMsg Heartbeat2 =
-	{ 0x108, 0, CAN_Id_Standard, CAN_RTR_Data, 4,
-	{ 0x66, 0xCC, 0x66, 0xCC } };
+	CanTxMsg Heartbeat1 = { 0x108, 0, CAN_Id_Standard, CAN_RTR_Data, 8, { 0x55, 0xAA, 0x55, 0xAA, 0x07, 0x10, 0x00, 0x00 } };
+	CanTxMsg Heartbeat2 = { 0x108, 0, CAN_Id_Standard, CAN_RTR_Data, 4, { 0x66, 0xCC, 0x66, 0xCC } };
 
 	float cosRoll = 0;
 	float sinRoll = 0;
@@ -176,8 +172,12 @@ static void naza_main_task(void* pData)
 				magCompX = magCalX * cosPitch + magCalZ * sinPitch;
 				magCompY = magCalX * sinRoll * sinPitch + magCalY * cosRoll - magCalZ * sinRoll * cosPitch;
 
-				simpleTelemtryData.headingNc = (atan2f(magCalY, magCalX) / M_PI * 180.0) + 180;
-				simpleTelemtryData.heading = (atan2f(magCompY, magCompX) / M_PI * 180.0) + 180;
+				simpleTelemtryData.headingNc = -(atan2f(magCalY, magCalX) / M_PI * 180.0);
+				if (simpleTelemtryData.headingNc < 0)
+					simpleTelemtryData.headingNc += 360;
+				simpleTelemtryData.heading = -(atan2f(magCompY, magCompX) / M_PI * 180.0);
+				if (simpleTelemtryData.heading < 0)
+					simpleTelemtryData.heading += 360;
 
 				simpleTelemtryData.numSat = osd->numSat;
 				simpleTelemtryData.gpsAlt = osd->altGps;
@@ -189,7 +189,9 @@ static void naza_main_task(void* pData)
 				eVel = osd->eastVelocity;
 
 				simpleTelemtryData.speed = sqrtf(nVel * nVel + eVel * eVel);
-				simpleTelemtryData.cog = (atan2f(eVel, nVel) / M_PI * 180) + 180;
+				simpleTelemtryData.cog = (atan2f(eVel, nVel) / M_PI * 180);
+				if (simpleTelemtryData.cog < 0)
+					simpleTelemtryData.cog += 360;
 
 				simpleTelemtryData.vsi = -osd->downVelocity;
 
