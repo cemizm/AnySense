@@ -62,8 +62,9 @@ namespace KonfigurationTool
             GPS_SPEED = (TelemetryValue)data[offset++];
             GPS_COURS = (TelemetryValue)data[offset++];
             GPS_TIME_DATE = (TelemetryValue)data[offset++];
-            BETA_VARIO = (TelemetryValue)data[offset++];
-            BETA_BARO_ALT = (TelemetryValue)data[offset++];
+            A3 = (TelemetryValue)data[offset++];
+            A4 = (TelemetryValue)data[offset++];
+            AIR_SPEED = (TelemetryValue)data[offset++];
         }
 
         public override byte[] Serialize()
@@ -91,8 +92,9 @@ namespace KonfigurationTool
             data[offset++] = (byte)GPS_SPEED;
             data[offset++] = (byte)GPS_COURS;
             data[offset++] = (byte)GPS_TIME_DATE;
-            data[offset++] = (byte)BETA_VARIO;
-            data[offset++] = (byte)BETA_BARO_ALT;
+            data[offset++] = (byte)A3;
+            data[offset++] = (byte)A4;
+            data[offset++] = (byte)AIR_SPEED;
 
             return data;
         }
@@ -144,9 +146,8 @@ namespace KonfigurationTool
         [DisplayName("Acceleration Z")]
         public TelemetryValue ACCZ { get; set; }
         [Category("3. Mag/Acc/Baro")]
-        public TelemetryValue BETA_VARIO { get; set; }
-        [Category("3. Mag/Acc/Baro")]
-        public TelemetryValue BETA_BARO_ALT { get; set; }
+        public TelemetryValue AIR_SPEED { get; set; }
+
 
         [Category("4. Others")]
         public TelemetryValue T1 { get; set; }
@@ -162,6 +163,10 @@ namespace KonfigurationTool
         public TelemetryValue CURR { get; set; }
         [Category("4. Others")]
         public TelemetryValue CELLS { get; set; }
+        [Category("4. Others")]
+        public TelemetryValue A3 { get; set; }
+        [Category("4. Others")]
+        public TelemetryValue A4 { get; set; }
 
     }
 }

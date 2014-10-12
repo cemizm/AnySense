@@ -29,7 +29,7 @@ enum SPort_State
 #define SPORT_STARTSTOP					0x7E
 #define SPORT_DATAFRAME					0x10
 #define SPORT_CONFIG_CURRENT_VERSION	((uint16_t)0x0001)
-#define SPORT_VALUES_MAX				19
+#define SPORT_VALUES_MAX				24
 
 /* Types */
 
@@ -60,8 +60,9 @@ typedef enum
 	SENSOR_GPS_SPEED = 0x0830,
 	SENSOR_GPS_COURS = 0x0840,
 	SENSOR_GPS_TIME_DATE = 0x0850,
-	SENSOR_BETA_VARIO = 0x8030,
-	SENSOR_BETA_BARO_ALT = 0x8010,
+	SENSOR_A3 = 0x0900,
+	SENSOR_A4 = 0x0910,
+	SENSOR_AIR_SPEED = 0x0a00,
 } SensorId;
 
 enum telemetryValue
@@ -87,7 +88,7 @@ enum telemetryValue
 	tv_flight_mode = 18,
 	tv_lastHeartbeat = 19,
 	tv_gpsTime = 20,
-	TV_END_LAST = 21,
+	tv_alt_relative = 21,
 };
 
 struct SPort_Config
@@ -120,9 +121,9 @@ typedef struct SPort_SessionStruct SPortSession;
 
 static SPortSession* sessions;
 
-static const uint16_t mapping[] = { SENSOR_T1, SENSOR_T2, SENSOR_RPM, SENSOR_FUEL, SENSOR_ALT, SENSOR_VARIO, SENSOR_ACCX, SENSOR_ACCY, SENSOR_ACCZ, SENSOR_CURR,
-		SENSOR_VFAS, SENSOR_CELLS, SENSOR_GPS_LONG_LATI, SENSOR_GPS_ALT, SENSOR_GPS_SPEED, SENSOR_GPS_COURS, SENSOR_GPS_TIME_DATE,
-		SENSOR_BETA_VARIO, SENSOR_BETA_BARO_ALT };
+static const uint16_t mapping[] = { SENSOR_T1, SENSOR_T2, SENSOR_RPM, SENSOR_FUEL, SENSOR_ALT, SENSOR_VARIO, SENSOR_ACCX,
+		SENSOR_ACCY, SENSOR_ACCZ, SENSOR_CURR, SENSOR_VFAS, SENSOR_CELLS, SENSOR_GPS_LONG_LATI, SENSOR_GPS_ALT, SENSOR_GPS_SPEED,
+		SENSOR_GPS_COURS, SENSOR_GPS_TIME_DATE, SENSOR_A3, SENSOR_A4, SENSOR_AIR_SPEED};
 
 static const struct SPort_Config sport_defaultConfig =
 {
@@ -130,8 +131,7 @@ static const struct SPort_Config sport_defaultConfig =
 	.version = SPORT_CONFIG_CURRENT_VERSION,
 	.map =
 	{	tv_numSat, tv_gps_fix, tv_none, tv_none, tv_alt, tv_vsi, tv_roll, tv_pitch, tv_none, tv_none,
-		tv_battery, tv_none, tv_lon_lat, tv_gpsAlt, tv_speed, tv_heading, tv_gpsTime,
-		tv_none, tv_none},
+		tv_battery, tv_none, tv_lon_lat, tv_gpsAlt, tv_speed, tv_heading, tv_gpsTime, tv_none, tv_none, tv_none},
 };
 
 /* functions */

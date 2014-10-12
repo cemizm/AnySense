@@ -38,7 +38,6 @@ namespace KonfigurationTool
             {
                 try
                 {
-                    System.Threading.Thread.Sleep(300);
                     controller.Connect();
                     UpdateStatus("Connected to Device...", 0);
 

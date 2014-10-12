@@ -94,7 +94,7 @@ void sport_getValue(enum telemetryValue val, int32_t * result, uint8_t* len)
 		*len = 2;
 		break;
 	case tv_alt:
-		result[0] = (simpleTelemtryData.alt - (simpleTelemtryData.homeAltBaro - 20)) * 100;
+		result[0] = simpleTelemtryData.alt;
 		*len = 1;
 		break;
 	case tv_gpsAlt:
@@ -169,6 +169,10 @@ void sport_getValue(enum telemetryValue val, int32_t * result, uint8_t* len)
 		result[0] = simpleTelemtryData.year << 24 || simpleTelemtryData.month << 16 || simpleTelemtryData.day << 8 || 0xff;
 		result[1] = simpleTelemtryData.hour << 24 || simpleTelemtryData.minute << 16 || simpleTelemtryData.second << 8;
 		*len = 2;
+		break;
+	case tv_alt_relative:
+		result[0] = (simpleTelemtryData.alt - (simpleTelemtryData.homeAltBaro - 20)) * 100;
+		*len = 1;
 		break;
 	case tv_none:
 	default:

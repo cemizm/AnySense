@@ -15,7 +15,7 @@ namespace KonfigurationTool
         private const int MAX_RETRY = 16;
 
         private const int MAV_SYSTEM_ID = 0xCE;
-        private const uint FIRMWARE_VERSION = 0x00000903;
+        private const uint FIRMWARE_VERSION = 0x00000904;
 
         private int retry;
         private StateMachineStep currentStep = StateMachineStep.None;
@@ -440,7 +440,7 @@ namespace KonfigurationTool
                     serialPort.Write(bytes, 0, bytes.Length);
                 }
                 serialPort.Close();
-                serialPort.Dispose();
+
                 StateMachineUpdate(StateMachineStep.None);
             }
             catch (Exception ex)
