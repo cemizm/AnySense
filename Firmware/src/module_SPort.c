@@ -58,6 +58,7 @@ void sport_start(const struct hardware_port_cfg* port, uint8_t* config)
 	session->next = NULL;
 	session->config = (struct SPort_Config*) config;
 	session->currentValue = 0;
+	session->tmp_length = 0;
 	session->tmp.Header = SPORT_DATAFRAME;
 
 	FIFO_init(session->send_buffer);
