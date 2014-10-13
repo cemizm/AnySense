@@ -95,7 +95,7 @@ void sport_getValue(enum telemetryValue val, int32_t * result, uint8_t* len)
 		*len = 2;
 		break;
 	case tv_alt:
-		result[0] = simpleTelemtryData.alt;
+		result[0] = simpleTelemtryData.alt * 100;
 		*len = 1;
 		break;
 	case tv_gpsAlt:

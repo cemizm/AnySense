@@ -15,7 +15,7 @@ namespace KonfigurationTool
         private const int MAX_RETRY = 16;
 
         private const int MAV_SYSTEM_ID = 0xCE;
-        private const uint FIRMWARE_VERSION = 0x00000906;
+        private const uint FIRMWARE_VERSION = 0x00000907;
 
         private int retry;
         private StateMachineStep currentStep = StateMachineStep.None;
@@ -46,6 +46,7 @@ namespace KonfigurationTool
 
             if (cmbPort.Items.Count > 0)
                 cmbPort.SelectedIndex = 0;
+
 
             byte[] ver = BitConverter.GetBytes(FIRMWARE_VERSION);
 
