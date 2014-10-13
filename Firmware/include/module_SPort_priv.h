@@ -29,7 +29,7 @@ enum SPort_State
 #define SPORT_STARTSTOP					0x7E
 #define SPORT_DATAFRAME					0x10
 #define SPORT_CONFIG_CURRENT_VERSION	((uint16_t)0x0001)
-#define SPORT_VALUES_MAX				24
+#define SPORT_VALUES_MAX				20
 
 /* Types */
 
