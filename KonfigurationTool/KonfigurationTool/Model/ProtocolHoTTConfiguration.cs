@@ -16,9 +16,11 @@ namespace KonfigurationTool
         public ProtocolHoTTConfiguration()
             : base()
         {
-            Version = 1;
+            Version = 2;
             Active = Sensors.GPS_AND_GAM;
             Cells = 3;
+            GPSAltSource = GPSAltSourceEnum.Baro;
+
             VoltageAlarms = new VoltageAlarm[] { 
                 new VoltageAlarm() { Voltage = 15, Tone=HoTTAlarmTone.Tone_A, Interval = 3, Invert=true, Repeat=0 }, 
                 new VoltageAlarm(), 
@@ -60,6 +62,11 @@ namespace KonfigurationTool
             }
         }
 
+        [Category("1. General")]
+        [DisplayName("GPS Altitude Source")]
+        [Description("Defines the source of GPS Altitude")]
+        public GPSAltSourceEnum GPSAltSource { get; set; }
+
         [Category("2. Alarms")]
         [DisplayName("Voltage Alarms")]
         [Description("Defines alarms for Voltage")]
@@ -75,8 +82,8 @@ namespace KonfigurationTool
             Version = data[0];
             Cells = data[1];
             Active = (Sensors)data[2];
-
-            int offset = 3;
+            GPSAltSource = (GPSAltSourceEnum)data[3];
+            int offset = 4;
 
             List<VoltageAlarm> voltageAlarms = new List<VoltageAlarm>();
             for (int i = 0; i < VOLTAGE_ALARMS; i++)
@@ -112,8 +119,9 @@ namespace KonfigurationTool
             data[0] = Version;
             data[1] = Cells;
             data[2] = (byte)Active;
+            data[3] = (byte)GPSAltSource;
 
-            int offset = 3;
+            int offset = 4;
             foreach (VoltageAlarm alarm in VoltageAlarms)
             {
                 data[offset++] = alarm.Voltage;
@@ -143,6 +151,12 @@ namespace KonfigurationTool
             GPS = 1,
             GAM = 2,
             GPS_AND_GAM = 3,
+        }
+
+        public enum GPSAltSourceEnum : byte
+        {
+            GPS = 0,
+            Baro = 1,
         }
 
         public abstract class Alarm

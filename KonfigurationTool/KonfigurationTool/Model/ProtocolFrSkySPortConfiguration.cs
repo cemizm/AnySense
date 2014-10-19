@@ -11,12 +11,13 @@ namespace KonfigurationTool
     internal class ProtocolFrSkySPortConfiguration : ProtocolConfiguration
     {
 
-        private const UInt16 CONFIG_VERSION = 0x0001;
+        private const UInt16 CONFIG_VERSION = 0x0002;
 
         public ProtocolFrSkySPortConfiguration()
         {
 
             Version = CONFIG_VERSION;
+            MinFixType = FixType.FIX_2D;
 
             T1 = TelemetryValue.NumSat;
             T2 = TelemetryValue.GPS_Fix;
@@ -44,7 +45,9 @@ namespace KonfigurationTool
                 return;
             }
 
-            int offset = 3;
+            MinFixType = (FixType)data[3];
+
+            int offset = 4;
             T1 = (TelemetryValue)data[offset++];
             T2 = (TelemetryValue)data[offset++];
             RPM = (TelemetryValue)data[offset++];
@@ -74,7 +77,9 @@ namespace KonfigurationTool
             data[0] = (byte)SensorId;
             Converter.GetBytes(Version, data, 1);
 
-            int offset = 3;
+            data[3] = (byte)MinFixType;
+
+            int offset = 4;
             data[offset++] = (byte)T1;
             data[offset++] = (byte)T2;
             data[offset++] = (byte)RPM;
@@ -103,6 +108,11 @@ namespace KonfigurationTool
         [DisplayName("Sensor Id")]
         [Description("Defines the Id to use on this Port")]
         public FrSkySensorId SensorId { get; set; }
+
+        [Category("1. General")]
+        [DisplayName("Min. Fix Type")]
+        [Description("Defines minimum GPS Fix for certain values")]
+        public FixType MinFixType { get; set; }
 
         [Category("1. General")]
         [DisplayName("Config Version")]

@@ -15,7 +15,7 @@ namespace KonfigurationTool
         private const int MAX_RETRY = 16;
 
         private const int MAV_SYSTEM_ID = 0xCE;
-        private const uint FIRMWARE_VERSION = 0x00000907;
+        private const uint FIRMWARE_VERSION = 0x00000908;
 
         private int retry;
         private StateMachineStep currentStep = StateMachineStep.None;

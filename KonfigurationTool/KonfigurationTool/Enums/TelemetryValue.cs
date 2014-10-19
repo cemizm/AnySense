@@ -28,5 +28,6 @@ namespace KonfigurationTool
         Flight_mode = 18,
         LastHeartbeat = 19,
         GPS_Time = 20,
+        Heading_Relative = 21,
     }
 }

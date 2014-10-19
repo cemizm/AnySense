@@ -28,7 +28,7 @@ enum SPort_State
 
 #define SPORT_STARTSTOP					0x7E
 #define SPORT_DATAFRAME					0x10
-#define SPORT_CONFIG_CURRENT_VERSION	((uint16_t)0x0001)
+#define SPORT_CONFIG_CURRENT_VERSION	((uint16_t)0x0002)
 #define SPORT_VALUES_MAX				20
 
 /* Types */
@@ -95,6 +95,7 @@ struct SPort_Config
 {
 	uint8_t sensorId;
 	uint16_t version;
+	enum fixType minFix;
 	enum telemetryValue map[SPORT_VALUES_MAX];
 }__attribute__((packed, aligned(1)));
 
@@ -129,6 +130,7 @@ static const struct SPort_Config sport_defaultConfig =
 {
 	.sensorId = 0,
 	.version = SPORT_CONFIG_CURRENT_VERSION,
+	.minFix = fixType_2D,
 	.map =
 	{	tv_numSat, tv_gps_fix, tv_none, tv_none, tv_alt, tv_vsi, tv_roll, tv_pitch, tv_none, tv_none,
 		tv_battery, tv_none, tv_lon_lat, tv_gpsAlt, tv_speed, tv_heading, tv_gpsTime, tv_none, tv_none, tv_none},
@@ -137,8 +139,7 @@ static const struct SPort_Config sport_defaultConfig =
 /* functions */
 
 void sport_task(void* pdata);
-uint8_t sport_getNextValue(struct SPort_SessionStruct* session);
-void sport_getValue(enum telemetryValue val, int32_t * result, uint8_t* len);
+void sport_getValue(enum telemetryValue val, enum fixType minFixTyp, int32_t * result, uint8_t* len);
 
 static void RX_Callback(uint8_t* id);
 static void TX_Callback(uint8_t* id);

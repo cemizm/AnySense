@@ -11,11 +11,12 @@ void hott_initializeConfig(void* config)
 {
 	struct hott_config* cfg = (struct hott_config*) config;
 
-	if (cfg->version != 1)
+	if (cfg->version != 2)
 	{
 		cfg->version = 1;
 		cfg->num_cells = 3;
 		cfg->active_sensors = simulate_sensor_gam | simulate_sensor_gps;
+		cfg->gps_altitude_source = altitude_source_baro_sensor;
 
 		cfg->voltage_alarm[0].level = 8;
 		cfg->voltage_alarm[0].interval = 3;
@@ -211,11 +212,16 @@ void module_hott_task(void* pData)
 				msg.gps.sensor_id = 0xa0;
 				msg.gps.GPSNumSat = simpleTelemtryData.numSat;
 				msg.gps.GPSFixChar = simpleTelemtryData.fixType;
-				msg.gps.altitude = 500 + simpleTelemtryData.gpsAlt;
+
+				if (session->config->gps_altitude_source == altitude_source_baro_sensor)
+					msg.gps.altitude = 500 + simpleTelemtryData.alt - (simpleTelemtryData.homeAltBaro - 20);
+				else
+					msg.gps.altitude = 500 + simpleTelemtryData.gpsAlt;
+
 				msg.gps.climbrate1s = 30000 + (simpleTelemtryData.gpsVsi * 100);
 				msg.gps.climbrate3s = 120;
 				msg.gps.GPSSpeed = simpleTelemtryData.speed * 3.6;
-				msg.gps.flightDirection = simpleTelemtryData.cog / 2;
+				msg.gps.flightDirection = simpleTelemtryData.heading / 2;
 				msg.gps.angleXdirection = simpleTelemtryData.pitch;
 				msg.gps.angleYdirection = simpleTelemtryData.roll;
 				msg.gps.angleZdirection = simpleTelemtryData.heading;
@@ -276,7 +282,7 @@ void module_hott_task(void* pData)
 							(int16_t) simpleTelemtryData.battery / 1000, getFraction(simpleTelemtryData.battery / 1000.0, 2));
 					snprintf((char *) &msg.text.text[3], MODULE_HOTT_TEXT_COLUMNS + 1, " Calc. Cell:%2d.%02dV",
 							(int16_t) (simpleTelemtryData.battery / session->config->num_cells) / 1000,
-							getFraction((simpleTelemtryData.battery / session->config->num_cells)/ 1000.0, 2));
+							getFraction((simpleTelemtryData.battery / session->config->num_cells) / 1000.0, 2));
 					snprintf((char *) &msg.text.text[5], MODULE_HOTT_TEXT_COLUMNS + 1, " Altitude  :%d.%02dm",
 							(int16_t) simpleTelemtryData.alt, getFraction(simpleTelemtryData.alt, 2));
 					snprintf((char *) &msg.text.text[6], MODULE_HOTT_TEXT_COLUMNS + 1, " Home Alt. :%d.%02dm",

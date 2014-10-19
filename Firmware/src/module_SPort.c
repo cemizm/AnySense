@@ -9,10 +9,9 @@
 
 void sport_initializeConfig(void* conf)
 {
-	uint16_t version = *((uint8_t*) conf + 1);
-	//struct SPort_Config* scfg = (struct SPort_Config*)conf;
+	struct SPort_Config* scfg = (struct SPort_Config*) conf;
 
-	if (version != SPORT_CONFIG_CURRENT_VERSION)
+	if (scfg->version != SPORT_CONFIG_CURRENT_VERSION)
 	{
 		memcpy(conf, &sport_defaultConfig, sizeof(struct SPort_Config));
 	}
@@ -77,34 +76,43 @@ void sport_start(const struct hardware_port_cfg* port, uint8_t* config)
 	USART_ITConfig(port->port, USART_IT_RXNE, ENABLE);
 }
 
-void sport_getValue(enum telemetryValue val, int32_t * result, uint8_t* len)
+void sport_getValue(enum telemetryValue val, enum fixType minFixTyp, int32_t * result, uint8_t* len)
 {
 	*len = 0;
 
 	switch (val)
 	{
 	case tv_lon_lat:
-		if (simpleTelemtryData.lon < 0)
-			result[0] = (((abs(simpleTelemtryData.lon * 10000000)) / 100) * 6) | 0xC0000000;
-		else
-			result[0] = (((abs(simpleTelemtryData.lon * 10000000)) / 100) * 6) | 0x80000000;
-		if (simpleTelemtryData.lat < 0)
-			result[1] = (((abs(simpleTelemtryData.lat * 10000000)) / 100) * 6) | 0x40000000;
-		else
-			result[1] = (((abs(simpleTelemtryData.lat * 10000000)) / 100) * 6);
-		*len = 2;
+		if (simpleTelemtryData.fixType >= minFixTyp)
+		{
+			if (simpleTelemtryData.lon < 0)
+				result[0] = (((abs(simpleTelemtryData.lon * 10000000)) / 100) * 6) | 0xC0000000;
+			else
+				result[0] = (((abs(simpleTelemtryData.lon * 10000000)) / 100) * 6) | 0x80000000;
+			if (simpleTelemtryData.lat < 0)
+				result[1] = (((abs(simpleTelemtryData.lat * 10000000)) / 100) * 6) | 0x40000000;
+			else
+				result[1] = (((abs(simpleTelemtryData.lat * 10000000)) / 100) * 6);
+			*len = 2;
+		}
 		break;
 	case tv_alt:
 		result[0] = simpleTelemtryData.alt * 100;
 		*len = 1;
 		break;
 	case tv_gpsAlt:
-		result[0] = simpleTelemtryData.gpsAlt * 100;
-		*len = 1;
+		if (simpleTelemtryData.fixType >= minFixTyp)
+		{
+			result[0] = simpleTelemtryData.gpsAlt * 100;
+			*len = 1;
+		}
 		break;
 	case tv_speed:
-		result[0] = simpleTelemtryData.speed * 100;
-		*len = 1;
+		if (simpleTelemtryData.fixType >= minFixTyp)
+		{
+			result[0] = simpleTelemtryData.speed * 100;
+			*len = 1;
+		}
 		break;
 	case tv_gps_fix:
 		result[0] = simpleTelemtryData.fixType;
@@ -123,16 +131,22 @@ void sport_getValue(enum telemetryValue val, int32_t * result, uint8_t* len)
 		*len = 1;
 		break;
 	case tv_cog:
-		result[0] = simpleTelemtryData.cog * 100;
-		*len = 1;
+		if (simpleTelemtryData.fixType >= minFixTyp)
+		{
+			result[0] = simpleTelemtryData.cog * 100;
+			*len = 1;
+		}
 		break;
 	case tv_vsi:
 		result[0] = simpleTelemtryData.vsi * 100;
 		*len = 1;
 		break;
 	case tv_gpsVsi:
-		result[0] = simpleTelemtryData.gpsVsi * 100;
-		*len = 1;
+		if (simpleTelemtryData.fixType >= minFixTyp)
+		{
+			result[0] = simpleTelemtryData.gpsVsi * 100;
+			*len = 1;
+		}
 		break;
 	case tv_hdop:
 		result[0] = simpleTelemtryData.hdop * 100;
@@ -167,9 +181,12 @@ void sport_getValue(enum telemetryValue val, int32_t * result, uint8_t* len)
 		*len = 1;
 		break;
 	case tv_gpsTime:
-		result[0] = simpleTelemtryData.year << 24 || simpleTelemtryData.month << 16 || simpleTelemtryData.day << 8 || 0xff;
-		result[1] = simpleTelemtryData.hour << 24 || simpleTelemtryData.minute << 16 || simpleTelemtryData.second << 8;
-		*len = 2;
+		if (simpleTelemtryData.fixType >= minFixTyp)
+		{
+			result[0] = simpleTelemtryData.year << 24 || simpleTelemtryData.month << 16 || simpleTelemtryData.day << 8 || 0xff;
+			result[1] = simpleTelemtryData.hour << 24 || simpleTelemtryData.minute << 16 || simpleTelemtryData.second << 8;
+			*len = 2;
+		}
 		break;
 	case tv_alt_relative:
 		result[0] = (simpleTelemtryData.alt - (simpleTelemtryData.homeAltBaro - 20)) * 100;
@@ -203,7 +220,8 @@ static void RX_Callback(uint8_t* id)
 				session->tmp.Id = mapping[session->currentValue];
 
 				if (session->tmp_length == 0)
-					sport_getValue(session->config->map[session->currentValue], session->tmp_bytes, &session->tmp_length);
+					sport_getValue(session->config->map[session->currentValue], session->config->minFix, session->tmp_bytes,
+							&session->tmp_length);
 
 				if (session->tmp_length > 0)
 				{
