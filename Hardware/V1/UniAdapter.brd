@@ -116,8 +116,7 @@
 <wire x1="22.7097375" y1="19.2989625" x2="22.7097375" y2="1.53345" width="0.254" layer="49"/>
 <wire x1="22.7097375" y1="1.53345" x2="37.66655" y2="1.53345" width="0.254" layer="49"/>
 <wire x1="37.66655" y1="1.53345" x2="37.7" y2="1.5" width="0.254" layer="49" curve="-90"/>
-<text x="7.62" y="19.098" size="1.27" layer="25" font="vector">UniAdapter 1.1</text>
-<text x="0.762" y="19.304" size="1.016" layer="25" font="vector">cemizm</text>
+<text x="2.0574" y="19.2504" size="1.27" layer="25" font="vector">AnySense 1.1</text>
 </plain>
 <libraries>
 <library name="rcl">
@@ -2081,19 +2080,23 @@ Covered vias can be set in Masks (Limit).
 <attribute name="VALUE" x="17.8054" y="17.78" size="1.27" layer="27" rot="R270"/>
 <attribute name="OC_FARNELL" value="2331730" x="19.7104" y="17.145" size="1.778" layer="27" rot="R270" display="off"/>
 </element>
-<element name="R4" library="rcl" package="R0603" value="55Ohm" x="12.573" y="17.145" smashed="yes" rot="R90">
+<element name="R4" library="rcl" package="R0603" value="68Ohm" x="12.573" y="17.145" smashed="yes" rot="R90">
 <attribute name="NAME" x="12.7" y="15.494" size="0.6096" layer="25" rot="R180" align="bottom-center"/>
 <attribute name="VALUE" x="14.478" y="16.51" size="1.27" layer="27" rot="R90"/>
+<attribute name="OC_FARNELL" value="2331710" x="12.573" y="17.145" size="1.778" layer="27" rot="R90" display="off"/>
 </element>
-<element name="R5" library="rcl" package="R0603" value="55Ohm" x="10.795" y="17.145" smashed="yes" rot="R90">
+<element name="R5" library="rcl" package="R0603" value="56Ohm" x="10.795" y="17.145" smashed="yes" rot="R90">
 <attribute name="NAME" x="10.795" y="15.494" size="0.6096" layer="25" rot="R180" align="bottom-center"/>
 <attribute name="VALUE" x="12.7" y="16.51" size="1.27" layer="27" rot="R90"/>
+<attribute name="OC_FARNELL" value="2331709" x="10.795" y="17.145" size="1.778" layer="27" rot="R90" display="off"/>
 </element>
 <element name="LD1" library="led" package="CHIPLED_0603" value="RED" x="9.398" y="12.573" smashed="yes" rot="R180">
 <attribute name="VALUE" x="7.493" y="13.843" size="1.27" layer="27" rot="R270"/>
+<attribute name="OC_FARNELL" value="2099221" x="9.398" y="12.573" size="1.778" layer="27" rot="R180" display="off"/>
 </element>
 <element name="LD2" library="led" package="CHIPLED_0603" value="GREEN" x="11.049" y="12.573" smashed="yes" rot="R180">
 <attribute name="VALUE" x="9.144" y="13.843" size="1.27" layer="27" rot="R270"/>
+<attribute name="OC_FARNELL" value="2099223" x="11.049" y="12.573" size="1.778" layer="27" rot="R180" display="off"/>
 </element>
 </elements>
 <signals>
@@ -2154,9 +2157,8 @@ Covered vias can be set in Masks (Limit).
 <wire x1="9.8806" y1="4.2926" x2="9.906" y2="3.055" width="0.254" layer="1"/>
 <wire x1="9.906" y1="3.055" x2="9.86" y2="3.136" width="0.254" layer="1"/>
 <wire x1="24.711" y1="17.635" x2="24.729" y2="17.653" width="0.254" layer="1"/>
-<wire x1="24.729" y1="17.653" x2="27.305" y2="17.653" width="0.254" layer="1"/>
-<wire x1="27.305" y1="17.653" x2="27.686" y2="17.272" width="0.254" layer="1"/>
-<via x="27.686" y="17.272" extent="1-16" drill="0.3048"/>
+<wire x1="24.729" y1="17.653" x2="26.416" y2="17.653" width="0.254" layer="1"/>
+<via x="26.416" y="17.653" extent="1-16" drill="0.3048"/>
 <wire x1="18.7452" y1="11.8364" x2="18.7452" y2="10.8712" width="0.254" layer="1"/>
 <wire x1="18.7452" y1="10.8712" x2="18.288" y2="10.414" width="0.254" layer="1"/>
 <via x="18.288" y="10.414" extent="1-16" drill="0.3048"/>
@@ -2199,9 +2201,8 @@ Covered vias can be set in Masks (Limit).
 <wire x1="14.351" y1="16.295" x2="14.351" y2="15.24" width="0.254" layer="1"/>
 <wire x1="14.351" y1="15.24" x2="14.7574" y2="14.8336" width="0.254" layer="1"/>
 <wire x1="14.7574" y1="14.8336" x2="14.7574" y2="11.8364" width="0.254" layer="1"/>
-<wire x1="17.9324" y1="17.995" x2="17.9324" y2="18.6944" width="0.254" layer="1"/>
-<wire x1="17.9324" y1="18.6944" x2="18.542" y2="19.304" width="0.254" layer="1"/>
-<via x="18.542" y="19.304" extent="1-16" drill="0.3048"/>
+<wire x1="17.9324" y1="17.995" x2="17.9324" y2="18.9484" width="0.254" layer="1"/>
+<via x="17.9324" y="18.9484" extent="1-16" drill="0.3048"/>
 </signal>
 <signal name="CANRX">
 <contactref element="IC3" pad="32"/>

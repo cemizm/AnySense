@@ -15979,10 +15979,18 @@ Source: www.kingbright.com</description>
 <attribute name="OC_FARNELL" value="2331730"/>
 </part>
 <part name="P+4" library="supply1" deviceset="VCC" device=""/>
-<part name="R4" library="rcl" deviceset="R-EU_" device="R0603" value="55Ohm"/>
-<part name="R5" library="rcl" deviceset="R-EU_" device="R0603" value="55Ohm"/>
-<part name="LD1" library="led" deviceset="LED" device="CHIPLED_0603" value="RED"/>
-<part name="LD2" library="led" deviceset="LED" device="CHIPLED_0603" value="GREEN"/>
+<part name="R4" library="rcl" deviceset="R-EU_" device="R0603" value="68Ohm">
+<attribute name="OC_FARNELL" value="2331710"/>
+</part>
+<part name="R5" library="rcl" deviceset="R-EU_" device="R0603" value="56Ohm">
+<attribute name="OC_FARNELL" value="2331709"/>
+</part>
+<part name="LD1" library="led" deviceset="LED" device="CHIPLED_0603" value="RED">
+<attribute name="OC_FARNELL" value="2099221"/>
+</part>
+<part name="LD2" library="led" deviceset="LED" device="CHIPLED_0603" value="GREEN">
+<attribute name="OC_FARNELL" value="2099223"/>
+</part>
 <part name="GND5" library="supply1" deviceset="GND" device=""/>
 </parts>
 <sheets>
@@ -16051,10 +16059,18 @@ Source: www.kingbright.com</description>
 <attribute name="OC_FARNELL" x="86.36" y="-63.5" size="1.778" layer="96" rot="R90" display="off"/>
 </instance>
 <instance part="P+4" gate="VCC" x="68.58" y="-63.5"/>
-<instance part="R4" gate="G$1" x="111.76" y="30.48"/>
-<instance part="R5" gate="G$1" x="111.76" y="20.32"/>
-<instance part="LD1" gate="G$1" x="127" y="30.48" rot="R90"/>
-<instance part="LD2" gate="G$1" x="127" y="20.32" rot="R90"/>
+<instance part="R4" gate="G$1" x="111.76" y="30.48">
+<attribute name="OC_FARNELL" x="111.76" y="30.48" size="1.778" layer="96" display="off"/>
+</instance>
+<instance part="R5" gate="G$1" x="111.76" y="20.32">
+<attribute name="OC_FARNELL" x="111.76" y="20.32" size="1.778" layer="96" display="off"/>
+</instance>
+<instance part="LD1" gate="G$1" x="127" y="30.48" rot="R90">
+<attribute name="OC_FARNELL" x="127" y="30.48" size="1.778" layer="96" rot="R90" display="off"/>
+</instance>
+<instance part="LD2" gate="G$1" x="127" y="20.32" rot="R90">
+<attribute name="OC_FARNELL" x="127" y="20.32" size="1.778" layer="96" rot="R90" display="off"/>
+</instance>
 <instance part="GND5" gate="1" x="134.62" y="15.24"/>
 </instances>
 <busses>
