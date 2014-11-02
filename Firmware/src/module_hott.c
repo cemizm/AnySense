@@ -235,10 +235,17 @@ void module_hott_task(void* pData)
 				tmp_conv = simpleTelemtryData.lat;
 				msg.gps.latMin = (tmp_conv * 100) + ((simpleTelemtryData.lat - tmp_conv) * 60);
 				msg.gps.latSec = ((uint16_t) (((simpleTelemtryData.lat * 100000) - (tmp_conv * 100000)) * 6)) % 10000;
+
 				msg.gps.distance = (uint16_t) distance;
 
-				msg.gps.HomeDirection = calculateAngle(simpleTelemtryData.lon, simpleTelemtryData.lat, simpleTelemtryData.homeLon,
-						simpleTelemtryData.homeLat);
+				if (simpleTelemtryData.lon != 0 && simpleTelemtryData.lat != 0 && simpleTelemtryData.homeLon != 0
+						&& simpleTelemtryData.homeLat != 0)
+				{
+					msg.gps.HomeDirection = calculateAngle(simpleTelemtryData.homeLon, simpleTelemtryData.homeLat,
+							simpleTelemtryData.lon, simpleTelemtryData.lat) / 2;
+				}
+				else
+					msg.gps.HomeDirection = 0;
 
 				msg.gps.gps_time_h = simpleTelemtryData.hour;
 				msg.gps.gps_time_m = simpleTelemtryData.minute;
@@ -657,18 +664,14 @@ __inline__ double getDistance(double long1, double lat1, double long2, double la
 
 __inline__ double calculateAngle(double long1, double lat1, double long2, double lat2)
 {
-	float dlon = (long2 - long1) * (M_PI / 180);
-	lat1 = lat1 * (M_PI / 180);
-	lat2 = lat2 * (M_PI / 180);
-	float a1 = sin(dlon) * cos(lat2);
-	float a2 = sin(lat1) * cos(lat2) * cos(dlon);
-	a2 = cos(lat1) * sin(lat2) - a2;
-	a2 = atan2(a1, a2);
-	if (a2 < 0.0)
-	{
-		a2 += M_2_PI;
-	}
-	return a2 * 180.0 / M_PI;
+	double off_y = lat2 - lat1;
+	double off_x = cos(M_PI / 180 * lat1) * (long2 - long1);
+	double bearing = atan2(off_y, off_x) / M_PI * 180;
+
+	if (bearing < 0)
+		bearing += 360;
+
+	return bearing;
 }
 
 int hott_cmp_alarm_distance(const void * a, const void * b)
