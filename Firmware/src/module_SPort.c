@@ -110,7 +110,7 @@ void sport_getValue(enum telemetryValue val, enum fixType minFixTyp, int32_t * r
 	case tv_speed:
 		if (simpleTelemtryData.fixType >= minFixTyp)
 		{
-			result[0] = (simpleTelemtryData.speed * 3.6) * 1000;
+			result[0] = simpleTelemtryData.speed * 1943;
 			*len = 1;
 		}
 		break;

@@ -136,6 +136,10 @@ static void naza_main_task(void* pData)
 	float ndop = 0;
 	float edop = 0;
 
+	float avg[3] = { 0 };
+	uint8_t avg_curr = 0;
+
+
 	while (1)
 	{
 
@@ -188,7 +192,11 @@ static void naza_main_task(void* pData)
 				nVel = osd->northVelocity;
 				eVel = osd->eastVelocity;
 
-				simpleTelemtryData.speed = sqrtf(nVel * nVel + eVel * eVel);
+				avg[avg_curr++] = sqrtf(nVel * nVel + eVel * eVel);
+				avg_curr = avg_curr % 3;
+
+				simpleTelemtryData.speed = (avg[0] + avg[1] + avg[2]) / 3;
+
 				simpleTelemtryData.cog = (atan2f(eVel, nVel) / M_PI * 180);
 				if (simpleTelemtryData.cog < 0)
 					simpleTelemtryData.cog += 360;
