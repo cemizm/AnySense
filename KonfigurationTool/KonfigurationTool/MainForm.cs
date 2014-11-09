@@ -12,10 +12,10 @@ namespace KonfigurationTool
 {
     public partial class MainForm : Form
     {
-        private const int MAX_RETRY = 16;
+        private const int MAX_RETRY = 25;
 
         private const int MAV_SYSTEM_ID = 0xCE;
-        private const uint FIRMWARE_VERSION = 0x0000090B;
+        private const uint FIRMWARE_VERSION = 0x0000090C;
 
         private int retry;
         private StateMachineStep currentStep = StateMachineStep.None;
@@ -371,7 +371,7 @@ namespace KonfigurationTool
         private void timer_Tick(object sender, EventArgs e)
         {
 
-            if (retry > 12)
+            if (retry > MAX_RETRY)
             {
                 try
                 {

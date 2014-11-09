@@ -94,7 +94,6 @@ void modules_start()
 
 void configManager_task(void* pdata)
 {
-	DEBUG_TOGGLE_ORANGE();
 
 	U64 exitIn = CoGetOSTime() + delay_ms(2100);
 	U64 ticks = 0;
@@ -242,7 +241,7 @@ void configManager_task(void* pdata)
 
 	CoSchedUnlock();
 
-	DEBUG_TOGGLE_ORANGE();
+	hardware_led_toggle_red();
 
 	CoExitTask();
 

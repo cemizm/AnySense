@@ -8,7 +8,9 @@
 int main() {
  	CoInitOS();
 
-	DEBUG_INIT();
+	hardware_led_init();
+	hardware_led_toggle_red();
+	hardware_led_toggle_green();
 
 	//initialize
 	simpleTelemetry_initialize();

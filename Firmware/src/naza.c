@@ -116,6 +116,7 @@ static void naza_main_task(void* pData)
 
 	U64 nextOSDHeartbeat = CoGetOSTime();
 	U64 tmpTick = 0;
+	U64 spdTick = 0;
 
 	CanTxMsg Heartbeat1 = { 0x108, 0, CAN_Id_Standard, CAN_RTR_Data, 8, { 0x55, 0xAA, 0x55, 0xAA, 0x07, 0x10, 0x00, 0x00 } };
 	CanTxMsg Heartbeat2 = { 0x108, 0, CAN_Id_Standard, CAN_RTR_Data, 4, { 0x66, 0xCC, 0x66, 0xCC } };
@@ -138,7 +139,6 @@ static void naza_main_task(void* pData)
 
 	float avg[3] = { 0 };
 	uint8_t avg_curr = 0;
-
 
 	while (1)
 	{
@@ -189,17 +189,22 @@ static void naza_main_task(void* pData)
 				simpleTelemtryData.lon = osd->lon / M_PI * 180.0;
 				simpleTelemtryData.alt = osd->altBaro;
 
-				nVel = osd->northVelocity;
-				eVel = osd->eastVelocity;
+				if (spdTick < tmpTick)
+				{
+					nVel = osd->northVelocity;
+					eVel = osd->eastVelocity;
 
-				avg[avg_curr++] = sqrtf(nVel * nVel + eVel * eVel);
-				avg_curr = avg_curr % 3;
+					avg[avg_curr++] = sqrtf(nVel * nVel + eVel * eVel);
+					avg_curr = avg_curr % 3;
 
-				simpleTelemtryData.speed = (avg[0] + avg[1] + avg[2]) / 3;
+					simpleTelemtryData.speed = (avg[0] + avg[1] + avg[2]) / 3;
 
-				simpleTelemtryData.cog = (atan2f(eVel, nVel) / M_PI * 180);
-				if (simpleTelemtryData.cog < 0)
-					simpleTelemtryData.cog += 360;
+					simpleTelemtryData.cog = (atan2f(eVel, nVel) / M_PI * 180);
+					if (simpleTelemtryData.cog < 0)
+						simpleTelemtryData.cog += 360;
+
+					spdTick = tmpTick + delay_ms(200);
+				}
 
 				simpleTelemtryData.vsi = -osd->downVelocity;
 
@@ -264,10 +269,12 @@ static void naza_main_task(void* pData)
 				simpleTelemtryData.homeLat = raw_io->homeLat / M_PI * 180.0;
 				simpleTelemtryData.homeLon = raw_io->homeLon / M_PI * 180.0;
 				simpleTelemtryData.homeAltBaro = raw_io->homeAltBaro;
+
 			}
 			else if (channel->msg.header.id == 0x0922)
 			{ //PMU Heartbeat
 				simpleTelemtryData.lastHeartbeat = CoGetOSTime();
+				hardware_led_toggle_green();
 			}
 			else if (channel->msg.header.id == 0x1007)
 			{ //osd heartbeat available

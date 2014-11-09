@@ -227,6 +227,8 @@ static void RX_Callback(uint8_t* id)
 				{
 					session->tmp.Value = session->tmp_bytes[session->tmp_length - 1];
 
+					hardware_led_toggle_red();
+
 					short crc = 0;
 					uint8_t* data = (uint8_t*) &session->tmp;
 					uint8_t byte;

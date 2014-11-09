@@ -148,7 +148,7 @@ void module_hott_task(void* pData)
 	uint8_t exec_alarm = 0;
 	double distance = 0;
 	uint8_t voltagePercent = 0;
-	uint16_t tmp_conv = 0;
+	double tmp_conv = 0;
 	int8_t page = 0;
 	uint8_t line = 0;
 	uint8_t active = 0;
@@ -226,23 +226,39 @@ void module_hott_task(void* pData)
 				msg.gps.angleYdirection = simpleTelemtryData.roll;
 				msg.gps.angleZdirection = simpleTelemtryData.heading;
 
-				msg.gps.lonEW = simpleTelemtryData.lon > 0 ? 0 : 1;
 				tmp_conv = simpleTelemtryData.lon;
-				msg.gps.lonMin = (tmp_conv * 100) + ((simpleTelemtryData.lon - tmp_conv) * 60);
-				msg.gps.lonSec = ((uint16_t) (((simpleTelemtryData.lon * 100000) - (tmp_conv * 100000)) * 6)) % 10000;
+				if (tmp_conv < 0)
+				{
+					msg.gps.lonEW = 1;
+					tmp_conv *= -1;
+				}
 
-				msg.gps.latNS = simpleTelemtryData.lat > 0 ? 0 : 1;
+				msg.gps.lonMin = (((uint16_t) tmp_conv) * 100);
+				tmp_conv = (tmp_conv - ((uint16_t) tmp_conv)) * 60;
+				msg.gps.lonMin += (uint16_t) tmp_conv;
+				tmp_conv = (tmp_conv - ((uint16_t) tmp_conv)) * 10000;
+				msg.gps.lonSec = (uint16_t) tmp_conv;
+
 				tmp_conv = simpleTelemtryData.lat;
-				msg.gps.latMin = (tmp_conv * 100) + ((simpleTelemtryData.lat - tmp_conv) * 60);
-				msg.gps.latSec = ((uint16_t) (((simpleTelemtryData.lat * 100000) - (tmp_conv * 100000)) * 6)) % 10000;
+				if (tmp_conv < 0)
+				{
+					msg.gps.latNS = 1;
+					tmp_conv *= -1;
+				}
+
+				msg.gps.latMin = (((uint16_t) tmp_conv) * 100);
+				tmp_conv = (tmp_conv - ((uint16_t) tmp_conv)) * 60;
+				msg.gps.latMin += (uint16_t) tmp_conv;
+				tmp_conv = (tmp_conv - ((uint16_t) tmp_conv)) * 10000;
+				msg.gps.latSec = (uint16_t) tmp_conv;
 
 				msg.gps.distance = (uint16_t) distance;
 
 				if (simpleTelemtryData.lon != 0 && simpleTelemtryData.lat != 0 && simpleTelemtryData.homeLon != 0
 						&& simpleTelemtryData.homeLat != 0)
 				{
-					msg.gps.HomeDirection = calculateAngle(simpleTelemtryData.homeLon, simpleTelemtryData.homeLat,
-							simpleTelemtryData.lon, simpleTelemtryData.lat) / 2;
+					msg.gps.HomeDirection = calculateAngle(simpleTelemtryData.lon, simpleTelemtryData.lat,
+							simpleTelemtryData.homeLon, simpleTelemtryData.homeLat) / 2;
 				}
 				else
 					msg.gps.HomeDirection = 0;
@@ -531,7 +547,7 @@ void module_hott_task(void* pData)
 			if (delay > ticks)
 				CoTickDelay(delay - ticks);
 
-			DEBUG_TOGGLE_RED();
+			hardware_led_toggle_red();
 
 			crc = 0;
 
@@ -546,8 +562,6 @@ void module_hott_task(void* pData)
 
 			USART_SendData(session->port->port, crc);
 			CoTickDelay(MODULE_HOTT_TX_DELAY);
-
-			DEBUG_TOGGLE_RED();
 		}
 
 	}
@@ -664,8 +678,8 @@ __inline__ double getDistance(double long1, double lat1, double long2, double la
 
 __inline__ double calculateAngle(double long1, double lat1, double long2, double lat2)
 {
-	double off_y = lat2 - lat1;
-	double off_x = cos(M_PI / 180 * lat1) * (long2 - long1);
+	double off_y = long2 - long1;
+	double off_x = cos(M_PI / 180 * long1) * (lat2 - lat1);
 	double bearing = atan2(off_y, off_x) / M_PI * 180;
 
 	if (bearing < 0)
