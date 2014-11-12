@@ -15964,7 +15964,7 @@ Source: www.kingbright.com</description>
 <attribute name="OC_FARNELL" value="2320811"/>
 </part>
 <part name="R1" library="rcl" deviceset="R-EU_" device="R0603" value="10k">
-<attribute name="OC_FARNELL" value="2331740"/>
+<attribute name="OC_FARNELL" value="2059627"/>
 </part>
 <part name="GND2" library="supply1" deviceset="GND" device=""/>
 <part name="IC2" library="texas" deviceset="SN65HVD232D" device=""/>
@@ -15973,17 +15973,17 @@ Source: www.kingbright.com</description>
 <part name="EXTENS." library="con-jst2" deviceset="?M05B-SRSS-TB" device="S"/>
 <part name="X2" library="con-molex-micro-fit-3_0" deviceset="HEADER_POS4_?" device="43650-0412" value="CAN Bus"/>
 <part name="R3" library="rcl" deviceset="R-EU_" device="R0603" value="1.8K">
-<attribute name="OC_FARNELL" value="2331730"/>
+<attribute name="OC_FARNELL" value="2059608"/>
 </part>
 <part name="R2" library="rcl" deviceset="R-EU_" device="R0603" value="1.8K">
-<attribute name="OC_FARNELL" value="2331730"/>
+<attribute name="OC_FARNELL" value="2059608"/>
 </part>
 <part name="P+4" library="supply1" deviceset="VCC" device=""/>
 <part name="R4" library="rcl" deviceset="R-EU_" device="R0603" value="68Ohm">
-<attribute name="OC_FARNELL" value="2331710"/>
+<attribute name="OC_FARNELL" value="2059570"/>
 </part>
 <part name="R5" library="rcl" deviceset="R-EU_" device="R0603" value="56Ohm">
-<attribute name="OC_FARNELL" value="2331709"/>
+<attribute name="OC_FARNELL" value="2059568"/>
 </part>
 <part name="LD1" library="led" deviceset="LED" device="CHIPLED_0603" value="RED">
 <attribute name="OC_FARNELL" value="2099221"/>

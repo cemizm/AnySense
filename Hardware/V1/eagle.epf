@@ -348,7 +348,7 @@ UsedLibrary="/Applications/EAGLE-7.0.0/lbr/zilog.lbr"
 
 [Win_1]
 Type="Schematic Editor"
-Loc="480 338 1079 737"
+Loc="360 248 959 647"
 State=0
 Number=2
 File="UniAdapter.sch"
@@ -395,11 +395,11 @@ Sheet="1"
 
 [Win_2]
 Type="Control Panel"
-Loc="0 -278 1875 577"
+Loc="360 248 959 647"
 State=2
 Number=0
 
 [Desktop]
-Screen="1920 1200"
+Screen="1440 900"
 Window="Win_1"
 Window="Win_2"

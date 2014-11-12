@@ -116,7 +116,7 @@
 <wire x1="22.7097375" y1="19.2989625" x2="22.7097375" y2="1.53345" width="0.254" layer="49"/>
 <wire x1="22.7097375" y1="1.53345" x2="37.66655" y2="1.53345" width="0.254" layer="49"/>
 <wire x1="37.66655" y1="1.53345" x2="37.7" y2="1.5" width="0.254" layer="49" curve="-90"/>
-<text x="2.0574" y="19.2504" size="1.27" layer="25" font="vector">AnySense 1.1</text>
+<text x="3.3274" y="19.2504" size="1.27" layer="25" font="vector">AnySense 1.1</text>
 </plain>
 <libraries>
 <library name="rcl">
@@ -1856,7 +1856,7 @@ Covered vias can be set in Masks (Limit).
 <param name="psElongationLong" value="100"/>
 <param name="psElongationOffset" value="100"/>
 <param name="mvStopFrame" value="0"/>
-<param name="mvCreamFrame" value="0.2"/>
+<param name="mvCreamFrame" value="0.1"/>
 <param name="mlMinStopFrame" value="0.075mm"/>
 <param name="mlMaxStopFrame" value="0.2mm"/>
 <param name="mlMinCreamFrame" value="0mil"/>
@@ -2041,7 +2041,7 @@ Covered vias can be set in Masks (Limit).
 <element name="R1" library="rcl" package="R0603" value="10k" x="21.4884" y="17.145" smashed="yes" rot="R90">
 <attribute name="NAME" x="21.4884" y="15.494" size="0.6096" layer="25" font="vector" rot="R180" align="bottom-center"/>
 <attribute name="VALUE" x="23.3934" y="16.51" size="1.27" layer="27" rot="R90"/>
-<attribute name="OC_FARNELL" value="2331740" x="21.4884" y="17.145" size="1.778" layer="27" rot="R90" display="off"/>
+<attribute name="OC_FARNELL" value="2059627" x="21.4884" y="17.145" size="1.778" layer="27" rot="R90" display="off"/>
 </element>
 <element name="IC2" library="texas" package="SOIC127P600X175-8N" value="SN65HVD232D" x="4.5" y="15.5" smashed="yes" rot="R180">
 <attribute name="PACKAGE" value="SOIC-8" x="4.5" y="15.5" size="1.778" layer="27" rot="R180" display="off"/>
@@ -2049,7 +2049,7 @@ Covered vias can be set in Masks (Limit).
 <attribute name="MPN" value="SN65HVD232D" x="4.5" y="15.5" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="SUPPLIER" value="Texas Instruments" x="4.5" y="15.5" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="OC_FARNELL" value="1103107" x="4.5" y="15.5" size="1.778" layer="27" rot="R180" display="off"/>
-<attribute name="NAME" x="3.798" y="18.0964" size="0.6096" layer="25" ratio="10" rot="SR0"/>
+<attribute name="NAME" x="6.211" y="12.3814" size="0.6096" layer="25" ratio="10" rot="SR0"/>
 <attribute name="VALUE" x="7.9544" y="21.215" size="2.0828" layer="27" ratio="10" rot="SR180"/>
 </element>
 <element name="PORT1" library="con-jst2" package="SM03B-SRSS-TB" value="SM03B-SRSS-TB" x="27.686" y="9.392" smashed="yes" rot="R90">
@@ -2073,22 +2073,22 @@ Covered vias can be set in Masks (Limit).
 <element name="R3" library="rcl" package="R0603" value="1.8K" x="17.9324" y="17.145" smashed="yes" rot="R270">
 <attribute name="NAME" x="17.9324" y="15.494" size="0.6096" layer="25" align="top-center"/>
 <attribute name="VALUE" x="16.0274" y="17.78" size="1.27" layer="27" rot="R270"/>
-<attribute name="OC_FARNELL" value="2331730" x="17.9324" y="17.145" size="1.778" layer="27" rot="R270" display="off"/>
+<attribute name="OC_FARNELL" value="2059608" x="17.9324" y="17.145" size="1.778" layer="27" rot="R270" display="off"/>
 </element>
 <element name="R2" library="rcl" package="R0603" value="1.8K" x="19.7104" y="17.145" smashed="yes" rot="R270">
 <attribute name="NAME" x="19.7104" y="15.494" size="0.6096" layer="25" rot="R180" align="bottom-center"/>
 <attribute name="VALUE" x="17.8054" y="17.78" size="1.27" layer="27" rot="R270"/>
-<attribute name="OC_FARNELL" value="2331730" x="19.7104" y="17.145" size="1.778" layer="27" rot="R270" display="off"/>
+<attribute name="OC_FARNELL" value="2059608" x="19.7104" y="17.145" size="1.778" layer="27" rot="R270" display="off"/>
 </element>
 <element name="R4" library="rcl" package="R0603" value="68Ohm" x="12.573" y="17.145" smashed="yes" rot="R90">
 <attribute name="NAME" x="12.7" y="15.494" size="0.6096" layer="25" rot="R180" align="bottom-center"/>
 <attribute name="VALUE" x="14.478" y="16.51" size="1.27" layer="27" rot="R90"/>
-<attribute name="OC_FARNELL" value="2331710" x="12.573" y="17.145" size="1.778" layer="27" rot="R90" display="off"/>
+<attribute name="OC_FARNELL" value="2059570" x="12.573" y="17.145" size="1.778" layer="27" rot="R90" display="off"/>
 </element>
 <element name="R5" library="rcl" package="R0603" value="56Ohm" x="10.795" y="17.145" smashed="yes" rot="R90">
 <attribute name="NAME" x="10.795" y="15.494" size="0.6096" layer="25" rot="R180" align="bottom-center"/>
 <attribute name="VALUE" x="12.7" y="16.51" size="1.27" layer="27" rot="R90"/>
-<attribute name="OC_FARNELL" value="2331709" x="10.795" y="17.145" size="1.778" layer="27" rot="R90" display="off"/>
+<attribute name="OC_FARNELL" value="2059568" x="10.795" y="17.145" size="1.778" layer="27" rot="R90" display="off"/>
 </element>
 <element name="LD1" library="led" package="CHIPLED_0603" value="RED" x="9.398" y="12.573" smashed="yes" rot="R180">
 <attribute name="VALUE" x="7.493" y="13.843" size="1.27" layer="27" rot="R270"/>
@@ -2401,16 +2401,19 @@ Covered vias can be set in Masks (Limit).
 <wire x1="20.2184" y1="9.3726" x2="21.5646" y2="9.3726" width="0.254" layer="1"/>
 <wire x1="21.5646" y1="9.3726" x2="22.225" y2="10.033" width="0.254" layer="1"/>
 <wire x1="22.225" y1="10.033" x2="22.225" y2="12.065" width="0.254" layer="1"/>
-<wire x1="22.225" y1="12.065" x2="23.114" y2="12.954" width="0.254" layer="1"/>
+<wire x1="22.225" y1="12.065" x2="23.876" y2="13.716" width="0.254" layer="1"/>
 <contactref element="EXTENS." pad="1"/>
-<wire x1="23.114" y1="12.954" x2="23.114" y2="14.224" width="0.254" layer="1"/>
-<wire x1="23.114" y1="14.224" x2="23.525" y2="14.635" width="0.254" layer="1"/>
-<wire x1="23.525" y1="14.635" x2="24.711" y2="14.635" width="0.254" layer="1"/>
 <contactref element="R3" pad="2"/>
-<wire x1="18.161" y1="14.859" x2="22.479" y2="14.859" width="0.254" layer="1"/>
-<wire x1="22.479" y1="14.859" x2="23.114" y2="14.224" width="0.254" layer="1"/>
+<wire x1="18.161" y1="14.859" x2="22.86" y2="14.859" width="0.254" layer="1"/>
 <wire x1="17.9324" y1="16.295" x2="17.9324" y2="15.0876" width="0.254" layer="1"/>
 <wire x1="17.9324" y1="15.0876" x2="18.161" y2="14.859" width="0.254" layer="1"/>
+<wire x1="23.876" y1="13.716" x2="25.654" y2="13.716" width="0.254" layer="1"/>
+<wire x1="25.654" y1="13.716" x2="25.781" y2="13.843" width="0.254" layer="1"/>
+<wire x1="25.781" y1="13.843" x2="25.781" y2="14.478" width="0.254" layer="1"/>
+<wire x1="25.781" y1="14.478" x2="25.624" y2="14.635" width="0.254" layer="1"/>
+<wire x1="25.624" y1="14.635" x2="24.711" y2="14.635" width="0.254" layer="1"/>
+<wire x1="24.711" y1="14.635" x2="23.084" y2="14.635" width="0.254" layer="1"/>
+<wire x1="23.084" y1="14.635" x2="22.86" y2="14.859" width="0.254" layer="1"/>
 </signal>
 <signal name="LD_RED">
 <contactref element="IC3" pad="10"/>
