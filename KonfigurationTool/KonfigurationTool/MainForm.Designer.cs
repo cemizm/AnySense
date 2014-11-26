@@ -111,6 +111,7 @@
             this.btnPort2Configure = new System.Windows.Forms.Button();
             this.lblPort2 = new System.Windows.Forms.Label();
             this.lblPort2Label = new System.Windows.Forms.Label();
+            this.lblUpdateHint = new System.Windows.Forms.Label();
             this.pnlTop.SuspendLayout();
             this.groupRC.SuspendLayout();
             this.grpChannelStats.SuspendLayout();
@@ -144,6 +145,7 @@
             // 
             this.pnlTop.AutoSize = true;
             this.pnlTop.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.pnlTop.Controls.Add(this.lblUpdateHint);
             this.pnlTop.Controls.Add(this.btnUpdate);
             this.pnlTop.Controls.Add(this.btnConnect);
             this.pnlTop.Controls.Add(this.cmbPort);
@@ -987,6 +989,19 @@
             this.lblPort2Label.TabIndex = 8;
             this.lblPort2Label.Text = "Port 2";
             // 
+            // lblUpdateHint
+            // 
+            this.lblUpdateHint.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.lblUpdateHint.AutoSize = true;
+            this.lblUpdateHint.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblUpdateHint.ForeColor = System.Drawing.Color.Red;
+            this.lblUpdateHint.Location = new System.Drawing.Point(439, 13);
+            this.lblUpdateHint.Name = "lblUpdateHint";
+            this.lblUpdateHint.Size = new System.Drawing.Size(224, 16);
+            this.lblUpdateHint.TabIndex = 4;
+            this.lblUpdateHint.Text = "Please Update your AnySense.";
+            this.lblUpdateHint.Visible = false;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1010,6 +1025,7 @@
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyUp);
             this.pnlTop.ResumeLayout(false);
+            this.pnlTop.PerformLayout();
             this.groupRC.ResumeLayout(false);
             this.groupRC.PerformLayout();
             this.grpChannelStats.ResumeLayout(false);
@@ -1113,6 +1129,7 @@
         private System.Windows.Forms.Button btnPort2Configure;
         private System.Windows.Forms.Label lblPort2;
         private System.Windows.Forms.Label lblPort2Label;
+        private System.Windows.Forms.Label lblUpdateHint;
     }
 }
 

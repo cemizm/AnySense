@@ -16,43 +16,44 @@ void hott_initializeConfig(void* config)
 		cfg->version = 1;
 		cfg->num_cells = 3;
 		cfg->active_sensors = simulate_sensor_gam | simulate_sensor_gps;
-		cfg->gps_altitude_source = altitude_source_baro_sensor;
+		cfg->gps_altitude_source = value_source_alt_sensor;
+		cfg->gps_flightdirection_source = value_source_gps_sensor;
 
-		cfg->voltage_alarm[0].level = 8;
-		cfg->voltage_alarm[0].interval = 3;
+		cfg->voltage_alarm[0].level = 20;
+		cfg->voltage_alarm[0].interval = 8;
 		cfg->voltage_alarm[0].repeat = 0;
 		cfg->voltage_alarm[0].invert = 1;
 		cfg->voltage_alarm[0].tone = hott_alarm_tone_volt_min;
 
-		cfg->voltage_alarm[1].level = 50;
+		cfg->voltage_alarm[1].level = 10;
 		cfg->voltage_alarm[1].interval = 5;
-		cfg->voltage_alarm[1].repeat = 1;
-		cfg->voltage_alarm[1].invert = 0;
+		cfg->voltage_alarm[1].repeat = 0;
+		cfg->voltage_alarm[1].invert = 1;
 		cfg->voltage_alarm[1].tone = hott_alarm_tone_s1_volt_min;
 
-		cfg->voltage_alarm[2].level = 20;
-		cfg->voltage_alarm[2].interval = 10;
+		cfg->voltage_alarm[2].level = 5;
+		cfg->voltage_alarm[2].interval = 2;
 		cfg->voltage_alarm[2].repeat = 0;
 		cfg->voltage_alarm[2].invert = 1;
 		cfg->voltage_alarm[2].tone = hott_alarm_tone_s2_volt_min;
 
-		cfg->distance_alarm[0].level = 50;
-		cfg->distance_alarm[0].interval = 1;
-		cfg->distance_alarm[0].repeat = 1;
-		cfg->distance_alarm[0].invert = 0;
-		cfg->distance_alarm[0].tone = hott_alarm_tone_diff_pos_1;
+		cfg->distance_alarm[0].level = 3000;
+		cfg->distance_alarm[0].interval = 10;
+		cfg->distance_alarm[0].repeat = 0;
+		cfg->distance_alarm[0].invert = 1;
+		cfg->distance_alarm[0].tone = hott_alarm_tone_unk_04;
 
-		cfg->distance_alarm[1].level = 10;
-		cfg->distance_alarm[1].interval = 1;
-		cfg->distance_alarm[1].repeat = 1;
-		cfg->distance_alarm[1].invert = 1;
-		cfg->distance_alarm[1].tone = hott_alarm_tone_diff_pos_2;
+		cfg->distance_alarm[1].level = 0;
+		cfg->distance_alarm[1].interval = 0;
+		cfg->distance_alarm[1].repeat = 0;
+		cfg->distance_alarm[1].invert = 0;
+		cfg->distance_alarm[1].tone = hott_alarm_tone_none;
 
-		cfg->distance_alarm[2].level = 500;
-		cfg->distance_alarm[2].interval = 1;
+		cfg->distance_alarm[2].level = 0;
+		cfg->distance_alarm[2].interval = 0;
 		cfg->distance_alarm[2].repeat = 0;
-		cfg->distance_alarm[2].invert = 1;
-		cfg->distance_alarm[2].tone = hott_alarm_tone_diff_neg_2;
+		cfg->distance_alarm[2].invert = 0;
+		cfg->distance_alarm[2].tone = hott_alarm_tone_none;
 	}
 }
 
@@ -213,15 +214,28 @@ void module_hott_task(void* pData)
 				msg.gps.GPSNumSat = simpleTelemtryData.numSat;
 				msg.gps.GPSFixChar = simpleTelemtryData.fixType;
 
-				if (session->config->gps_altitude_source == altitude_source_baro_sensor)
+				if (session->config->gps_altitude_source == value_source_alt_sensor)
+				{
 					msg.gps.altitude = 500 + simpleTelemtryData.alt - (simpleTelemtryData.homeAltBaro - 20);
+					msg.gps.climbrate1s = 30000 + (simpleTelemtryData.vsi * 100);
+				}
 				else
+				{
 					msg.gps.altitude = 500 + simpleTelemtryData.gpsAlt;
+					msg.gps.climbrate1s = 30000 + (simpleTelemtryData.gpsVsi * 100);
+				}
 
-				msg.gps.climbrate1s = 30000 + (simpleTelemtryData.gpsVsi * 100);
 				msg.gps.climbrate3s = 120;
+
 				msg.gps.GPSSpeed = simpleTelemtryData.speed * 3.6;
-				msg.gps.flightDirection = simpleTelemtryData.heading / 2;
+
+				if (session->config->gps_flightdirection_source == value_source_alt_sensor)
+					msg.gps.flightDirection = simpleTelemtryData.heading / 2;
+				else
+					msg.gps.flightDirection = simpleTelemtryData.cog / 2;
+
+
+
 				msg.gps.angleXdirection = simpleTelemtryData.pitch;
 				msg.gps.angleYdirection = simpleTelemtryData.roll;
 				msg.gps.angleZdirection = simpleTelemtryData.heading;
@@ -261,16 +275,15 @@ void module_hott_task(void* pData)
 							simpleTelemtryData.homeLon, simpleTelemtryData.homeLat) / 2;
 				}
 				else
+				{
 					msg.gps.HomeDirection = 0;
+					msg.gps.alarm = hott_msg_alarm_main_curr;
+				}
 
 				msg.gps.gps_time_h = simpleTelemtryData.hour;
 				msg.gps.gps_time_m = simpleTelemtryData.minute;
 				msg.gps.gps_time_s = simpleTelemtryData.second;
 
-				if (simpleTelemtryData.fixType == fixType_No)
-					msg.gps.alarm = hott_msg_alarm_cells | hott_msg_alarm_main_curr;
-				else if (simpleTelemtryData.fixType == fixType_2D)
-					msg.gps.alarm = hott_msg_alarm_cells;
 
 				size = sizeof(struct hott_msg_gps);
 			} //session->sensor == hott_sensor_id_gps
@@ -298,7 +311,7 @@ void module_hott_task(void* pData)
 				{
 				case 0:
 					//															        012345678901234567890
-					snprintf((char *) &msg.text.text[0], MODULE_HOTT_TEXT_COLUMNS + 1, " UniAdapter GAM    <>");
+					snprintf((char *) &msg.text.text[0], MODULE_HOTT_TEXT_COLUMNS + 1, " AnySense GAM      <>");
 					snprintf((char *) &msg.text.text[1], MODULE_HOTT_TEXT_COLUMNS + 1, " Cells     :%d",
 							session->config->num_cells);
 					snprintf((char *) &msg.text.text[2], MODULE_HOTT_TEXT_COLUMNS + 1, " Battery   :%d.%02dV",
@@ -325,8 +338,8 @@ void module_hott_task(void* pData)
 					if (session->key == hott_key_set)
 						active = !active;
 
-					//															        012345678901234567890
-					snprintf((char *) &msg.text.text[0], MODULE_HOTT_TEXT_COLUMNS, " UniAdapter Tones  < ");
+					//															    012345678901234567890
+					snprintf((char *) &msg.text.text[0], MODULE_HOTT_TEXT_COLUMNS, " AnySense Tones    < ");
 					snprintf((char *) &msg.text.text[1], MODULE_HOTT_TEXT_COLUMNS + 1, "    A    H    O    V");
 					snprintf((char *) &msg.text.text[2], MODULE_HOTT_TEXT_COLUMNS + 1, "    B    I    P    W");
 					snprintf((char *) &msg.text.text[3], MODULE_HOTT_TEXT_COLUMNS + 1, "    C    J    Q    X");
@@ -367,7 +380,7 @@ void module_hott_task(void* pData)
 						fixText = fixTextDGPS;
 
 					//															        012345678901234567890
-					snprintf((char *) &msg.text.text[0], MODULE_HOTT_TEXT_COLUMNS + 1, " UniAdapter GPS    <>");
+					snprintf((char *) &msg.text.text[0], MODULE_HOTT_TEXT_COLUMNS + 1, " AnySense GPS      <>");
 					snprintf((char *) &msg.text.text[1], MODULE_HOTT_TEXT_COLUMNS + 1, " Num Sats :%d",
 							simpleTelemtryData.numSat);
 					snprintf((char *) &msg.text.text[2], MODULE_HOTT_TEXT_COLUMNS + 1, " FixType  :%s", fixText);
@@ -386,7 +399,7 @@ void module_hott_task(void* pData)
 				case 1:
 
 					//															        012345678901234567890
-					snprintf((char *) &msg.text.text[0], MODULE_HOTT_TEXT_COLUMNS + 1, " UniAdapter GPS    <>");
+					snprintf((char *) &msg.text.text[0], MODULE_HOTT_TEXT_COLUMNS + 1, " AnySense GPS      <>");
 					snprintf((char *) &msg.text.text[1], MODULE_HOTT_TEXT_COLUMNS + 1, " Position:");
 					snprintf((char *) &msg.text.text[2], MODULE_HOTT_TEXT_COLUMNS + 1, "  %3d.%06d",
 							(uint16_t) simpleTelemtryData.lat, getFraction(simpleTelemtryData.lat, 6));
@@ -412,7 +425,7 @@ void module_hott_task(void* pData)
 						modeText = modeTextFS;
 
 					//															        012345678901234567890
-					snprintf((char *) &msg.text.text[0], MODULE_HOTT_TEXT_COLUMNS + 1, " UniAdapter GPS    <>");
+					snprintf((char *) &msg.text.text[0], MODULE_HOTT_TEXT_COLUMNS + 1, " AnySense GPS      <>");
 					snprintf((char *) &msg.text.text[1], MODULE_HOTT_TEXT_COLUMNS + 1, " HDOP    :%3d.%02d",
 							(uint16_t) simpleTelemtryData.hdop, getFraction(simpleTelemtryData.hdop, 2));
 					snprintf((char *) &msg.text.text[2], MODULE_HOTT_TEXT_COLUMNS + 1, " VDOP    :%3d.%02d",
@@ -439,8 +452,8 @@ void module_hott_task(void* pData)
 					if (session->key == hott_key_set)
 						active = !active;
 
-					//															        012345678901234567890
-					snprintf((char *) &msg.text.text[0], MODULE_HOTT_TEXT_COLUMNS, " UniAdapter Tones  < ");
+					//															    012345678901234567890
+					snprintf((char *) &msg.text.text[0], MODULE_HOTT_TEXT_COLUMNS, " AnySense Tones    < ");
 					snprintf((char *) &msg.text.text[1], MODULE_HOTT_TEXT_COLUMNS + 1, "    A    H    O    V");
 					snprintf((char *) &msg.text.text[2], MODULE_HOTT_TEXT_COLUMNS + 1, "    B    I    P    W");
 					snprintf((char *) &msg.text.text[3], MODULE_HOTT_TEXT_COLUMNS + 1, "    C    J    Q    X");

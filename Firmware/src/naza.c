@@ -199,7 +199,7 @@ static void naza_main_task(void* pData)
 
 					simpleTelemtryData.speed = (avg[0] + avg[1] + avg[2]) / 3;
 
-					simpleTelemtryData.cog = (atan2f(eVel, nVel) / M_PI * 180);
+					simpleTelemtryData.cog = -(atan2f(eVel, nVel) / M_PI * 180);
 					if (simpleTelemtryData.cog < 0)
 						simpleTelemtryData.cog += 360;
 

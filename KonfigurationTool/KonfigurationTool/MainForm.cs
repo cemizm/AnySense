@@ -15,7 +15,7 @@ namespace KonfigurationTool
         private const int MAX_RETRY = 25;
 
         private const int MAV_SYSTEM_ID = 0xCE;
-        private const uint FIRMWARE_VERSION = 0x0000090C;
+        private const uint FIRMWARE_VERSION = 0x0000090F;
 
         private int retry;
         private StateMachineStep currentStep = StateMachineStep.None;
@@ -50,7 +50,7 @@ namespace KonfigurationTool
 
             byte[] ver = BitConverter.GetBytes(FIRMWARE_VERSION);
 
-            Text = string.Format("UniAdapter {0}.{1}.{2} - Konfiguration Manager", ver[2], ver[1], ver[0]);
+            Text = string.Format("AnySense {0}.{1}.{2} - Konfiguration Manager", ver[2], ver[1], ver[0]);
         }
 
         private void serialPort_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
@@ -81,7 +81,7 @@ namespace KonfigurationTool
 
             Type t = msg.GetType();
 
-            if (currentStep != StateMachineStep.Connected && t != typeof(Msg_configuration_version) &&  t != typeof(Msg_configuration_version2))
+            if (currentStep != StateMachineStep.Connected && t != typeof(Msg_configuration_version) && t != typeof(Msg_configuration_version2))
                 return;
 
             if (t == typeof(Msg_configuration_control))
@@ -221,9 +221,9 @@ namespace KonfigurationTool
                     Msg_configuration_version msg_version = (msg as Msg_configuration_version);
                     lblPort1.Text = ((ProtocolType)msg_version.port1).ToString();
                     lblPort2.Text = ((ProtocolType)msg_version.port2).ToString();
-                    
+
                     version = msg_version.fw_version;
-                    version =  version << 8;
+                    version = version << 8;
                 }
                 else
                 {
@@ -235,9 +235,11 @@ namespace KonfigurationTool
                     lblPort2.Text = ((ProtocolType)msg_version.port2).ToString();
                 }
 
-                tsFWVersion.Text = string.Format("{0}.{1}.{2}", (byte)(version >> 16), (byte)(version>>8), (byte)version);
+                tsFWVersion.Text = string.Format("{0}.{1}.{2}", (byte)(version >> 16), (byte)(version >> 8), (byte)version);
 
                 btnUpdate.Visible = FIRMWARE_VERSION > version;
+                lblUpdateHint.Visible = FIRMWARE_VERSION != version;
+                lblUpdateHint.Text = (FIRMWARE_VERSION > version ? "Please Update your AnySense." : "Please Update your Konfiguration Manager.");
                 btnPort1Configure.Enabled = FIRMWARE_VERSION == version;
                 btnPort2Configure.Enabled = FIRMWARE_VERSION == version;
             }
@@ -384,7 +386,7 @@ namespace KonfigurationTool
                 }
                 StateMachineUpdate(StateMachineStep.None);
 
-                MessageBox.Show(this, string.Format("No UniAdapter found on {0}\nMaybe wrong Port?", serialPort.PortName), "Connection failed", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(this, string.Format("No AnySense found on {0}\nMaybe wrong Port?", serialPort.PortName), "Connection failed", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
             else
             {

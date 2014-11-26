@@ -10,7 +10,7 @@
 struct configStruct configuration = {
 		.configVersion = CONFIG_VERSION,
 		.port1 = {
-				.type = parser_frsky,
+				.type = parser_hott,
 				.parserConfig = { 0 },
 		},
 		.port2 = {

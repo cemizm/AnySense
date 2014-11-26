@@ -62,7 +62,7 @@
             this.MinimizeBox = false;
             this.Name = "UpdateForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "UniAdapter Firmware Update";
+            this.Text = "AnySense Firmware Update";
             this.ResumeLayout(false);
             this.PerformLayout();
 

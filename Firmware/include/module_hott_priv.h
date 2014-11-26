@@ -243,9 +243,9 @@ enum simulate_sensor
 	simulate_sensor_gps = 1, simulate_sensor_gam = 2,
 };
 
-enum altitude_source
+enum value_source
 {
-	altitude_source_gps_sensor = 0, altitude_source_baro_sensor = 1,
+	value_source_gps_sensor = 0, value_source_alt_sensor = 1,
 };
 
 struct hott_config
@@ -253,7 +253,8 @@ struct hott_config
 	uint8_t version;
 	uint8_t num_cells;								//number of cells
 	enum simulate_sensor active_sensors;			//bitmask for sensors
-	enum altitude_source gps_altitude_source;
+	enum value_source gps_altitude_source;
+	enum value_source gps_flightdirection_source;
 	struct hott_voltage_alarm voltage_alarm[MODULE_HOTT_VOLTAGE_ALARMS];
 	struct hott_distance_alarm distance_alarm[MODULE_HOTT_DISTANCE_ALARMS];
 }__attribute__((packed, aligned(1)));

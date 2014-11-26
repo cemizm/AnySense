@@ -19,14 +19,15 @@ namespace KonfigurationTool
             Version = 2;
             Active = Sensors.GPS_AND_GAM;
             Cells = 3;
-            GPSAltSource = GPSAltSourceEnum.Baro;
+            GPSAltSource = AltSourceEnum.Baro;
+            GPSFlightdirectionSource = FlightDirSourceEnum.GPS;
 
             VoltageAlarms = new VoltageAlarm[] { 
-                new VoltageAlarm() { Voltage = 15, Tone=HoTTAlarmTone.Tone_A, Interval = 3, Invert=true, Repeat=0 }, 
-                new VoltageAlarm(), 
-                new VoltageAlarm(), };
+                new VoltageAlarm() { Voltage = 20, Tone=HoTTAlarmTone.Tone_P, Interval = 8, Invert=true, Repeat=0 }, 
+                new VoltageAlarm() { Voltage = 10, Tone=HoTTAlarmTone.Tone_R, Interval = 5, Invert=true, Repeat=0 }, 
+                new VoltageAlarm() { Voltage = 5, Tone=HoTTAlarmTone.Tone_S, Interval = 2, Invert=true, Repeat=0 },  };
             DistanceAlarms = new DistanceAlarm[] { 
-                new DistanceAlarm() { Distance=3000, Tone=HoTTAlarmTone.Tone_P, Interval=10, Invert=true, Repeat=0 }, 
+                new DistanceAlarm() { Distance=3000, Tone=HoTTAlarmTone.Tone_D, Interval=10, Invert=true, Repeat=0 }, 
                 new DistanceAlarm(), 
                 new DistanceAlarm(), };
         }
@@ -63,9 +64,14 @@ namespace KonfigurationTool
         }
 
         [Category("1. General")]
-        [DisplayName("GPS Altitude Source")]
-        [Description("Defines the source of GPS Altitude")]
-        public GPSAltSourceEnum GPSAltSource { get; set; }
+        [DisplayName("GPS Altitude/Vario Source")]
+        [Description("Defines the source of GPS Altitude and Vario")]
+        public AltSourceEnum GPSAltSource { get; set; }
+
+        [Category("1. General")]
+        [DisplayName("GPS Flightdirection Source")]
+        [Description("Defines the source of GPS Flightdirectio")]
+        public FlightDirSourceEnum GPSFlightdirectionSource { get; set; }
 
         [Category("2. Alarms")]
         [DisplayName("Voltage Alarms")]
@@ -82,8 +88,9 @@ namespace KonfigurationTool
             Version = data[0];
             Cells = data[1];
             Active = (Sensors)data[2];
-            GPSAltSource = (GPSAltSourceEnum)data[3];
-            int offset = 4;
+            GPSAltSource = (AltSourceEnum)data[3];
+            GPSFlightdirectionSource = (FlightDirSourceEnum)data[4];
+            int offset = 5;
 
             List<VoltageAlarm> voltageAlarms = new List<VoltageAlarm>();
             for (int i = 0; i < VOLTAGE_ALARMS; i++)
@@ -120,8 +127,9 @@ namespace KonfigurationTool
             data[1] = Cells;
             data[2] = (byte)Active;
             data[3] = (byte)GPSAltSource;
+            data[4] = (byte)GPSFlightdirectionSource;
 
-            int offset = 4;
+            int offset = 5;
             foreach (VoltageAlarm alarm in VoltageAlarms)
             {
                 data[offset++] = alarm.Voltage;
@@ -153,10 +161,16 @@ namespace KonfigurationTool
             GPS_AND_GAM = 3,
         }
 
-        public enum GPSAltSourceEnum : byte
+        public enum AltSourceEnum : byte
         {
             GPS = 0,
             Baro = 1,
+        }
+
+        public enum FlightDirSourceEnum : byte
+        {
+            GPS = 0,
+            Compass = 1,
         }
 
         public abstract class Alarm
