@@ -51,7 +51,7 @@
 enum hott_sensor_id
 {
 	hott_sensor_id_gam = 0x8D,  		// General Air Module ID
-	hott_senor_id_eam = 0x8E,		// Electric Air Module ID
+	hott_sensor_id_eam = 0x8E,		// Electric Air Module ID
 	hott_sensor_id_gps = 0x8A,		// GPS Module ID
 	hott_sensor_id_vario = 0x89,		// Vario Sensor Module ID
 };
@@ -127,7 +127,7 @@ enum hott_gps_fix
 	hott_gps_fix_DGPS = 0x44,				//DGPS Fix
 };
 
-// GENERAL AIR MODULE
+// GENERAL AIR Module
 struct hott_msg_gam
 {
 	uint8_t start;								//#01 start uint8_t constant value 0x7c
@@ -159,7 +159,7 @@ struct hott_msg_gam
 	uint8_t stop;								//#44 stop uint8_t 0x7D
 }__attribute__((packed, aligned(1)));
 
-//GPS MODULE
+//GPS Module
 struct hott_msg_gps
 {
 	uint8_t start;							//#01 start uint8_t constant value 0x7c
@@ -167,6 +167,7 @@ struct hott_msg_gps
 	enum hott_alarm_tone warning_beeps;		//#03 warning tone
 	uint8_t sensor_id;						//#04 GPS Text message ID
 	enum hott_alarm_msg alarm;				//#05 alarm bitmask
+
 	uint8_t flightDirection; 				//#07: 119 = Flightdir./dir. 1 = 2°; 0°(North), 90°(East), 180°(South), 270°(West)
 	uint16_t GPSSpeed; 						//#08: 8 = /GPS speed low byte 8km/h
 	uint8_t latNS; 							//#10: 00 = N = 48°39’988 #10 north = 0, south = 1
@@ -194,7 +195,74 @@ struct hott_msg_gps
 	uint8_t Ascii4; 						//#40: 00 ASCII Free Character [4]
 	uint8_t Ascii5; 						//#41: 00 ASCII Free Character [5]
 	uint8_t GPS_fix; 						//#42: 00 ASCII Free Character [6], we use it for GPS FIX
+
 	uint8_t version; 						//#43: 00 version number
+	uint8_t stop;	 						//#44: 0x7D Ende byte
+}__attribute__((packed, aligned(1)));
+
+//Vardio Module
+struct hott_msg_vario
+{
+	uint8_t start;							//#01 start uint8_t constant value 0x7c
+	enum hott_sensor_id request_sensor_id;	//#02 GPS Sesnor ID
+	enum hott_alarm_tone warning_beeps;		//#03 warning tone
+	uint8_t sensor_id;						//#04 GPS Text message ID
+	uint8_t alarm;				//#05 alarm bitmask
+
+	int16_t height; /* altitude in meters. offset of 500, 500 = 0m */
+	int16_t height_max; /* altitude in meters. offset of 500, 500 = 0m */
+	int16_t height_min; /* altitude in meters. offset of 500, 500 = 0m */
+	uint16_t climbm2s; /* climb rate in 0.01m/s; 120= 0 */
+	uint16_t Vclimbm3s; /* climb rate in 0.01m/3s; 30000= 0 */
+	uint16_t Vclimbm10s; /* climb rate in 0.01m/10s; 30000 = 0 */
+	uint8_t text_msg[MODULE_HOTT_TEXT_COLUMNS];  // text index, should be 21 characters
+	uint8_t free_char1; /* appears right to home distance */
+	uint8_t free_char2; /* appears right to home distance */
+	uint8_t gps_fix_char; /* GPS ASCII D=DGPS 2=2D 3=3D -=No Fix */
+	uint8_t flight_direction; /*angle heading in 2 degree steps */
+
+	uint8_t version; 						//#43: 00 version number
+	uint8_t stop;	 						//#44: 0x7D Ende byte
+}__attribute__((packed, aligned(1)));
+
+//Electric Air Module
+struct hott_msg_eam
+{
+	uint8_t start;							//#01 start uint8_t constant value 0x7c
+	enum hott_sensor_id request_sensor_id;	//#02 GPS Sesnor ID
+	enum hott_alarm_tone warning_beeps;		//#03 warning tone
+	uint8_t sensor_id;						//#04 GPS Text message ID
+	enum hott_alarm_msg alarm;				//#05 alarm bitmask
+
+	uint8_t cell1L; /* Low Voltage Cell 1-7 in 2mV steps */
+	uint8_t cell2L;
+	uint8_t cell3L;
+	uint8_t cell4L;
+	uint8_t cell5L;
+	uint8_t cell6L;
+	uint8_t cell7L;
+	uint8_t cell1H; /* High Voltage Cell 1-7 in 2mV steps */
+	uint8_t cell2H;
+	uint8_t cell3H;
+	uint8_t cell4H;
+	uint8_t cell5H;
+	uint8_t cell6H;
+	uint8_t cell7H;
+	uint16_t battery1; /* Battery 1 LSB/MSB in 100mv steps; 50 == 5V */
+	uint16_t battery2; /* Battery 2 LSB/MSB in 100mv steps; 50 == 5V */
+	uint8_t temp1; /* Temp 1; Offset of 20. 20 == 0C */
+	uint8_t temp2; /* Temp 2; Offset of 20. 20 == 0C */
+	uint16_t height; /* Height. Offset -500. 500 == 0 */
+	uint16_t current; /* 1 = 0.1A */
+	uint16_t driveVoltage; /* Main battery */
+	uint16_t capacity; /* mAh */
+	uint16_t climbm2s; /* climb rate in 0.01m/s; 120 == 0 */
+	uint8_t climbm3s; /* climb rate in m/3s; 120 == 0 WATCH the 255 (uint8) as max*/
+	uint16_t rpm; /* RPM. 10er steps; 300 == 3000rpm */
+	uint8_t minutes;
+	uint8_t seconds;
+	uint16_t speed; /* Air speed in km.h */    // moet dit niet een uint8_t zijn!!!!
+
 	uint8_t stop;	 						//#44: 0x7D Ende byte
 }__attribute__((packed, aligned(1)));
 
@@ -216,6 +284,8 @@ union hott_msg
 	uint8_t buffer[MODULE_HOTT_MSG_BUFFER_SIZE];
 	struct hott_msg_gam gam;
 	struct hott_msg_gps gps;
+	struct hott_msg_vario vario;
+	struct hott_msg_eam eam;
 
 	struct hott_msg_text text;
 };
@@ -240,7 +310,7 @@ struct hott_distance_alarm
 
 enum simulate_sensor
 {
-	simulate_sensor_gps = 1, simulate_sensor_gam = 2,
+	simulate_sensor_gps = 1, simulate_sensor_gam = 2, simulate_sensor_eam = 4, simulate_sensor_vario = 8,
 };
 
 enum value_source

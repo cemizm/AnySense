@@ -17,7 +17,7 @@ namespace KonfigurationTool
             : base()
         {
             Version = 2;
-            Active = Sensors.GPS_AND_GAM;
+
             Cells = 3;
             GPSAltSource = AltSourceEnum.Baro;
             GPSFlightdirectionSource = FlightDirSourceEnum.GPS;
@@ -36,12 +36,6 @@ namespace KonfigurationTool
         [DisplayName("Config Version")]
         [Description("Version of Configuration for backward compability")]
         public byte Version { get; private set; }
-
-        [Category("1. General")]
-        [DisplayName("Active Sensors")]
-        [Description("Defines the active Sensors to simulate")]
-        public Sensors Active { get; set; }
-
 
         [Category("1. General")]
         [DisplayName("Number of cells")]
@@ -64,8 +58,8 @@ namespace KonfigurationTool
         }
 
         [Category("1. General")]
-        [DisplayName("GPS Altitude/Vario Source")]
-        [Description("Defines the source of GPS Altitude and Vario")]
+        [DisplayName("Altitude/Vario Source")]
+        [Description("Defines the source of Altitude and Vario")]
         public AltSourceEnum GPSAltSource { get; set; }
 
         [Category("1. General")]
@@ -73,12 +67,32 @@ namespace KonfigurationTool
         [Description("Defines the source of GPS Flightdirectio")]
         public FlightDirSourceEnum GPSFlightdirectionSource { get; set; }
 
-        [Category("2. Alarms")]
+        [Category("2. Active Sensors")]
+        [DisplayName("General Air Modul")]
+        [Description("General Air modul enabled")]
+        public bool ActiveGAM { get; set; }
+
+        [Category("2. Active Sensors")]
+        [DisplayName("Electric Air Modul")]
+        [Description("Electric Air Modul enbabled")]
+        public bool ActiveEAM { get; set; }
+
+        [Category("2. Active Sensors")]
+        [DisplayName("GPS")]
+        [Description("GPS enbabled")]
+        public bool ActiveGPS { get; set; }
+
+        [Category("2. Active Sensors")]
+        [DisplayName("Vario")]
+        [Description("Vario enbabled")]
+        public bool ActiveVario { get; set; }
+
+        [Category("3. Alarms")]
         [DisplayName("Voltage Alarms")]
         [Description("Defines alarms for Voltage")]
         public VoltageAlarm[] VoltageAlarms { get; private set; }
 
-        [Category("2. Alarms")]
+        [Category("3. Alarms")]
         [DisplayName("Distance Alarms")]
         [Description("Defines alarms for distance")]
         public DistanceAlarm[] DistanceAlarms { get; private set; }
@@ -87,7 +101,12 @@ namespace KonfigurationTool
         {
             Version = data[0];
             Cells = data[1];
-            Active = (Sensors)data[2];
+
+            ActiveEAM = ((Sensors)data[2] & Sensors.EAM) == Sensors.EAM;
+            ActiveGAM = ((Sensors)data[2] & Sensors.GAM) == Sensors.GAM;
+            ActiveGPS = ((Sensors)data[2] & Sensors.GPS) == Sensors.GPS;
+            ActiveVario = ((Sensors)data[2] & Sensors.Vario) == Sensors.Vario;
+
             GPSAltSource = (AltSourceEnum)data[3];
             GPSFlightdirectionSource = (FlightDirSourceEnum)data[4];
             int offset = 5;
@@ -123,9 +142,23 @@ namespace KonfigurationTool
         {
             byte[] data = new byte[128];
 
+            Sensors active = Sensors.None;
+
+            if (ActiveEAM)
+                active = active | Sensors.EAM;
+
+            if (ActiveGAM)
+                active = active | Sensors.GAM;
+
+            if (ActiveGPS)
+                active = active | Sensors.GPS;
+
+            if (ActiveVario)
+                active = active | Sensors.Vario;
+
             data[0] = Version;
             data[1] = Cells;
-            data[2] = (byte)Active;
+            data[2] = (byte)active;
             data[3] = (byte)GPSAltSource;
             data[4] = (byte)GPSFlightdirectionSource;
 
@@ -156,9 +189,11 @@ namespace KonfigurationTool
 
         public enum Sensors : byte
         {
+            None = 0,
             GPS = 1,
             GAM = 2,
-            GPS_AND_GAM = 3,
+            EAM = 4, 
+            Vario = 8,
         }
 
         public enum AltSourceEnum : byte

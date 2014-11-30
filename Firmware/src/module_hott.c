@@ -11,11 +11,11 @@ void hott_initializeConfig(void* config)
 {
 	struct hott_config* cfg = (struct hott_config*) config;
 
-	if (cfg->version != 2)
+	if (cfg->version != 4)
 	{
-		cfg->version = 1;
+		cfg->version = 4;
 		cfg->num_cells = 3;
-		cfg->active_sensors = simulate_sensor_gam | simulate_sensor_gps;
+		cfg->active_sensors = simulate_sensor_gam | simulate_sensor_gps | simulate_sensor_vario | simulate_sensor_eam;
 		cfg->gps_altitude_source = value_source_alt_sensor;
 		cfg->gps_flightdirection_source = value_source_gps_sensor;
 
@@ -154,6 +154,9 @@ void module_hott_task(void* pData)
 	uint8_t line = 0;
 	uint8_t active = 0;
 
+	float minHeight = 500;
+	float maxHeight = 500;
+
 	char fixTextNo[] = "No";
 	char fixText2D[] = "2D";
 	char fixText3D[] = "3D";
@@ -165,6 +168,8 @@ void module_hott_task(void* pData)
 	char modeTextGPS[] = "GPS";
 	char modeTextFS[] = "Failsafe";
 	char* modeText = NULL;
+
+	char fixChars[] = { '-', '-', '2', '3', 'D' };
 
 	while (1)
 	{
@@ -184,6 +189,15 @@ void module_hott_task(void* pData)
 		}
 		else
 			distance = 0;
+
+		if (simpleTelemtryData.mode == flightMode_manual)
+			modeText = modeTextMan;
+		else if (simpleTelemtryData.mode == flightMode_atti)
+			modeText = modeTextAtti;
+		else if (simpleTelemtryData.mode == flightMode_gps)
+			modeText = modeTextGPS;
+		else
+			modeText = modeTextFS;
 
 		switch (session->request_type)
 		{
@@ -207,12 +221,75 @@ void module_hott_task(void* pData)
 
 				size = sizeof(struct hott_msg_gam);
 			} //session->sensor == hott_sensor_id_gam
+			else if (session->sensor == hott_sensor_id_vario && (session->config->active_sensors & simulate_sensor_vario))
+			{
+				HOTT_INIT_MSG(msg.vario, hott_sensor_id_vario);
+
+				msg.vario.Vclimbm10s = 30000;
+				msg.vario.Vclimbm3s = 30000;
+
+				if (session->config->gps_altitude_source == value_source_alt_sensor)
+				{
+					msg.vario.height = 500 + simpleTelemtryData.alt - (simpleTelemtryData.homeAltBaro - 20);
+					msg.vario.climbm2s = 120 + (simpleTelemtryData.vsi * 10);
+				}
+				else
+				{
+					msg.vario.height = 500 + simpleTelemtryData.gpsAlt;
+					msg.vario.climbm2s = 120 + (simpleTelemtryData.gpsVsi * 10);
+				}
+
+				if (simpleTelemtryData.lon != 0 && simpleTelemtryData.lat != 0 && simpleTelemtryData.homeLon != 0
+						&& simpleTelemtryData.homeLat != 0)
+				{
+
+					if (msg.vario.height > maxHeight)
+						maxHeight = msg.vario.height;
+
+					if (msg.vario.height < minHeight)
+						minHeight = msg.vario.height;
+				}
+
+				msg.vario.height_max = maxHeight;
+				msg.vario.height_min = minHeight;
+
+				snprintf((char *) &msg.vario.text_msg, MODULE_HOTT_TEXT_COLUMNS + 1, "Flightmode: %s", modeText);
+
+				if (session->config->gps_flightdirection_source == value_source_alt_sensor)
+					msg.vario.flight_direction = simpleTelemtryData.heading / 2;
+				else
+					msg.vario.flight_direction = simpleTelemtryData.cog / 2;
+
+				size = sizeof(struct hott_msg_vario);
+			} //session->sensor == hott_sensor_id_vario
+			else if (session->sensor == hott_sensor_id_eam && (session->config->active_sensors & simulate_sensor_eam))
+			{
+				HOTT_INIT_MSG(msg.eam, hott_sensor_id_eam);
+
+				if (session->config->gps_altitude_source == value_source_alt_sensor)
+				{
+					msg.eam.height = 500 + simpleTelemtryData.alt - (simpleTelemtryData.homeAltBaro - 20);
+					msg.eam.climbm2s = 30000 + (simpleTelemtryData.vsi * 100);
+				}
+				else
+				{
+					msg.eam.height = 500 + simpleTelemtryData.gpsAlt;
+					msg.eam.climbm2s = 30000 + (simpleTelemtryData.gpsVsi * 100);
+				}
+
+				msg.eam.climbm3s = 120;
+
+				msg.eam.speed = simpleTelemtryData.speed * 3.6;
+				msg.eam.driveVoltage = simpleTelemtryData.battery / 100;
+
+				size = sizeof(struct hott_msg_eam);
+			} //session->sensor == hott_sensor_id_eam
 			else if (session->sensor == hott_sensor_id_gps && (session->config->active_sensors & simulate_sensor_gps))
 			{
 				HOTT_INIT_MSG(msg.gps, hott_sensor_id_gps);
-				msg.gps.sensor_id = 0xa0;
 				msg.gps.GPSNumSat = simpleTelemtryData.numSat;
-				msg.gps.GPSFixChar = simpleTelemtryData.fixType;
+
+				msg.gps.GPS_fix = fixChars[simpleTelemtryData.fixType];
 
 				if (session->config->gps_altitude_source == value_source_alt_sensor)
 				{
@@ -233,8 +310,6 @@ void module_hott_task(void* pData)
 					msg.gps.flightDirection = simpleTelemtryData.heading / 2;
 				else
 					msg.gps.flightDirection = simpleTelemtryData.cog / 2;
-
-
 
 				msg.gps.angleXdirection = simpleTelemtryData.pitch;
 				msg.gps.angleYdirection = simpleTelemtryData.roll;
@@ -283,7 +358,6 @@ void module_hott_task(void* pData)
 				msg.gps.gps_time_h = simpleTelemtryData.hour;
 				msg.gps.gps_time_m = simpleTelemtryData.minute;
 				msg.gps.gps_time_s = simpleTelemtryData.second;
-
 
 				size = sizeof(struct hott_msg_gps);
 			} //session->sensor == hott_sensor_id_gps
@@ -414,15 +488,6 @@ void module_hott_task(void* pData)
 							(uint16_t) distance, getFraction(distance, 2));
 					break;
 				case 2:
-
-					if (simpleTelemtryData.mode == flightMode_manual)
-						modeText = modeTextMan;
-					else if (simpleTelemtryData.mode == flightMode_atti)
-						modeText = modeTextAtti;
-					else if (simpleTelemtryData.mode == flightMode_gps)
-						modeText = modeTextGPS;
-					else
-						modeText = modeTextFS;
 
 					//															        012345678901234567890
 					snprintf((char *) &msg.text.text[0], MODULE_HOTT_TEXT_COLUMNS + 1, " AnySense GPS      <>");
@@ -606,7 +671,9 @@ static void RX_Callback(uint8_t* id)
 			tmpSensor = (0x80 | (byte >> 4));
 
 		if ((tmpSensor == hott_sensor_id_gam && (session->config->active_sensors & simulate_sensor_gam))
-				|| (tmpSensor == hott_sensor_id_gps && (session->config->active_sensors & simulate_sensor_gps)))
+				|| (tmpSensor == hott_sensor_id_gps && (session->config->active_sensors & simulate_sensor_gps))
+				|| (tmpSensor == hott_sensor_id_vario && (session->config->active_sensors & simulate_sensor_vario))
+				|| (tmpSensor == hott_sensor_id_eam && (session->config->active_sensors & simulate_sensor_eam)))
 		{
 			session->sensor = tmpSensor;
 			session->key = session->request_type == hott_request_type_text ? (byte & 0x0F) : 0;
