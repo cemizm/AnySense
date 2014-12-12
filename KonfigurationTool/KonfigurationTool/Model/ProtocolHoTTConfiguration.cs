@@ -22,6 +22,11 @@ namespace KonfigurationTool
             GPSAltSource = AltSourceEnum.Baro;
             GPSFlightdirectionSource = FlightDirSourceEnum.GPS;
 
+            ActiveGPS = true;
+            ActiveEAM = true;
+            ActiveGAM = true;
+            ActiveVario = true;
+
             VoltageAlarms = new VoltageAlarm[] { 
                 new VoltageAlarm() { Voltage = 20, Tone=HoTTAlarmTone.Tone_P, Interval = 8, Invert=true, Repeat=0 }, 
                 new VoltageAlarm() { Voltage = 10, Tone=HoTTAlarmTone.Tone_R, Interval = 5, Invert=true, Repeat=0 }, 
