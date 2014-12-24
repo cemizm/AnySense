@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<head lang="en">
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<title>“Viral Coupon” Documentation by “WESMASHED.IT”</title>
+	<!-- Framework CSS -->
+	<link rel="stylesheet" href="assets/blueprint-css/screen.css" type="text/css" media="screen, projection">
+	<link rel="stylesheet" href="assets/blueprint-css/print.css" type="text/css" media="print">
+	<!--[if lt IE 8]><link rel="stylesheet" href="assets/blueprint-css/ie.css" type="text/css" media="screen, projection"><![endif]-->
+	<link rel="stylesheet" href="assets/blueprint-css/plugins/fancy-type/screen.css" type="text/css" media="screen, projection">
+	<style type="text/css" media="screen">
+		p, table, hr, .box { margin-bottom:25px; }
+		.box p { margin-bottom:10px; }
+	</style>
+</head>
+
+
+<body>
+	<div class="container">
+	
+		<h3 class="center alt">&ldquo;Viral Coupon for WooCommerce&rdquo; Documentation by &ldquo;WESMASHED.IT&rdquo;</h3>
+		
+		<hr>
+		
+		<h1 class="center">&ldquo;Viral Coupon for WooCommerce&rdquo;</h1>
+		
+		<div class="borderTop">
+			<div class="span-6 colborder info prepend-1">
+				<p class="prepend-top">
+					<strong>
+				Created: 27/02/2012</strong><strong><br>
+			    By: <a href="http://WESMASHED.IT">WESMASHED.IT </a><br>
+			    </strong> </p>
+</div><!-- end div .span-6 -->		
+	
+			<div class="span-12 last">
+				<p class="prepend-top append-0">&quot;If you want something done, ask a busy person.&quot; - <em>Benjamin Franklin</em></p>
+		  </div>
+		</div><!-- end div .borderTop -->
+		
+		<hr>
+		
+		<h3 id="toc" class="success"><a href="http://www.youtube.com/watch?v=NCoJOjSxasohttp://wesmashed.it/plugins/viraldownload/doc/video/">Check out the Video walkthrough here!</a></h3>
+		<h3 class="success">NEW: Now you can give your customers the opportunity to write a comment with their Facebook like.</h3>
+  <h2 class="alt">Table of Contents</h2>
+		<ol class="alpha">
+	    <li><a href="#upload">Upload files</a></li>
+			<li><a href="#activate">Setting up the plugin</a></li>
+			<li><a href="#custom2">Customization &amp; Styling</a></li>
+			<li><a href="#menus">Cookies</a></li>
+
+
+
+      </ol>
+		
+<hr>
+					<h3 class="notice" id="upload">New in version 1.4.1: You can now disable social networks from the settings page. If you upgrade then please go to the settings and activate the ones you want to use.</h3>
+		<h3 class="error" id="upload">IMPORTANT: In order for Viral Coupon to work on the checkout page you need to &quot;Enable coupon form on checkout&quot; in WooCommerce settings. Go to WooCommerce-&gt;Settings-&gt;General.<img src="assets/images/coupons.png" width="618" height="90"></h3>
+					<h3>&nbsp;</h3>
+		<h3><strong>A) Upload files </strong> - <a href="#toc">top</a></h3>
+	  <p>The first thing you need to do is upload the plugin to your server.</p>
+	  <p><strong>Install via WordPress admin dashboard</strong><br>
+      1) The easiest way to install Viral Coupon is to login to your WordPress admin -&gt; Click: Plugins -&gt; Add new -&gt; Upload.</p>
+<p><img src="assets/images/upload.jpg" width="610" height="407"></p>
+	  <p>2) Find the ZIP file of the Plugin in the &quot;Plugin&quot; folder of your download.</p>
+	  <p>3) Click &quot;Install now&quot;.</p>
+	  <p>4) When it has been installed click &quot;Activate Plugin&quot;.</p>
+	  <p><img src="assets/images/activate.jpg" width="731" height="159"></p>
+	  <p><strong>Installing via FTP</strong></p>
+	  <p>1) Upload the &quot;woocommerce-viral-coupon&quot; folder which you can find in the plugin folder to &quot;/wp-content/plugins/&quot; on your server.<br>
+      </p>
+<p>2) Login to your WordPress admin and go to Plugins-&gt;Installed plugins.</p>
+	  <p>3) Activate the plugin by clicking activate under &quot;Viral Coupon for WooCommerce&quot;.</p>
+<hr>
+
+		<h3 id="activate"><strong>B) Setting up the plugin</strong> - <a href="#toc">top</a></h3>
+
+		<p>To start using the plugin head over to the Viral Coupon settings page by clicking the &quot;Viral Coupon&quot; link in your WordPress admin menu.</p>
+		<p><img src="assets/images/couponlink.jpg" width="601" height="523"></p>
+      <h2>Settings cheat sheet:</h2>
+      <p><strong>My ID</strong> - This is used to identify every unique discount campaign. Enter something unique here like &quot;5BUCKS12&quot;. When a user likes or shares your link for campaign &quot;5BUCKS12&quot; they won't see the Viral Coupon box again until you change the My ID or they clear out there cookies. This can be useful if you for example want to run a free shipping campaign at one time and a percentage discount another time. So short version: Set it to something unique and if you want to show the Viral Coupon box to everybody that has already shared before then change the ID.</p>
+      <p>
+        <label for="message">Message</label> 
+        - This message is shown to the customer before the have liked or shared your link. Use it to tell your customers that they should like to get a discount. Example: &quot;Like or share to get £5 off your order!&quot;.</p>
+      <p>
+        <label for="twitterurl">Twitter URL</label>
+       - The link that is sent along with the Tweet.<br>
+       <br>
+        <label for="twitterurl">Facebook URL</label>
+        - The link that is liked on Facebook. This can be a fanpage or just a link to your site.<br>
+        <br>
+        <label for="twitterurl">Google+ URL</label>
+      - The link that is +1 at Google+. This can be a Google+ page or a link to your site.</p>
+      <p><strong>Tweet </strong>- The twitter message that is sent to twitter along with your link. The message will be placed before your link.</p>
+      <p>
+        <label for="coupon">Select Coupon code</label> 
+      - Select which WooCommerce coupon should be applied once they like or share. If the dropdown is empty then you need to create a coupon in WooCommerce.</p>
+      <p><strong>Thank you message </strong>- This message is displayed once when the user has succesfully liked or shared. Use it to thank your customers or give them the acutal coupon code if you want them to be able to use it at another time.<br>
+      </p>
+      <p>
+        <label for="cartpage">Enable on Cart page</label>
+-  If enabled then the Viral Coupon box will be shown on the cart page.<br>
+<br>
+        <label for="cartpage">Enable on Checkout page</label>
+        -   If enabled then the Viral Coupon box will be shown on the checkout page. If a users shares your link when at the cart page then the Viral Coupon box will not be shown again on the checkout page.</p>
+      <p><strong>NEW: Enable HTTPS - Send the data over a secure HTTPS connecting. Enable this if you have any SSL errors.</strong></p>
+      <strong>Refresh delay</strong> - If enabled you can set a delay between when the users likes or G+'s your link and the coupon is applied. This gives your customer the oppurtunity to write a comment for their like.<br>
+      <br>
+      <strong>Refresh delay time</strong> - The time between the like or G+ and the page is refreshed and coupon is applied in seconds. Checkbox above need to be enabled for this to have any effect. 
+<p><strong>Test Mode</strong>- Enable if you don't want the Viral Coupon box to dissapear after it has been liked/shared.</p>
+      <p><img src="assets/images/new_admin.jpg" width="740" height="673"><br>
+      </p>
+<hr>
+		
+		<h3 id="custom2"><strong>C) Customization &amp; Styling</strong> - <a href="#toc">top</a></h3>
+		<p>You can make some simple changes in the plugin code if you want to customize the plugin more then you can do with the settings.</p>
+        <p><strong>Style the Viral Coupon output:<br>
+        </strong></p>
+        <p>Put your custom styles in custom.css that you can find in your Viral Coupon plugin folder. All the classes that you can style are already in there with descriptions for when to use which one.</p>
+        <h3> CSS Examples:</h3>
+        <p><strong>Change the width on the Cart page:</strong></p>
+        <p class="success">.virallocker-box {<br>
+          width: 93%;<br>
+          }</p>
+        <p><strong>Change the background color on the checkout page:</strong></p>
+        <p class="success">.virallocker-box-checkout {<br>
+          background-color: #0C0;<br>
+          }</p>
+        <p><strong>Use solid border instead of dashed:</strong></p>
+        <p class="success">.virallocker-box {<br>
+          border: 1px solid #3B5998<br>
+          }</p>
+        <p><strong>Float thank you message to the right instead of left and change font size:</strong></p>
+        <p class="success">.unlocked {<br>
+          float: right;<br>
+          font-size: 60px;<br>
+          }</p>
+        <h3>Code customizations:</h3>
+        <p><strong>Change the language of the Facebook like button:</strong></p>
+        <p>Edit line 110 of class-viral-coupon.php</p>
+        <p class="success"> echo '&lt;script type=&quot;text/javascript&quot; src=&quot;http://connect.facebook.net/en_US/all.js#xfbml=1&quot;&gt;&lt;/script&gt;';</p>
+        <p>Replace en_US with the ISO code of your country. Example: For Germany it would be de_DE.</p>
+        <p><strong>Change the language of the Tweet button:</strong></p>
+        <p>Edit line 282 of woocommerce-viral-coupon.php</p>
+      <p class="success"> &lt;div&gt;&lt;a href=&quot;http://twitter.com/share&quot; class=&quot;twitter-share-button&quot; data-text=&quot;'.$tweet.'&quot; data-url=&quot;'.$my_url.'&quot; data-count=&quot;horizontal&quot; data-lang=&quot;en&quot;&gt;Tweet&lt;/a&gt;&lt;/div&gt;</p>
+      <p>Replace data-lang=&quot;<strong>en</strong>&quot; with your own language code. Example: data-lang=&quot;<strong>de</strong>&quot; for German. Then on the same line replace &quot;<strong>Tweet</strong>&quot; with the translated version.</p>
+      <p><strong>Change the langauge of the Google+ button:</strong></p>
+      <p>Add this somewhere in your themes header.php file (wp-content/your-theme/header.php).</p>
+      <p class="success">&lt;script type=&quot;text/javascript&quot;&gt;<br>
+window.___gcfg = {<br>
+lang: 'zh-CN'<br>
+};(function() {<br>
+      var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;<br>
+      po.src = 'https://apis.google.com/js/plusone.js';<br>
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);<br>
+      })();<br>
+  &lt;/script&gt;</p>
+      <p>Replace <strong>zh-CN</strong> with your own language and country ISO codes.</p>
+<hr>
+		
+	  <h3 id="menus"><strong>D) <span id="menus">Cookies</span></strong> - <a href="#toc">top</a></h3>
+	  <p>Please note that this plugin use cookies that are placed on the users computer to remember if they have already like or shared your link. In some countries you have to inform your visitors that your site uses cookies.</p>
+      <p>You can read more about cookies here:</p>
+      <p><a href="http://en.wikipedia.org/wiki/HTTP_cookie">http://en.wikipedia.org/wiki/HTTP_cookie</a></p>
+      <hr>
+      <h2 id="support">Need support?</h2>
+      <p><span class="large alt append-bottom">Need support? Please go through the manual  once more before you ask for help. This will in most cases solve your issues quicker. If you need further support then don't hesitate to contact us using our <a href="https://smashed.desk.com">dedicated support site.</a><br>
+        Thank you</span>!</p>
+      <p><span class="large alt append-bottom">For WooCommerce questions:<br>
+        <a href="http://wordpress.org/support/plugin/woocommerce">WooThemes Support<br>
+          WooCommerce Support</a></span></p>
+      <p><span class="large alt append-bottom">For questions regarding Royal Mail for WooCommerce:</span><br>
+        <span class="large alt append-bottom"><a href="http://forum.jigoshop.com/">Support desk</a></span></p>
+      <p class="large alt append-bottom"><strong>TAKE CARE<br>
+        WESMASHED.IT </strong>	  </p>
+    <p><a href="#toc">Go To Table of Contents</a></p>
+		
+		<hr class="space">
+	</div><!-- end div .container -->
+</body>
+</html>

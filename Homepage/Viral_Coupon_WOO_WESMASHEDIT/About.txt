@@ -1,0 +1,72 @@
+Viral Coupon for WordPress + WooCommerce by WESMASHED.IT.
+
+http://WESMASHED.IT/
+
+Changelog:
+
+2014-11-24 - 1.5.2
+-Added options for Horizontal/Vertical display.
+
+2014-10-28 - 1.5.1
+-Fixed issue when using custom assets folder in WordPress.
+-Fixed an issue with the Thank You message on checkout.
+
+2014-10-27 - 1.5
+-Fixed Mandrill conflict.
+
+2014-10-15 - 1.4.9
+-Fixed Twitter message bug.
+
+2014-10-04 - 1.4.8
+-Fixed missing Call To Action message bug.
+
+2014-05-12 - 1.4.7
+-Added option to disabled jQuery in case of Javascript conflicts.
+
+2014-04-12 - 1.4.6
+-Updated jQuery version for compatability. 
+
+2014-01-24 - 1.4.5
+-Fixed a typo in the code causing a  fatal error on checkout page.
+
+2014-01-10 - 1.4.4
+-Added warning messages when SSL is enabled and URL isn't HTTPS.
+
+2013-10-25 - 1.4.3
+-Added some helping notes to the settings regarding URL format. This solves the issue with the Facebook button not showing up.
+
+2013-09-26 - 1.4.2
+-Made some changes to improve compatability with other plugins and themes using jQuery.
+
+2013-07-22 - 1.4.1
+-You can now enable/disable social networks on the settings page. If you updated from an older version then you need to activate the social networks you want from the settings page.
+
+2013-04-22 - 1.4
+-Updated the refresh delay feature to include Google+.
+-Added HTTPS support to avoid SSL errors.
+
+2013-02-22 - 1.3.2
+-WooCommerce 2.0 compatability confirmed. No changes necessary.
+-CSS fix to checkout page. Thank you message now displayed in front of billing address. 
+
+2013-02-22 - 1.3.1
+-Fixed a bug where coupons would not be applied on checkout page with latest WooCommerce 1.6.6.
+
+2013-01-17 - 1.3
+-Added a delay option for Facebook likes. This gives the customer the opportunity to wrote a message with their like if they want to.
+-Compatability update for WooCommerce 1.6.6 when Viral Coupon is activated on the checkout page.
+
+2012-10-17 - 1.2.1
+Updated twitter code.
+
+2012-09-21 - 1.2
+New Facebook code.
+
+1.1.1
+Updated for WooCommerce 1.6
+
+1.1
+Updated for WooCommerce 1.5.8.
+
+1.0.1
+-Fixed bug where coupons where not found in the admin page when using DB prefix other then wp_.

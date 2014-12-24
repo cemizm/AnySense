@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0" xmlns:c="http://base.google.com/cns/1.0">
+  <channel>
+    <title>produkte-xml</title>
+    <link><![CDATA[http://anysense.de/wp-content/uploads/cart_product_feeds/Google/produkte-xml.xml]]></link>
+    <description>produkte-xml</description>
+      <item>
+        <g:id>333</g:id>
+        <title><![CDATA[Anysense - Mavlink Osd Kabel]]></title>
+        <link><![CDATA[http://anysense.de/produkte/anysense-mavlink-osd-kabel/]]></link>
+        <g:product_type><![CDATA[Toys & Games > Toys > Remote Control Toy Accessories]]></g:product_type>
+        <description><![CDATA[Um die Anbindung des Mavlink OSD‘s zu vereinfachen ist optional das AnySense Mavlink OSD Kabel erhältlich. Dies vereinfacht den Verkabelungsaufwand erheblich.]]></description>
+        <g:google_product_category><![CDATA[Toys & Games > Toys > Remote Control Toy Accessories]]></g:google_product_category>
+        <g:condition>New</g:condition>
+        <g:availability>in stock</g:availability>
+        <g:mpn>10003</g:mpn>
+	<g:brand>AnySense</g:brand>
+        <g:price>7.95 EUR</g:price>
+        <g:sale_price>5.95 EUR</g:sale_price>
+        <g:image_link><![CDATA[http://anysense.de/wp-content/uploads/2014/12/AnySense_Zubehoer_OSD.jpg]]></g:image_link>
+        <g:additional_image_link><![CDATA[http://anysense.de/wp-content/uploads/2014/11/AnySense_Installation_OSD.jpg]]></g:additional_image_link>
+        <g:shipping>
+          <g:service>Ground</g:service>
+          <g:price>0.00 EUR</g:price>
+        </g:shipping>
+      </item>
+      <item>
+        <g:id>321</g:id>
+        <title><![CDATA[Anysense - Programmierkabel]]></title>
+        <link><![CDATA[http://anysense.de/produkte/anysense-programmierkabel/]]></link>
+        <g:product_type><![CDATA[Toys & Games > Toys > Remote Control Toy Accessories]]></g:product_type>
+        <description><![CDATA[Mit dem AnySense USB Kabel lässt sich das Telemetrie Modul bequem mit dem Computer verbinden. Dies wird für die Konfiguration und Firmware Aktualisierungen benötigt.]]></description>
+        <g:google_product_category><![CDATA[Toys & Games > Toys > Remote Control Toy Accessories]]></g:google_product_category>
+        <g:condition>New</g:condition>
+        <g:availability>in stock</g:availability>
+        <g:mpn>10002</g:mpn>
+	<g:brand>AnySense</g:brand>
+        <g:price>16.95 EUR</g:price>
+        <g:sale_price>14.95 EUR</g:sale_price>
+        <g:image_link><![CDATA[http://anysense.de/wp-content/uploads/2014/12/AnySense_Zubehoer_USB.jpg]]></g:image_link>
+        <g:additional_image_link><![CDATA[http://anysense.de/wp-content/uploads/2014/11/AnySense_Konfiguration_Abbildung1.jpg]]></g:additional_image_link>
+        <g:shipping>
+          <g:service>Ground</g:service>
+          <g:price>0.00 EUR</g:price>
+        </g:shipping>
+      </item>
+      <item>
+        <g:id>315</g:id>
+        <title><![CDATA[Anysense - Telemetrie Modul]]></title>
+        <link><![CDATA[http://anysense.de/produkte/anysense-telemetrie-modul/]]></link>
+        <g:product_type><![CDATA[Toys & Games > Toys > Remote Control Toy Accessories]]></g:product_type>
+        <description><![CDATA[Der AnySense bringt dir die Telemetrie Information der DJI Naza, Wookong und Phantom in Echtzeit  auf deine Graupner/SJ HoTT oder Taranis Fernsteuerung, um dir relevante Statusinformationen des Modells während eines Fluges anzuzeigen. Mit dem MinimOSD ist eine Anbindung an das OSD ebenfalls möglich.
+Welche Flugsteuerungen/Modelle unterstützt der AnySense?
+Zurzeit unterstützt der AnySense die Naza-M V1*, Naza-M V2, Wookong-M, Phantom 1* und Phantom 2.
+
+*Für die Verwendung mit der Naza-M V1 oder dem Phantom 1 wird der CAN Bus benötigt. Der CAN Bus kann in beiden Fällen mit der PMU V2  nachgerüstet werden.
+Welche Fernsteuerung unterstützt der AnySense?
+Der AnySense arbeitet aktuell mit den Telemetrie Protokollen der Hersteller Graupner/SJ HoTT und FrSky S.Port (Taranis) zusammen. Neben der Unterstützung der Fernsteuerung, werden die Telemetrie Daten auch in dem Mavlink Protokoll ausgeben. Damit kann z.B. auch das MinimOSD verwendet werden um die Telemetrie Daten i]]></description>
+        <g:google_product_category><![CDATA[Toys & Games > Toys > Remote Control Toy Accessories]]></g:google_product_category>
+        <g:condition>New</g:condition>
+        <g:availability>in stock</g:availability>
+        <g:mpn>10001</g:mpn>
+	<g:brand>AnySense</g:brand>
+        <g:price>69.95 EUR</g:price>
+        <g:sale_price>59.95 EUR</g:sale_price>
+        <g:image_link><![CDATA[http://anysense.de/wp-content/uploads/2014/11/AnySense_Installation_Empfaenger.jpg]]></g:image_link>
+        <g:additional_image_link><![CDATA[http://anysense.de/wp-content/uploads/2014/11/AnySense_Bild1.jpg]]></g:additional_image_link>
+        <g:additional_image_link><![CDATA[http://anysense.de/wp-content/uploads/2014/11/AnySense_Bild3.jpg]]></g:additional_image_link>
+        <g:additional_image_link><![CDATA[http://anysense.de/wp-content/uploads/2014/11/AnySense_Konfiguration_Abbildung1.jpg]]></g:additional_image_link>
+        <g:additional_image_link><![CDATA[http://anysense.de/wp-content/uploads/2014/11/AnySense_Installation_OSD.jpg]]></g:additional_image_link>
+        <g:shipping>
+          <g:service>Ground</g:service>
+          <g:price>0.00 EUR</g:price>
+        </g:shipping>
+      </item>
+  </channel>
+</rss>
