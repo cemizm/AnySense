@@ -64,5 +64,7 @@ struct simpleTelemetry simpleTelemtryData;
 
 void simpleTelemetry_initialize();
 int16_t simpleTelemetry_getRCIn(uint8_t chan);
+uint8_t simpleTelemetry_isStickConfig();
+uint8_t simpleTelemetry_stickConfigPosition();
 
 #endif /* SIMPLETELEMTRY_H_ */

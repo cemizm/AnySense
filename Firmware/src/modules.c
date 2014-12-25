@@ -95,11 +95,19 @@ void modules_start()
 void configManager_task(void* pdata)
 {
 
-	U64 exitIn = CoGetOSTime() + delay_ms(2100);
+	U64 exitIn = CoGetOSTime() + delay_ms(2600);
 	U64 ticks = 0;
 	U64 lastNazaHeartbeatSend = 0;
 	uint8_t established = 0;
 	uint8_t exit = 0;
+
+	U64 stickConfigStart = 0;
+	U64 stickConfigSetStart = 0;
+
+	uint8_t isStickConfig = 0;
+	uint8_t stickConfigPosOld = 0;
+	uint8_t stickConfigPosNew = 0;
+	uint8_t stickConfigFinish = 0;
 
 	StatusType status;
 
@@ -115,7 +123,7 @@ void configManager_task(void* pdata)
 	while (!exit)
 	{
 
-		buffer = CoPendQueueMail(command_box_id, established ? delay_ms(100) : delay_ms(500), &status);
+		buffer = CoPendQueueMail(command_box_id, delay_ms(100), &status);
 
 		msg_len = 0;
 
@@ -206,8 +214,68 @@ void configManager_task(void* pdata)
 			else
 				msg_len = mavlink_pack_nextData(&msg_tmp, &currentValue);
 		}
+		else if (isStickConfig)
+		{
+			if (!stickConfigFinish)
+			{
+				if (ticks % delay_ms(400) < delay_ms(100))
+					hardware_led_toggle_red();
+
+				stickConfigPosNew = simpleTelemetry_stickConfigPosition();
+
+				if (stickConfigPosNew != stickConfigPosOld)
+				{
+					stickConfigPosOld = stickConfigPosNew;
+					stickConfigSetStart = stickConfigPosOld != 0 ? ticks + delay_sec(1) : 0;
+				}
+
+				if (stickConfigSetStart > 0 && ticks > stickConfigSetStart)
+				{
+					switch (stickConfigPosNew)
+					{
+					case 1:
+						configuration.port1.type = parser_frsky;
+						break;
+					case 3:
+						configuration.port1.type = parser_hott;
+						break;
+					}
+
+					modules_initialize_config(&configuration.port1);
+					config_save();
+
+					stickConfigStart = ticks + delay_sec(3);
+					stickConfigFinish = 1;
+				}
+			}
+			else
+			{
+				//led off last half
+				if ((stickConfigStart - ticks) < delay_ms(1500))
+					hardware_led_off_red();
+				else //Blink first half
+					hardware_led_toggle_red();
+			}
+
+			if (ticks > stickConfigStart)
+				exit = 1;
+		}
 		else
 		{
+			if (simpleTelemetry_isStickConfig())
+			{
+				if (stickConfigStart == 0)
+					stickConfigStart = ticks + delay_sec(1);
+
+				if (ticks > stickConfigStart)
+				{
+					stickConfigStart = ticks + delay_sec(7); //auto exit stick config mode
+					isStickConfig = 1;
+				}
+			}
+			else
+				stickConfigStart = 0;
+
 			if (ticks > exitIn)
 				exit = 1;
 		}
@@ -241,7 +309,7 @@ void configManager_task(void* pdata)
 
 	CoSchedUnlock();
 
-	hardware_led_toggle_red();
+	hardware_led_off_red();
 
 	CoExitTask();
 

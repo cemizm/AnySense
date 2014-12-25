@@ -125,6 +125,12 @@ inline void hardware_led_toggle_red()
 	GPIO_WriteBit(LED_PORT, LED_PIN_RED, GPIO_ReadOutputDataBit(LED_PORT, LED_PIN_RED) ? Bit_RESET : Bit_SET);
 }
 
+
+inline void hardware_led_off_red()
+{
+	GPIO_WriteBit(LED_PORT, LED_PIN_RED, Bit_RESET);
+}
+
 inline void hardware_led_toggle_green()
 {
 	GPIO_WriteBit(LED_PORT, LED_PIN_GREEN, GPIO_ReadOutputDataBit(LED_PORT, LED_PIN_GREEN) ? Bit_RESET : Bit_SET);
