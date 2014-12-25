@@ -29,10 +29,13 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.serialPort = new System.IO.Ports.SerialPort(this.components);
             this.timer = new System.Windows.Forms.Timer(this.components);
             this.lblPort = new System.Windows.Forms.Label();
             this.pnlTop = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.lblUpdateHint = new System.Windows.Forms.Label();
             this.btnUpdate = new System.Windows.Forms.Button();
             this.btnConnect = new System.Windows.Forms.Button();
             this.cmbPort = new System.Windows.Forms.ComboBox();
@@ -82,6 +85,7 @@
             this.lblAltitude = new System.Windows.Forms.Label();
             this.lblSpeed = new System.Windows.Forms.Label();
             this.lblSpeedLabel = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.groupGPS = new System.Windows.Forms.GroupBox();
             this.lblNumSat = new System.Windows.Forms.Label();
             this.lblNumSatLabel = new System.Windows.Forms.Label();
@@ -111,7 +115,8 @@
             this.btnPort2Configure = new System.Windows.Forms.Button();
             this.lblPort2 = new System.Windows.Forms.Label();
             this.lblPort2Label = new System.Windows.Forms.Label();
-            this.lblUpdateHint = new System.Windows.Forms.Label();
+            this.lblInfo = new System.Windows.Forms.Label();
+            this.linkUrl = new System.Windows.Forms.LinkLabel();
             this.pnlTop.SuspendLayout();
             this.groupRC.SuspendLayout();
             this.grpChannelStats.SuspendLayout();
@@ -143,8 +148,9 @@
             // 
             // pnlTop
             // 
-            this.pnlTop.AutoSize = true;
             this.pnlTop.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.pnlTop.BackColor = System.Drawing.Color.Transparent;
+            this.pnlTop.Controls.Add(this.panel2);
             this.pnlTop.Controls.Add(this.lblUpdateHint);
             this.pnlTop.Controls.Add(this.btnUpdate);
             this.pnlTop.Controls.Add(this.btnConnect);
@@ -156,14 +162,39 @@
             this.pnlTop.MinimumSize = new System.Drawing.Size(0, 35);
             this.pnlTop.Name = "pnlTop";
             this.pnlTop.Padding = new System.Windows.Forms.Padding(5);
-            this.pnlTop.Size = new System.Drawing.Size(666, 41);
+            this.pnlTop.Size = new System.Drawing.Size(666, 59);
             this.pnlTop.TabIndex = 1;
+            // 
+            // panel2
+            // 
+            this.panel2.BackgroundImage = global::KonfigurationTool.Properties.Resources.anysense_80;
+            this.panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.panel2.Location = new System.Drawing.Point(477, -2);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(183, 52);
+            this.panel2.TabIndex = 5;
+            // 
+            // lblUpdateHint
+            // 
+            this.lblUpdateHint.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.lblUpdateHint.AutoSize = true;
+            this.lblUpdateHint.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblUpdateHint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(11)))), ((int)(((byte)(16)))));
+            this.lblUpdateHint.Location = new System.Drawing.Point(245, 36);
+            this.lblUpdateHint.Name = "lblUpdateHint";
+            this.lblUpdateHint.Size = new System.Drawing.Size(224, 16);
+            this.lblUpdateHint.TabIndex = 4;
+            this.lblUpdateHint.Text = "Please Update your AnySense.";
+            this.lblUpdateHint.Visible = false;
             // 
             // btnUpdate
             // 
-            this.btnUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUpdate.Location = new System.Drawing.Point(358, 8);
+            this.btnUpdate.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(11)))), ((int)(((byte)(16)))));
+            this.btnUpdate.FlatAppearance.CheckedBackColor = System.Drawing.Color.White;
+            this.btnUpdate.FlatAppearance.MouseDownBackColor = System.Drawing.Color.White;
+            this.btnUpdate.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(11)))), ((int)(((byte)(16)))));
+            this.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnUpdate.Location = new System.Drawing.Point(320, 8);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(75, 25);
             this.btnUpdate.TabIndex = 3;
@@ -173,27 +204,36 @@
             // 
             // btnConnect
             // 
-            this.btnConnect.Location = new System.Drawing.Point(277, 8);
+            this.btnConnect.BackColor = System.Drawing.Color.White;
+            this.btnConnect.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(11)))), ((int)(((byte)(16)))));
+            this.btnConnect.FlatAppearance.CheckedBackColor = System.Drawing.Color.White;
+            this.btnConnect.FlatAppearance.MouseDownBackColor = System.Drawing.Color.White;
+            this.btnConnect.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(11)))), ((int)(((byte)(16)))));
+            this.btnConnect.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnConnect.Location = new System.Drawing.Point(239, 8);
             this.btnConnect.Name = "btnConnect";
             this.btnConnect.Size = new System.Drawing.Size(75, 25);
             this.btnConnect.TabIndex = 2;
             this.btnConnect.Text = "Open";
-            this.btnConnect.UseVisualStyleBackColor = true;
+            this.btnConnect.UseVisualStyleBackColor = false;
             this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
             // 
             // cmbPort
             // 
+            this.cmbPort.BackColor = System.Drawing.Color.White;
             this.cmbPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbPort.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbPort.FormattingEnabled = true;
             this.cmbPort.Location = new System.Drawing.Point(63, 9);
             this.cmbPort.MinimumSize = new System.Drawing.Size(150, 0);
             this.cmbPort.Name = "cmbPort";
-            this.cmbPort.Size = new System.Drawing.Size(208, 21);
+            this.cmbPort.Size = new System.Drawing.Size(170, 21);
             this.cmbPort.TabIndex = 1;
             this.cmbPort.SelectedIndexChanged += new System.EventHandler(this.cmbPort_SelectedIndexChanged);
             // 
             // groupRC
             // 
+            this.groupRC.BackColor = System.Drawing.Color.Transparent;
             this.groupRC.Controls.Add(this.lblRC8);
             this.groupRC.Controls.Add(this.lblRC8Label);
             this.groupRC.Controls.Add(this.lblRC7);
@@ -384,6 +424,7 @@
             // 
             // grpChannelStats
             // 
+            this.grpChannelStats.BackColor = System.Drawing.Color.Transparent;
             this.grpChannelStats.Controls.Add(this.lblStatCorruptedLabel);
             this.grpChannelStats.Controls.Add(this.lblStatCorrupted);
             this.grpChannelStats.Controls.Add(this.lblStatDropLabel);
@@ -463,6 +504,7 @@
             // 
             // gpGenerall
             // 
+            this.gpGenerall.BackColor = System.Drawing.Color.Transparent;
             this.gpGenerall.Controls.Add(this.lblBattery);
             this.gpGenerall.Controls.Add(this.lblBatteryLabel);
             this.gpGenerall.Controls.Add(this.lblFlightMode);
@@ -516,6 +558,7 @@
             // 
             // groupTelemetry
             // 
+            this.groupTelemetry.BackColor = System.Drawing.Color.Transparent;
             this.groupTelemetry.Controls.Add(this.lblPitch);
             this.groupTelemetry.Controls.Add(this.lblPitchLabel);
             this.groupTelemetry.Controls.Add(this.lblRoll);
@@ -542,6 +585,7 @@
             // lblPitch
             // 
             this.lblPitch.AutoSize = true;
+            this.lblPitch.BackColor = System.Drawing.Color.Transparent;
             this.lblPitch.Location = new System.Drawing.Point(149, 147);
             this.lblPitch.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblPitch.Name = "lblPitch";
@@ -552,6 +596,7 @@
             // lblPitchLabel
             // 
             this.lblPitchLabel.AutoSize = true;
+            this.lblPitchLabel.BackColor = System.Drawing.Color.Transparent;
             this.lblPitchLabel.Location = new System.Drawing.Point(6, 147);
             this.lblPitchLabel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblPitchLabel.Name = "lblPitchLabel";
@@ -562,6 +607,7 @@
             // lblRoll
             // 
             this.lblRoll.AutoSize = true;
+            this.lblRoll.BackColor = System.Drawing.Color.Transparent;
             this.lblRoll.Location = new System.Drawing.Point(149, 129);
             this.lblRoll.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblRoll.Name = "lblRoll";
@@ -572,6 +618,7 @@
             // lblRollLabel
             // 
             this.lblRollLabel.AutoSize = true;
+            this.lblRollLabel.BackColor = System.Drawing.Color.Transparent;
             this.lblRollLabel.Location = new System.Drawing.Point(6, 129);
             this.lblRollLabel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblRollLabel.Name = "lblRollLabel";
@@ -582,6 +629,7 @@
             // lblThrottle
             // 
             this.lblThrottle.AutoSize = true;
+            this.lblThrottle.BackColor = System.Drawing.Color.Transparent;
             this.lblThrottle.Location = new System.Drawing.Point(149, 111);
             this.lblThrottle.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblThrottle.Name = "lblThrottle";
@@ -592,6 +640,7 @@
             // lblThrottleLabel
             // 
             this.lblThrottleLabel.AutoSize = true;
+            this.lblThrottleLabel.BackColor = System.Drawing.Color.Transparent;
             this.lblThrottleLabel.Location = new System.Drawing.Point(6, 111);
             this.lblThrottleLabel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblThrottleLabel.Name = "lblThrottleLabel";
@@ -602,6 +651,7 @@
             // lblClimb
             // 
             this.lblClimb.AutoSize = true;
+            this.lblClimb.BackColor = System.Drawing.Color.Transparent;
             this.lblClimb.Location = new System.Drawing.Point(149, 93);
             this.lblClimb.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblClimb.Name = "lblClimb";
@@ -612,6 +662,7 @@
             // lblClimbLabel
             // 
             this.lblClimbLabel.AutoSize = true;
+            this.lblClimbLabel.BackColor = System.Drawing.Color.Transparent;
             this.lblClimbLabel.Location = new System.Drawing.Point(6, 93);
             this.lblClimbLabel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblClimbLabel.Name = "lblClimbLabel";
@@ -622,6 +673,7 @@
             // lblHeadingLabel
             // 
             this.lblHeadingLabel.AutoSize = true;
+            this.lblHeadingLabel.BackColor = System.Drawing.Color.Transparent;
             this.lblHeadingLabel.Location = new System.Drawing.Point(6, 39);
             this.lblHeadingLabel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblHeadingLabel.Name = "lblHeadingLabel";
@@ -632,6 +684,7 @@
             // lblCOG
             // 
             this.lblCOG.AutoSize = true;
+            this.lblCOG.BackColor = System.Drawing.Color.Transparent;
             this.lblCOG.Location = new System.Drawing.Point(149, 75);
             this.lblCOG.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblCOG.Name = "lblCOG";
@@ -642,6 +695,7 @@
             // lblHeading
             // 
             this.lblHeading.AutoSize = true;
+            this.lblHeading.BackColor = System.Drawing.Color.Transparent;
             this.lblHeading.Location = new System.Drawing.Point(149, 39);
             this.lblHeading.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblHeading.Name = "lblHeading";
@@ -652,6 +706,7 @@
             // lblCOGLabel
             // 
             this.lblCOGLabel.AutoSize = true;
+            this.lblCOGLabel.BackColor = System.Drawing.Color.Transparent;
             this.lblCOGLabel.Location = new System.Drawing.Point(6, 75);
             this.lblCOGLabel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblCOGLabel.Name = "lblCOGLabel";
@@ -662,6 +717,7 @@
             // lblAltitudeLabel
             // 
             this.lblAltitudeLabel.AutoSize = true;
+            this.lblAltitudeLabel.BackColor = System.Drawing.Color.Transparent;
             this.lblAltitudeLabel.Location = new System.Drawing.Point(6, 21);
             this.lblAltitudeLabel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblAltitudeLabel.Name = "lblAltitudeLabel";
@@ -672,6 +728,7 @@
             // lblAltitude
             // 
             this.lblAltitude.AutoSize = true;
+            this.lblAltitude.BackColor = System.Drawing.Color.Transparent;
             this.lblAltitude.Location = new System.Drawing.Point(149, 21);
             this.lblAltitude.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblAltitude.Name = "lblAltitude";
@@ -682,6 +739,7 @@
             // lblSpeed
             // 
             this.lblSpeed.AutoSize = true;
+            this.lblSpeed.BackColor = System.Drawing.Color.Transparent;
             this.lblSpeed.Location = new System.Drawing.Point(149, 57);
             this.lblSpeed.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblSpeed.Name = "lblSpeed";
@@ -692,6 +750,7 @@
             // lblSpeedLabel
             // 
             this.lblSpeedLabel.AutoSize = true;
+            this.lblSpeedLabel.BackColor = System.Drawing.Color.Transparent;
             this.lblSpeedLabel.Location = new System.Drawing.Point(6, 57);
             this.lblSpeedLabel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblSpeedLabel.Name = "lblSpeedLabel";
@@ -699,8 +758,19 @@
             this.lblSpeedLabel.TabIndex = 12;
             this.lblSpeedLabel.Text = "Speed";
             // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.Color.Transparent;
+            this.panel1.BackgroundImage = global::KonfigurationTool.Properties.Resources.Logo_xeniC;
+            this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.panel1.Location = new System.Drawing.Point(12, 377);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(159, 56);
+            this.panel1.TabIndex = 8;
+            // 
             // groupGPS
             // 
+            this.groupGPS.BackColor = System.Drawing.Color.Transparent;
             this.groupGPS.Controls.Add(this.lblNumSat);
             this.groupGPS.Controls.Add(this.lblNumSatLabel);
             this.groupGPS.Controls.Add(this.lblVDOP);
@@ -842,6 +912,7 @@
             // 
             // statusStrip
             // 
+            this.statusStrip.BackColor = System.Drawing.Color.Transparent;
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsStatusLabel,
             this.tsStatus,
@@ -872,6 +943,8 @@
             // 
             // tsLoading
             // 
+            this.tsLoading.BackColor = System.Drawing.Color.White;
+            this.tsLoading.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(11)))), ((int)(((byte)(16)))));
             this.tsLoading.Name = "tsLoading";
             this.tsLoading.Size = new System.Drawing.Size(100, 18);
             this.tsLoading.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
@@ -936,6 +1009,11 @@
             // 
             // btnPort1Configure
             // 
+            this.btnPort1Configure.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(11)))), ((int)(((byte)(16)))));
+            this.btnPort1Configure.FlatAppearance.CheckedBackColor = System.Drawing.Color.White;
+            this.btnPort1Configure.FlatAppearance.MouseDownBackColor = System.Drawing.Color.White;
+            this.btnPort1Configure.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(11)))), ((int)(((byte)(16)))));
+            this.btnPort1Configure.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnPort1Configure.Location = new System.Drawing.Point(224, 19);
             this.btnPort1Configure.Name = "btnPort1Configure";
             this.btnPort1Configure.Size = new System.Drawing.Size(88, 23);
@@ -946,6 +1024,7 @@
             // 
             // grpPorts
             // 
+            this.grpPorts.BackColor = System.Drawing.Color.Transparent;
             this.grpPorts.Controls.Add(this.btnPort2Configure);
             this.grpPorts.Controls.Add(this.lblPort2);
             this.grpPorts.Controls.Add(this.btnPort1Configure);
@@ -961,6 +1040,11 @@
             // 
             // btnPort2Configure
             // 
+            this.btnPort2Configure.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(11)))), ((int)(((byte)(16)))));
+            this.btnPort2Configure.FlatAppearance.CheckedBackColor = System.Drawing.Color.White;
+            this.btnPort2Configure.FlatAppearance.MouseDownBackColor = System.Drawing.Color.White;
+            this.btnPort2Configure.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(11)))), ((int)(((byte)(16)))));
+            this.btnPort2Configure.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnPort2Configure.Location = new System.Drawing.Point(224, 48);
             this.btnPort2Configure.Name = "btnPort2Configure";
             this.btnPort2Configure.Size = new System.Drawing.Size(88, 23);
@@ -989,24 +1073,39 @@
             this.lblPort2Label.TabIndex = 8;
             this.lblPort2Label.Text = "Port 2";
             // 
-            // lblUpdateHint
+            // lblInfo
             // 
-            this.lblUpdateHint.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.lblUpdateHint.AutoSize = true;
-            this.lblUpdateHint.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblUpdateHint.ForeColor = System.Drawing.Color.Red;
-            this.lblUpdateHint.Location = new System.Drawing.Point(439, 13);
-            this.lblUpdateHint.Name = "lblUpdateHint";
-            this.lblUpdateHint.Size = new System.Drawing.Size(224, 16);
-            this.lblUpdateHint.TabIndex = 4;
-            this.lblUpdateHint.Text = "Please Update your AnySense.";
-            this.lblUpdateHint.Visible = false;
+            this.lblInfo.AutoSize = true;
+            this.lblInfo.Location = new System.Drawing.Point(9, 437);
+            this.lblInfo.Name = "lblInfo";
+            this.lblInfo.Size = new System.Drawing.Size(96, 13);
+            this.lblInfo.TabIndex = 9;
+            this.lblInfo.Text = "Updates / Manual:";
+            // 
+            // linkUrl
+            // 
+            this.linkUrl.AutoSize = true;
+            this.linkUrl.BackColor = System.Drawing.Color.Transparent;
+            this.linkUrl.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(11)))), ((int)(((byte)(16)))));
+            this.linkUrl.Location = new System.Drawing.Point(111, 436);
+            this.linkUrl.Name = "linkUrl";
+            this.linkUrl.Size = new System.Drawing.Size(143, 13);
+            this.linkUrl.TabIndex = 10;
+            this.linkUrl.TabStop = true;
+            this.linkUrl.Text = "http://anysense.de/support/";
+            this.linkUrl.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkUrl_LinkClicked);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.White;
+            this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.ClientSize = new System.Drawing.Size(666, 487);
+            this.Controls.Add(this.linkUrl);
+            this.Controls.Add(this.lblInfo);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.grpPorts);
             this.Controls.Add(this.groupRC);
             this.Controls.Add(this.statusStrip);
@@ -1015,12 +1114,16 @@
             this.Controls.Add(this.groupTelemetry);
             this.Controls.Add(this.pnlTop);
             this.Controls.Add(this.groupGPS);
+            this.DoubleBuffered = true;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(682, 525);
             this.MinimumSize = new System.Drawing.Size(682, 525);
             this.Name = "MainForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "fac";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyUp);
@@ -1130,6 +1233,10 @@
         private System.Windows.Forms.Label lblPort2;
         private System.Windows.Forms.Label lblPort2Label;
         private System.Windows.Forms.Label lblUpdateHint;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label lblInfo;
+        private System.Windows.Forms.LinkLabel linkUrl;
+        private System.Windows.Forms.Panel panel2;
     }
 }
 

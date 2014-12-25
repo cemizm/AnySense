@@ -30,6 +30,7 @@
         {
             this.lblStatus = new System.Windows.Forms.Label();
             this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
             // lblStatus
@@ -49,18 +50,32 @@
             this.progressBar.Step = 1;
             this.progressBar.TabIndex = 1;
             // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.Color.Transparent;
+            this.panel1.BackgroundImage = global::KonfigurationTool.Properties.Resources.Logo_Quadratisch_100;
+            this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel1.Location = new System.Drawing.Point(414, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(93, 83);
+            this.panel1.TabIndex = 2;
+            // 
             // UpdateForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(507, 83);
             this.ControlBox = false;
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.lblStatus);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Controls.Add(this.panel1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "UpdateForm";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "AnySense Firmware Update";
             this.ResumeLayout(false);
@@ -72,5 +87,6 @@
 
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.Panel panel1;
     }
 }

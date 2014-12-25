@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PortConfigurationForm));
             this.btnCancel = new System.Windows.Forms.Button();
             this.protocolConfiguration = new System.Windows.Forms.PropertyGrid();
             this.lblProtocol = new System.Windows.Forms.Label();
@@ -103,7 +104,10 @@
             this.Controls.Add(this.lblProtocol);
             this.Controls.Add(this.cmbProtocol);
             this.Controls.Add(this.btnCancel);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "PortConfigurationForm";
+            this.ShowInTaskbar = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Port Configuration";
             this.ResumeLayout(false);
             this.PerformLayout();

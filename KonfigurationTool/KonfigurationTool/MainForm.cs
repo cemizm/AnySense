@@ -1,9 +1,11 @@
 ﻿using MavLink;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -15,7 +17,7 @@ namespace KonfigurationTool
         private const int MAX_RETRY = 25;
 
         private const int MAV_SYSTEM_ID = 0xCE;
-        private const uint FIRMWARE_VERSION = 0x00000910;
+        private const uint FIRMWARE_VERSION = 0x00000911;
 
         private int retry;
         private StateMachineStep currentStep = StateMachineStep.None;
@@ -239,7 +241,7 @@ namespace KonfigurationTool
 
                 btnUpdate.Visible = FIRMWARE_VERSION > version;
                 lblUpdateHint.Visible = FIRMWARE_VERSION != version;
-                lblUpdateHint.Text = (FIRMWARE_VERSION > version ? "Please Update your AnySense." : "Please Update your Konfiguration Manager.");
+                lblUpdateHint.Text = (FIRMWARE_VERSION > version ? "Please Update your AnySense." : "Please Update your Application.");
                 btnPort1Configure.Enabled = FIRMWARE_VERSION == version;
                 btnPort2Configure.Enabled = FIRMWARE_VERSION == version;
             }
@@ -462,8 +464,7 @@ namespace KonfigurationTool
                     timer.Enabled = false;
                     retry = 0;
                     tsStatus.Text = "disconnected";
-                    tsStatus.ForeColor = Color.White;
-                    tsStatus.BackColor = Color.Red;
+                    tsStatus.ForeColor = Color.FromArgb(204, 11, 16);
                     tsFWVersion.Text = "-";
                     tsFWVersion.Visible = false;
                     tsLoading.Visible = false;
@@ -483,8 +484,7 @@ namespace KonfigurationTool
                     retry = 0;
                     timer.Enabled = true;
                     tsStatus.Text = "connecting";
-                    tsStatus.ForeColor = Color.Black;
-                    tsStatus.BackColor = Color.Yellow;
+                    tsStatus.ForeColor = Color.Orange;
                     Cursor = Cursors.WaitCursor;
                     tsFWVersion.Text = "-";
                     tsFWVersion.Visible = false;
@@ -502,8 +502,7 @@ namespace KonfigurationTool
                     btnUpdate.Visible = false;
                     timer.Enabled = false;
                     tsStatus.Text = "connected";
-                    tsStatus.ForeColor = Color.White;
-                    tsStatus.BackColor = Color.Green;
+                    tsStatus.ForeColor = Color.Green;
                     Cursor = Cursors.Default;
                     tsLoading.Visible = false;
                     tsFCHearbeat.Visible = true;
@@ -516,6 +515,49 @@ namespace KonfigurationTool
                     tsUniAdapterHeartbeat.Visible = true;
                     tsUniAdapterHeartbeat.BackColor = Color.Green;
                     tsFWVersion.Visible = true;
+
+                    Task.Factory.StartNew(() =>
+                    {
+                        try
+                        {
+                            string cid = "";
+
+                            try
+                            {
+                                if (string.IsNullOrWhiteSpace(cid))
+                                    cid = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("xeniC").OpenSubKey("AnySense").GetValue("user", "").ToString();
+                            }
+                            catch { }
+
+                            try
+                            {
+                                if (string.IsNullOrWhiteSpace(cid))
+                                {
+                                    cid = Guid.NewGuid().ToString();
+                                    Microsoft.Win32.Registry.CurrentUser.CreateSubKey("Software").CreateSubKey("xeniC").CreateSubKey("AnySense").SetValue("user", cid);
+                                }
+                            }
+                            catch { }
+
+                            using (WebClient client = new WebClient())
+                            {
+                                byte[] response =
+                                client.UploadValues("http://www.google-analytics.com/collect", new NameValueCollection() {
+                                { "v", "1" },
+                                { "tid", "UA-57362047-1" },
+                                { "cid", cid },
+                                { "t", "pageview" },
+                                { "dh", "anysense.de" },
+                                { "dp", "/checkupdate/"+ tsFWVersion.Text + "/" },
+                                { "dt", "Check for AnySense Update" }
+                                });
+
+                                string result = System.Text.Encoding.UTF8.GetString(response);
+                            }
+                        }
+                        catch { }
+                    });
+
                     break;
                 case StateMachineStep.Updating:
                     tsFWVersion.Text = "-";
@@ -612,7 +654,7 @@ namespace KonfigurationTool
             string path = string.Empty;
 
 
-#if DEBUG  
+#if DEBUG
             using (OpenFileDialog dlg = new OpenFileDialog())
             {
                 dlg.Filter = "Binary Files|*.bin";
@@ -632,14 +674,15 @@ namespace KonfigurationTool
                 serialPort.Write(bytes, 0, bytes.Length);
 
                 Disconnect(false);
-
+                Enabled = false;
                 UpdateForm.ShowDialog(this, serialPort.PortName, path);
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show(this, "Error while communication:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
+            Enabled = true;
             Connect();
         }
 
@@ -648,6 +691,18 @@ namespace KonfigurationTool
             if (currentStep == StateMachineStep.Connected && e.KeyCode == Keys.U)
                 btnUpdate.Visible = true;
         }
+
+        private void linkUrl_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start("http://anysense.de/support/");
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
 
     }
 }
