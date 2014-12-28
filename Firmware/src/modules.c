@@ -103,11 +103,14 @@ void configManager_task(void* pdata)
 
 	U64 stickConfigStart = 0;
 	U64 stickConfigSetStart = 0;
+	U64 stickConfigDelay = 0;
+	U64 stickConfigLedOn = 0;
 
 	uint8_t isStickConfig = 0;
-	uint8_t stickConfigPosOld = 0;
+	uint8_t stickConfigPos = 0;
 	uint8_t stickConfigPosNew = 0;
 	uint8_t stickConfigFinish = 0;
+	uint8_t stickConfigBlink = 1;
 
 	StatusType status;
 
@@ -216,45 +219,77 @@ void configManager_task(void* pdata)
 		}
 		else if (isStickConfig)
 		{
-			if (!stickConfigFinish)
+			if (stickConfigDelay > ticks)
 			{
-				if (ticks % delay_ms(400) < delay_ms(100))
-					hardware_led_toggle_red();
-
-				stickConfigPosNew = simpleTelemetry_stickConfigPosition();
-
-				if (stickConfigPosNew != stickConfigPosOld)
-				{
-					stickConfigPosOld = stickConfigPosNew;
-					stickConfigSetStart = stickConfigPosOld != 0 ? ticks + delay_sec(1) : 0;
-				}
-
-				if (stickConfigSetStart > 0 && ticks > stickConfigSetStart)
-				{
-					switch (stickConfigPosNew)
-					{
-					case 1:
-						configuration.port1.type = parser_frsky;
-						break;
-					case 3:
-						configuration.port1.type = parser_hott;
-						break;
-					}
-
-					modules_initialize_config(&configuration.port1);
-					config_save();
-
-					stickConfigStart = ticks + delay_sec(3);
-					stickConfigFinish = 1;
-				}
+				hardware_led_toggle_red();
 			}
 			else
 			{
-				//led off last half
-				if ((stickConfigStart - ticks) < delay_ms(1500))
-					hardware_led_off_red();
-				else //Blink first half
-					hardware_led_toggle_red();
+				if (!stickConfigFinish)
+				{
+					stickConfigPosNew = simpleTelemetry_stickConfigPosition();
+
+					if (stickConfigPosNew != stickConfigPos)
+					{
+						stickConfigStart = ticks + delay_sec(30);
+
+						stickConfigPos = stickConfigPosNew;
+						stickConfigBlink = stickConfigPos;
+						stickConfigLedOn = ticks;
+					}
+
+					if (stickConfigLedOn > ticks)
+						hardware_led_on_red();
+					else
+					{
+						hardware_led_off_red();
+
+						if (ticks > (stickConfigLedOn + (stickConfigBlink < stickConfigPos ? 100 : 700)))
+						{
+							stickConfigLedOn = ticks + delay_ms(300);
+							if (stickConfigBlink == stickConfigPos)
+								stickConfigBlink = 1;
+							else
+								stickConfigBlink++;
+						}
+					}
+
+					if (simpleTelemetry_isStickConfig())
+					{
+						if (stickConfigSetStart == 0)
+							stickConfigSetStart = ticks + delay_sec(1);
+					}
+					else
+						stickConfigSetStart = 0;
+
+					if (stickConfigSetStart > 0 && ticks > stickConfigSetStart)
+					{
+						switch (stickConfigPos)
+						{
+						case 1:
+							configuration.port1.type = parser_frsky;
+							break;
+						case 2:
+							configuration.port1.type = parser_hott;
+							break;
+						}
+
+						modules_initialize_config(&configuration.port1);
+						config_save();
+
+						stickConfigStart = ticks + delay_sec(3);
+						stickConfigFinish = 1;
+					}
+				}
+				else
+				{
+					//led off last half
+					if ((stickConfigStart - ticks) < delay_ms(1500))
+						hardware_led_off_red();
+					else
+						//Blink first half
+						hardware_led_toggle_red();
+				}
 			}
 
 			if (ticks > stickConfigStart)
@@ -269,7 +304,8 @@ void configManager_task(void* pdata)
 
 				if (ticks > stickConfigStart)
 				{
-					stickConfigStart = ticks + delay_sec(7); //auto exit stick config mode
+					stickConfigStart = ticks + delay_sec(30); //auto exit stick config mode
+					stickConfigDelay = ticks + delay_sec(3);
 					isStickConfig = 1;
 				}
 			}

@@ -53,6 +53,7 @@ struct simpleTelemetry
 	int16_t throttle;
 	enum flightMode mode; //flight mode (see mode_t enum)
 	unsigned long long lastHeartbeat;
+	float current;
 
 	//errors
 	uint16_t packets_drop;

@@ -61,29 +61,15 @@ uint8_t simpleTelemetry_isStickConfig()
 	return 1;
 }
 
-
 uint8_t simpleTelemetry_stickConfigPosition()
 {
-	if (simpleTelemetry_getRCIn(2) > 1550)
-		return 0;
+	int16_t fmSwitch = simpleTelemetry_getRCIn(4);
 
-	if(simpleTelemetry_getRCIn(2) > 1150) // Oben
-	{
-		if(simpleTelemetry_getRCIn(1) < 1100) //links
-			return 0;
-		else if(simpleTelemetry_getRCIn(1) > 1900) //rechts
-			return 0;
+	if(fmSwitch < 1475)
+		return 1;
+	else if(fmSwitch < 1875)
+		return 2;
+	else
+		return 3;
 
-	}
-	else // unten
-	{
-		if(simpleTelemetry_getRCIn(1) < 1100) //links
-			return 1;
-		else if(simpleTelemetry_getRCIn(1) > 1450 && simpleTelemetry_getRCIn(1) < 1550) //mitte
-			return 0;
-		else if(simpleTelemetry_getRCIn(1) > 1900) //rechts
-			return 3;
-	}
-
-	return 0;
 }
