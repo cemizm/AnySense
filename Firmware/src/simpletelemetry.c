@@ -6,6 +6,8 @@
  */
 
 #include "simpletelemtry.h"
+#include "hardware.h"
+#include "string.h"
 
 void simpleTelemetry_initialize()
 {
@@ -37,11 +39,36 @@ void simpleTelemetry_initialize()
 	simpleTelemtryData.battery = 0;
 	simpleTelemtryData.mode = flightMode_failsafe;
 	simpleTelemtryData.lastHeartbeat = 0;
+	simpleTelemtryData.current = 0;
+	simpleTelemtryData.temp1 = 0;
+	simpleTelemtryData.temp2 = 0;
+	simpleTelemtryData.cellCount = 0;
+
+
+	memset(simpleTelemtryData.cells, 0, SIMPLE_TELEMETRY_CELLS);
+	memset(simpleTelemtryData.rcIn, 0, SIMPLE_TELEMETRY_RC);
+
+#ifdef DEBUG
+
+	simpleTelemtryData.current = 5;
+	simpleTelemtryData.cellCount = 5;
+	simpleTelemtryData.cells[0] = 380;
+	simpleTelemtryData.cells[1] = 420;
+	simpleTelemtryData.cells[2] = 420;
+	simpleTelemtryData.cells[3] = 340;
+	simpleTelemtryData.cells[4] = 370;
+#endif
+
 }
 
 int16_t simpleTelemetry_getRCIn(uint8_t chan)
 {
 	return simpleTelemtryData.rcIn[chan] / 2 + 1500;
+}
+
+uint8_t simpleTelemetry_isAlive()
+{
+	return (simpleTelemtryData.lastHeartbeat + delay_sec(3)) > CoGetOSTime();
 }
 
 uint8_t simpleTelemetry_isStickConfig()
@@ -71,5 +98,17 @@ uint8_t simpleTelemetry_stickConfigPosition()
 		return 2;
 	else
 		return 3;
+}
 
+uint16_t simpleTelemetry_getLowestCell()
+{
+	uint16_t cell = simpleTelemtryData.cells[0];
+
+	for(uint8_t i=1;cell<simpleTelemtryData.cellCount; i++)
+	{
+		if(simpleTelemtryData.cells[i] < cell)
+			cell = simpleTelemtryData.cells[i];
+	}
+
+	return cell;
 }

@@ -9,6 +9,10 @@
 #define SIMPLETELEMTRY_H_
 
 #include <stdint.h>
+#include "CoOS.h"
+
+#define SIMPLE_TELEMETRY_RC		10
+#define SIMPLE_TELEMETRY_CELLS	12
 
 enum fixType
 {
@@ -49,11 +53,15 @@ struct simpleTelemetry
 	uint8_t minute; //minute from GPS
 	uint8_t second; //second from GPS
 	uint16_t battery; //battery voltage in mV
-	int16_t rcIn[10]; //RC stick input (-1000~1000), use rcInChan_t enum to index the table
+	int16_t rcIn[SIMPLE_TELEMETRY_RC]; //RC stick input (-1000~1000), use rcInChan_t enum to index the table
 	int16_t throttle;
 	enum flightMode mode; //flight mode (see mode_t enum)
-	unsigned long long lastHeartbeat;
-	float current;
+	U64 lastHeartbeat;
+	float current; //battery voltage in 0.1 A
+	float temp1;
+	float temp2;
+	uint16_t cells[SIMPLE_TELEMETRY_CELLS]; //battery voltage in mV
+	uint8_t cellCount;
 
 	//errors
 	uint16_t packets_drop;
@@ -67,5 +75,7 @@ void simpleTelemetry_initialize();
 int16_t simpleTelemetry_getRCIn(uint8_t chan);
 uint8_t simpleTelemetry_isStickConfig();
 uint8_t simpleTelemetry_stickConfigPosition();
+uint8_t simpleTelemetry_isAlive();
+uint16_t simpleTelemetry_getLowestCell();
 
 #endif /* SIMPLETELEMTRY_H_ */

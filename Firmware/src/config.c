@@ -14,7 +14,7 @@ struct configStruct configuration = {
 				.parserConfig = { 0 },
 		},
 		.port2 = {
-				.type = parser_none,
+				.type = parser_frsky,
 				.parserConfig = { 0 },
 		},
 };

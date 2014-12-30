@@ -29,5 +29,7 @@ namespace KonfigurationTool
         LastHeartbeat = 19,
         GPS_Time = 20,
         Heading_Relative = 21,
+        Current = 22,
+        Cells = 23,
     }
 }

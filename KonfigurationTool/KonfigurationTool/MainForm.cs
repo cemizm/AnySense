@@ -17,7 +17,7 @@ namespace KonfigurationTool
         private const int MAX_RETRY = 25;
 
         private const int MAV_SYSTEM_ID = 0xCE;
-        private const uint FIRMWARE_VERSION = 0x00000911;
+        private const uint FIRMWARE_VERSION = 0x00000A01;
 
         private int retry;
         private StateMachineStep currentStep = StateMachineStep.None;
@@ -516,6 +516,7 @@ namespace KonfigurationTool
                     tsUniAdapterHeartbeat.BackColor = Color.Green;
                     tsFWVersion.Visible = true;
 
+                    /*
                     Task.Factory.StartNew(() =>
                     {
                         try
@@ -557,6 +558,7 @@ namespace KonfigurationTool
                         }
                         catch { }
                     });
+                     * */
 
                     break;
                 case StateMachineStep.Updating:

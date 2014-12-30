@@ -123,6 +123,8 @@ void module_hott_task(void* pData)
 	U64 ticks = 0;
 	uint8_t pos = 0;
 
+	uint8_t ledEnabled = session->port == &usart_port1;
+
 	union hott_msg msg;	//Union of messages
 	uint8_t size; 		//Size of current packet
 	uint8_t crc;		//crc calculated during transmission
@@ -213,8 +215,23 @@ void module_hott_task(void* pData)
 				msg.gam.climbrate_L = 30000 + (simpleTelemtryData.vsi * 100);
 				msg.gam.climbrate3s = 120;
 				msg.gam.speed = simpleTelemtryData.speed * 3.6;
+				msg.gam.current = simpleTelemtryData.current * 10;
+				msg.gam.temp1 = 20 + simpleTelemtryData.temp1;
+				msg.gam.temp2 = 20 + simpleTelemtryData.temp2;
 
-				if (session->config->num_cells > 0)
+				if (simpleTelemtryData.cellCount > 0)
+				{
+					uint8_t lowest = simpleTelemtryData.cells[0] / 2;
+					for (uint8_t i = 0; i < simpleTelemtryData.cellCount && i < MODULE_HOTT_GAM_CELLS; i++)
+					{
+						msg.gam.cell[i] = simpleTelemtryData.cells[i] / 2;
+						if (msg.gam.cell[i] < lowest)
+							lowest = msg.gam.cell[i];
+					}
+
+					msg.gam.min_cell_volt = lowest;
+				}
+				else if (session->config->num_cells > 0)
 					msg.gam.min_cell_volt = (simpleTelemtryData.battery / session->config->num_cells) / 20;
 
 				msg.gam.fuel_percent = getVoltagePercent(simpleTelemtryData.battery, session->config->num_cells);
@@ -281,6 +298,13 @@ void module_hott_task(void* pData)
 
 				msg.eam.speed = simpleTelemtryData.speed * 3.6;
 				msg.eam.driveVoltage = simpleTelemtryData.battery / 100;
+
+				msg.eam.current = simpleTelemtryData.current * 10;
+				msg.eam.temp1 = 20 + simpleTelemtryData.temp1;
+				msg.eam.temp2 = 20 + simpleTelemtryData.temp2;
+
+				for (uint8_t i = 0; i < simpleTelemtryData.cellCount && i < MODULE_HOTT_EAM_CELLS; i++)
+					msg.eam.cells[i] = simpleTelemtryData.cells[i] / 2;
 
 				size = sizeof(struct hott_msg_eam);
 			} //session->sensor == hott_sensor_id_eam
@@ -625,7 +649,8 @@ void module_hott_task(void* pData)
 			if (delay > ticks)
 				CoTickDelay(delay - ticks);
 
-			hardware_led_toggle_red();
+			if(ledEnabled)
+				hardware_led_toggle_red();
 
 			crc = 0;
 

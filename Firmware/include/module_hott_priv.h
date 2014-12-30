@@ -33,6 +33,9 @@
 #define MODULE_HOTT_VOLTAGE_ALARMS			3
 #define MODULE_HOTT_DISTANCE_ALARMS			3
 
+#define MODULE_HOTT_GAM_CELLS				6
+#define MODULE_HOTT_EAM_CELLS				14
+
 #define MATH_MAP(A,B,X,C,D)   				((uint8_t) (((float)(X-A)/(B-A)) * (D-C) + C))
 
 #define HOTT_INIT_MSG(msg, sensor)	{ 		\
@@ -135,7 +138,7 @@ struct hott_msg_gam
 	enum hott_alarm_tone warning_beeps;			//#03 warning tone
 	uint8_t sensor_id;							//#04 constant value 0xd0
 	enum hott_alarm_msg alarm;					//#05 alarm bitmask
-	uint8_t cell[6];							//#07 Voltage Cells (in 2 mV increments, 210 == 4.20 V)
+	uint8_t cell[MODULE_HOTT_GAM_CELLS];							//#07 Voltage Cells (in 2 mV increments, 210 == 4.20 V)
 	uint16_t battery1;							//#13 LSB battery 1 voltage LSB value. 0.1V steps. 50 = 5.5V only pos. voltages
 	uint16_t battery2;							//#15 LSB battery 2 voltage LSB value. 0.1V steps. 50 = 5.5V only pos. voltages
 	uint8_t temp1;								//#17 Temperature 1. Offset of 20. a value of 20 = 0°C
@@ -233,21 +236,7 @@ struct hott_msg_eam
 	enum hott_alarm_tone warning_beeps;		//#03 warning tone
 	uint8_t sensor_id;						//#04 GPS Text message ID
 	enum hott_alarm_msg alarm;				//#05 alarm bitmask
-
-	uint8_t cell1L; /* Low Voltage Cell 1-7 in 2mV steps */
-	uint8_t cell2L;
-	uint8_t cell3L;
-	uint8_t cell4L;
-	uint8_t cell5L;
-	uint8_t cell6L;
-	uint8_t cell7L;
-	uint8_t cell1H; /* High Voltage Cell 1-7 in 2mV steps */
-	uint8_t cell2H;
-	uint8_t cell3H;
-	uint8_t cell4H;
-	uint8_t cell5H;
-	uint8_t cell6H;
-	uint8_t cell7H;
+	uint8_t cells[MODULE_HOTT_EAM_CELLS];	//Cell Voltage in 2mV steps: Low 1-7, High 8 - 14 */
 	uint16_t battery1; /* Battery 1 LSB/MSB in 100mv steps; 50 == 5V */
 	uint16_t battery2; /* Battery 2 LSB/MSB in 100mv steps; 50 == 5V */
 	uint8_t temp1; /* Temp 1; Offset of 20. 20 == 0C */
