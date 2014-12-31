@@ -50,13 +50,12 @@ void simpleTelemetry_initialize()
 
 #ifdef DEBUG
 
-	simpleTelemtryData.current = 5;
 	simpleTelemtryData.cellCount = 5;
-	simpleTelemtryData.cells[0] = 380;
-	simpleTelemtryData.cells[1] = 420;
-	simpleTelemtryData.cells[2] = 420;
-	simpleTelemtryData.cells[3] = 340;
-	simpleTelemtryData.cells[4] = 370;
+	simpleTelemtryData.cells[0] = 3800;
+	simpleTelemtryData.cells[1] = 4200;
+	simpleTelemtryData.cells[2] = 4200;
+	simpleTelemtryData.cells[3] = 3400;
+	simpleTelemtryData.cells[4] = 3700;
 #endif
 
 }

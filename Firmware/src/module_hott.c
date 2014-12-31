@@ -221,10 +221,10 @@ void module_hott_task(void* pData)
 
 				if (simpleTelemtryData.cellCount > 0)
 				{
-					uint8_t lowest = simpleTelemtryData.cells[0] / 2;
+					uint8_t lowest = simpleTelemtryData.cells[0] / 20;
 					for (uint8_t i = 0; i < simpleTelemtryData.cellCount && i < MODULE_HOTT_GAM_CELLS; i++)
 					{
-						msg.gam.cell[i] = simpleTelemtryData.cells[i] / 2;
+						msg.gam.cell[i] = simpleTelemtryData.cells[i] / 20;
 						if (msg.gam.cell[i] < lowest)
 							lowest = msg.gam.cell[i];
 					}
@@ -304,7 +304,7 @@ void module_hott_task(void* pData)
 				msg.eam.temp2 = 20 + simpleTelemtryData.temp2;
 
 				for (uint8_t i = 0; i < simpleTelemtryData.cellCount && i < MODULE_HOTT_EAM_CELLS; i++)
-					msg.eam.cells[i] = simpleTelemtryData.cells[i] / 2;
+					msg.eam.cells[i] = simpleTelemtryData.cells[i] / 20;
 
 				size = sizeof(struct hott_msg_eam);
 			} //session->sensor == hott_sensor_id_eam

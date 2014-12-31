@@ -437,7 +437,7 @@ static void RX_Callback(uint8_t* id)
 				switch (session->rxPacket.Id)
 				{
 				case SENSOR_CURR:
-					simpleTelemtryData.current = SPORT_DATA_U32(session->rxPacket) / 10;
+					simpleTelemtryData.current = ((float)SPORT_DATA_U32(session->rxPacket)) / 10;
 					break;
 				case SENSOR_CELLS:
 				{

@@ -14,7 +14,7 @@ namespace KonfigurationTool
 {
     public partial class MainForm : Form
     {
-        private const int MAX_RETRY = 25;
+        private const int MAX_RETRY = 100;
 
         private const int MAV_SYSTEM_ID = 0xCE;
         private const uint FIRMWARE_VERSION = 0x00000A01;

@@ -95,7 +95,7 @@ void modules_start()
 void configManager_task(void* pdata)
 {
 
-	U64 exitIn = CoGetOSTime() + delay_ms(2600);
+	U64 exitIn = CoGetOSTime() + delay_ms(5600);
 	U64 ticks = 0;
 	U64 lastNazaHeartbeatSend = 0;
 	uint8_t established = 0;

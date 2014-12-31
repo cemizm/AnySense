@@ -24,7 +24,6 @@ enum flightMode
 	flightMode_manual = 0, flightMode_gps = 1, flightMode_failsafe = 2, flightMode_atti = 3
 };
 
-
 struct simpleTelemetry
 {
 	double lat; //latitude in degree decimal
@@ -57,7 +56,7 @@ struct simpleTelemetry
 	int16_t throttle;
 	enum flightMode mode; //flight mode (see mode_t enum)
 	U64 lastHeartbeat;
-	float current; //battery voltage in 0.1 A
+	float current; //current consumption in 0.1 A
 	float temp1;
 	float temp2;
 	uint16_t cells[SIMPLE_TELEMETRY_CELLS]; //battery voltage in mV
@@ -67,6 +66,7 @@ struct simpleTelemetry
 	uint16_t packets_drop;
 	uint16_t packets_lost;
 	uint16_t packets_corrupted;
+
 };
 
 struct simpleTelemetry simpleTelemtryData;
