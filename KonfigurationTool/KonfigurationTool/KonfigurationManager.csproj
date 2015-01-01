@@ -156,6 +156,7 @@
   <ItemGroup>
     <Content Include="Logo_Quadratisch_32.ico" />
     <Content Include="Logo_Quadratisch_32_transparent.ico" />
+    <None Include="Resources\info-2-xxl.png" />
     <None Include="Resources\anysense_80.png" />
     <None Include="Resources\Logo_Quadratisch_100.png" />
     <None Include="Resources\Facebook_Profilfoto.png" />

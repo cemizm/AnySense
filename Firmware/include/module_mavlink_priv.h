@@ -23,6 +23,7 @@ uint16_t mavlink_pack_gps(mavlink_message_t* msg);
 uint16_t mavlink_pack_vfr_hud(mavlink_message_t* msg);
 uint16_t mavlink_pack_attitude(mavlink_message_t* msg);
 uint16_t mavlink_pack_rc_out(mavlink_message_t* msg);
+uint16_t mavlink_pack_battery(mavlink_message_t* msg);
 
 #define MODULE_MAVLINK_TASK_STACK				512
 #define MODULE_MAVLINK_RX_QUEUE_SIZE			2

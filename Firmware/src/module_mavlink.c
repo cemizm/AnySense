@@ -32,11 +32,13 @@ uint16_t mavlink_pack_nextData(mavlink_message_t* msg, uint8_t* currentValue)
 	case 5:
 		len = mavlink_pack_rc_out(msg);
 		break;
+	case 6:
+		len = mavlink_pack_battery(msg);
 	}
 
 	*currentValue = *currentValue + 1;
 
-	if (*currentValue > 5)
+	if (*currentValue > 6)
 		*currentValue = 0;
 
 	return len;
@@ -51,8 +53,8 @@ uint16_t mavlink_pack_heartbeat(mavlink_message_t* msg)
 uint16_t mavlink_pack_sys_status(mavlink_message_t* msg)
 {
 	return mavlink_msg_sys_status_pack(MAVLINK_SYSTEM_ID, MAVLINK_COMP_ID, msg, MAVLINK_SENSORS, MAVLINK_SENSORS, MAVLINK_SENSORS,
-			0, simpleTelemtryData.battery, 0, 0, 0, 0, simpleTelemtryData.packets_lost, simpleTelemtryData.packets_drop,
-			simpleTelemtryData.packets_corrupted, 0);
+			0, simpleTelemtryData.battery, simpleTelemtryData.current * 100, 0, 0, 0, simpleTelemtryData.packets_lost,
+			simpleTelemtryData.packets_drop, simpleTelemtryData.packets_corrupted, 0);
 }
 
 uint16_t mavlink_pack_gps(mavlink_message_t* msg)
@@ -83,6 +85,14 @@ uint16_t mavlink_pack_rc_out(mavlink_message_t* msg)
 			simpleTelemetry_getRCIn(5), simpleTelemetry_getRCIn(6), simpleTelemetry_getRCIn(7), simpleTelemetry_getRCIn(8),
 			simpleTelemetry_getRCIn(9), UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX, UINT16_MAX,
 			UINT16_MAX, 255);
+}
+
+uint16_t mavlink_pack_battery(mavlink_message_t* msg)
+{
+	return mavlink_msg_battery_status_pack(MAVLINK_SYSTEM_ID, MAVLINK_COMP_ID, msg, 1, MAV_BATTERY_FUNCTION_ALL,
+			MAV_BATTERY_TYPE_LIPO, simpleTelemtryData.temp1, simpleTelemtryData.cells, simpleTelemtryData.current * 100, -1, -1,
+			-1);
+
 }
 
 void mavlink_initializeConfig(void* config)

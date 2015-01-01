@@ -83,6 +83,16 @@ namespace KonfigurationTool.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap info_2_xxl {
+            get {
+                object obj = ResourceManager.GetObject("info-2-xxl", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap KonfigurationManager {
             get {
                 object obj = ResourceManager.GetObject("KonfigurationManager", resourceCulture);

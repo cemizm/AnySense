@@ -64,6 +64,9 @@
             this.lblStatLostLabel = new System.Windows.Forms.Label();
             this.lblStatLost = new System.Windows.Forms.Label();
             this.gpGenerall = new System.Windows.Forms.GroupBox();
+            this.pbCells = new System.Windows.Forms.PictureBox();
+            this.lblCurrent = new System.Windows.Forms.Label();
+            this.lblCurrentLabel = new System.Windows.Forms.Label();
             this.lblBattery = new System.Windows.Forms.Label();
             this.lblBatteryLabel = new System.Windows.Forms.Label();
             this.lblFlightMode = new System.Windows.Forms.Label();
@@ -117,10 +120,12 @@
             this.lblPort2Label = new System.Windows.Forms.Label();
             this.lblInfo = new System.Windows.Forms.Label();
             this.linkUrl = new System.Windows.Forms.LinkLabel();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.pnlTop.SuspendLayout();
             this.groupRC.SuspendLayout();
             this.grpChannelStats.SuspendLayout();
             this.gpGenerall.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCells)).BeginInit();
             this.groupTelemetry.SuspendLayout();
             this.groupGPS.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -250,7 +255,7 @@
             this.groupRC.Controls.Add(this.lblRC1);
             this.groupRC.Controls.Add(this.lblRC3);
             this.groupRC.Controls.Add(this.lblRuderLabel);
-            this.groupRC.Location = new System.Drawing.Point(334, 282);
+            this.groupRC.Location = new System.Drawing.Point(334, 295);
             this.groupRC.Name = "groupRC";
             this.groupRC.Size = new System.Drawing.Size(316, 168);
             this.groupRC.TabIndex = 6;
@@ -431,7 +436,7 @@
             this.grpChannelStats.Controls.Add(this.lblStatDrop);
             this.grpChannelStats.Controls.Add(this.lblStatLostLabel);
             this.grpChannelStats.Controls.Add(this.lblStatLost);
-            this.grpChannelStats.Location = new System.Drawing.Point(12, 120);
+            this.grpChannelStats.Location = new System.Drawing.Point(12, 144);
             this.grpChannelStats.Name = "grpChannelStats";
             this.grpChannelStats.Size = new System.Drawing.Size(316, 77);
             this.grpChannelStats.TabIndex = 5;
@@ -505,21 +510,57 @@
             // gpGenerall
             // 
             this.gpGenerall.BackColor = System.Drawing.Color.Transparent;
+            this.gpGenerall.Controls.Add(this.pbCells);
+            this.gpGenerall.Controls.Add(this.lblCurrent);
+            this.gpGenerall.Controls.Add(this.lblCurrentLabel);
             this.gpGenerall.Controls.Add(this.lblBattery);
             this.gpGenerall.Controls.Add(this.lblBatteryLabel);
             this.gpGenerall.Controls.Add(this.lblFlightMode);
             this.gpGenerall.Controls.Add(this.lblFlightModeLabel);
             this.gpGenerall.Location = new System.Drawing.Point(12, 54);
             this.gpGenerall.Name = "gpGenerall";
-            this.gpGenerall.Size = new System.Drawing.Size(316, 60);
+            this.gpGenerall.Size = new System.Drawing.Size(316, 84);
             this.gpGenerall.TabIndex = 4;
             this.gpGenerall.TabStop = false;
             this.gpGenerall.Text = "General";
             // 
+            // pbCells
+            // 
+            this.pbCells.BackgroundImage = global::KonfigurationTool.Properties.Resources.info_2_xxl;
+            this.pbCells.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pbCells.Image = global::KonfigurationTool.Properties.Resources.info_2_xxl;
+            this.pbCells.InitialImage = ((System.Drawing.Image)(resources.GetObject("pbCells.InitialImage")));
+            this.pbCells.Location = new System.Drawing.Point(125, 39);
+            this.pbCells.Name = "pbCells";
+            this.pbCells.Size = new System.Drawing.Size(16, 16);
+            this.pbCells.TabIndex = 6;
+            this.pbCells.TabStop = false;
+            this.toolTip1.SetToolTip(this.pbCells, "sss");
+            // 
+            // lblCurrent
+            // 
+            this.lblCurrent.AutoSize = true;
+            this.lblCurrent.Location = new System.Drawing.Point(149, 60);
+            this.lblCurrent.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
+            this.lblCurrent.Name = "lblCurrent";
+            this.lblCurrent.Size = new System.Drawing.Size(10, 13);
+            this.lblCurrent.TabIndex = 5;
+            this.lblCurrent.Text = "-";
+            // 
+            // lblCurrentLabel
+            // 
+            this.lblCurrentLabel.AutoSize = true;
+            this.lblCurrentLabel.Location = new System.Drawing.Point(6, 60);
+            this.lblCurrentLabel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
+            this.lblCurrentLabel.Name = "lblCurrentLabel";
+            this.lblCurrentLabel.Size = new System.Drawing.Size(44, 13);
+            this.lblCurrentLabel.TabIndex = 4;
+            this.lblCurrentLabel.Text = "Current:";
+            // 
             // lblBattery
             // 
             this.lblBattery.AutoSize = true;
-            this.lblBattery.Location = new System.Drawing.Point(149, 39);
+            this.lblBattery.Location = new System.Drawing.Point(149, 41);
             this.lblBattery.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblBattery.Name = "lblBattery";
             this.lblBattery.Size = new System.Drawing.Size(10, 13);
@@ -529,7 +570,7 @@
             // lblBatteryLabel
             // 
             this.lblBatteryLabel.AutoSize = true;
-            this.lblBatteryLabel.Location = new System.Drawing.Point(6, 39);
+            this.lblBatteryLabel.Location = new System.Drawing.Point(6, 41);
             this.lblBatteryLabel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblBatteryLabel.Name = "lblBatteryLabel";
             this.lblBatteryLabel.Size = new System.Drawing.Size(43, 13);
@@ -573,11 +614,9 @@
             this.groupTelemetry.Controls.Add(this.lblCOGLabel);
             this.groupTelemetry.Controls.Add(this.lblAltitudeLabel);
             this.groupTelemetry.Controls.Add(this.lblAltitude);
-            this.groupTelemetry.Controls.Add(this.lblSpeed);
-            this.groupTelemetry.Controls.Add(this.lblSpeedLabel);
-            this.groupTelemetry.Location = new System.Drawing.Point(12, 203);
+            this.groupTelemetry.Location = new System.Drawing.Point(12, 227);
             this.groupTelemetry.Name = "groupTelemetry";
-            this.groupTelemetry.Size = new System.Drawing.Size(316, 168);
+            this.groupTelemetry.Size = new System.Drawing.Size(316, 152);
             this.groupTelemetry.TabIndex = 3;
             this.groupTelemetry.TabStop = false;
             this.groupTelemetry.Text = "Telemetry";
@@ -586,7 +625,7 @@
             // 
             this.lblPitch.AutoSize = true;
             this.lblPitch.BackColor = System.Drawing.Color.Transparent;
-            this.lblPitch.Location = new System.Drawing.Point(149, 147);
+            this.lblPitch.Location = new System.Drawing.Point(149, 129);
             this.lblPitch.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblPitch.Name = "lblPitch";
             this.lblPitch.Size = new System.Drawing.Size(10, 13);
@@ -597,7 +636,7 @@
             // 
             this.lblPitchLabel.AutoSize = true;
             this.lblPitchLabel.BackColor = System.Drawing.Color.Transparent;
-            this.lblPitchLabel.Location = new System.Drawing.Point(6, 147);
+            this.lblPitchLabel.Location = new System.Drawing.Point(6, 129);
             this.lblPitchLabel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblPitchLabel.Name = "lblPitchLabel";
             this.lblPitchLabel.Size = new System.Drawing.Size(31, 13);
@@ -608,7 +647,7 @@
             // 
             this.lblRoll.AutoSize = true;
             this.lblRoll.BackColor = System.Drawing.Color.Transparent;
-            this.lblRoll.Location = new System.Drawing.Point(149, 129);
+            this.lblRoll.Location = new System.Drawing.Point(149, 111);
             this.lblRoll.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblRoll.Name = "lblRoll";
             this.lblRoll.Size = new System.Drawing.Size(10, 13);
@@ -619,7 +658,7 @@
             // 
             this.lblRollLabel.AutoSize = true;
             this.lblRollLabel.BackColor = System.Drawing.Color.Transparent;
-            this.lblRollLabel.Location = new System.Drawing.Point(6, 129);
+            this.lblRollLabel.Location = new System.Drawing.Point(6, 111);
             this.lblRollLabel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblRollLabel.Name = "lblRollLabel";
             this.lblRollLabel.Size = new System.Drawing.Size(25, 13);
@@ -630,7 +669,7 @@
             // 
             this.lblThrottle.AutoSize = true;
             this.lblThrottle.BackColor = System.Drawing.Color.Transparent;
-            this.lblThrottle.Location = new System.Drawing.Point(149, 111);
+            this.lblThrottle.Location = new System.Drawing.Point(149, 93);
             this.lblThrottle.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblThrottle.Name = "lblThrottle";
             this.lblThrottle.Size = new System.Drawing.Size(10, 13);
@@ -641,7 +680,7 @@
             // 
             this.lblThrottleLabel.AutoSize = true;
             this.lblThrottleLabel.BackColor = System.Drawing.Color.Transparent;
-            this.lblThrottleLabel.Location = new System.Drawing.Point(6, 111);
+            this.lblThrottleLabel.Location = new System.Drawing.Point(6, 93);
             this.lblThrottleLabel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblThrottleLabel.Name = "lblThrottleLabel";
             this.lblThrottleLabel.Size = new System.Drawing.Size(43, 13);
@@ -652,7 +691,7 @@
             // 
             this.lblClimb.AutoSize = true;
             this.lblClimb.BackColor = System.Drawing.Color.Transparent;
-            this.lblClimb.Location = new System.Drawing.Point(149, 93);
+            this.lblClimb.Location = new System.Drawing.Point(149, 75);
             this.lblClimb.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblClimb.Name = "lblClimb";
             this.lblClimb.Size = new System.Drawing.Size(10, 13);
@@ -663,7 +702,7 @@
             // 
             this.lblClimbLabel.AutoSize = true;
             this.lblClimbLabel.BackColor = System.Drawing.Color.Transparent;
-            this.lblClimbLabel.Location = new System.Drawing.Point(6, 93);
+            this.lblClimbLabel.Location = new System.Drawing.Point(6, 75);
             this.lblClimbLabel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblClimbLabel.Name = "lblClimbLabel";
             this.lblClimbLabel.Size = new System.Drawing.Size(32, 13);
@@ -685,7 +724,7 @@
             // 
             this.lblCOG.AutoSize = true;
             this.lblCOG.BackColor = System.Drawing.Color.Transparent;
-            this.lblCOG.Location = new System.Drawing.Point(149, 75);
+            this.lblCOG.Location = new System.Drawing.Point(149, 57);
             this.lblCOG.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblCOG.Name = "lblCOG";
             this.lblCOG.Size = new System.Drawing.Size(10, 13);
@@ -707,7 +746,7 @@
             // 
             this.lblCOGLabel.AutoSize = true;
             this.lblCOGLabel.BackColor = System.Drawing.Color.Transparent;
-            this.lblCOGLabel.Location = new System.Drawing.Point(6, 75);
+            this.lblCOGLabel.Location = new System.Drawing.Point(6, 57);
             this.lblCOGLabel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblCOGLabel.Name = "lblCOGLabel";
             this.lblCOGLabel.Size = new System.Drawing.Size(30, 13);
@@ -740,7 +779,7 @@
             // 
             this.lblSpeed.AutoSize = true;
             this.lblSpeed.BackColor = System.Drawing.Color.Transparent;
-            this.lblSpeed.Location = new System.Drawing.Point(149, 57);
+            this.lblSpeed.Location = new System.Drawing.Point(149, 93);
             this.lblSpeed.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblSpeed.Name = "lblSpeed";
             this.lblSpeed.Size = new System.Drawing.Size(10, 13);
@@ -751,7 +790,7 @@
             // 
             this.lblSpeedLabel.AutoSize = true;
             this.lblSpeedLabel.BackColor = System.Drawing.Color.Transparent;
-            this.lblSpeedLabel.Location = new System.Drawing.Point(6, 57);
+            this.lblSpeedLabel.Location = new System.Drawing.Point(6, 93);
             this.lblSpeedLabel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblSpeedLabel.Name = "lblSpeedLabel";
             this.lblSpeedLabel.Size = new System.Drawing.Size(38, 13);
@@ -763,9 +802,9 @@
             this.panel1.BackColor = System.Drawing.Color.Transparent;
             this.panel1.BackgroundImage = global::KonfigurationTool.Properties.Resources.Logo_xeniC;
             this.panel1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.panel1.Location = new System.Drawing.Point(12, 377);
+            this.panel1.Location = new System.Drawing.Point(12, 388);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(159, 56);
+            this.panel1.Size = new System.Drawing.Size(139, 45);
             this.panel1.TabIndex = 8;
             // 
             // groupGPS
@@ -783,9 +822,11 @@
             this.groupGPS.Controls.Add(this.lblLongitudeLabel);
             this.groupGPS.Controls.Add(this.lblLatitude);
             this.groupGPS.Controls.Add(this.lblLatitudeLabel);
+            this.groupGPS.Controls.Add(this.lblSpeedLabel);
+            this.groupGPS.Controls.Add(this.lblSpeed);
             this.groupGPS.Location = new System.Drawing.Point(334, 144);
             this.groupGPS.Name = "groupGPS";
-            this.groupGPS.Size = new System.Drawing.Size(318, 132);
+            this.groupGPS.Size = new System.Drawing.Size(318, 145);
             this.groupGPS.TabIndex = 2;
             this.groupGPS.TabStop = false;
             this.groupGPS.Text = "GPS";
@@ -813,7 +854,7 @@
             // lblVDOP
             // 
             this.lblVDOP.AutoSize = true;
-            this.lblVDOP.Location = new System.Drawing.Point(149, 111);
+            this.lblVDOP.Location = new System.Drawing.Point(149, 129);
             this.lblVDOP.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblVDOP.Name = "lblVDOP";
             this.lblVDOP.Size = new System.Drawing.Size(10, 13);
@@ -823,7 +864,7 @@
             // lblVDOPLabel
             // 
             this.lblVDOPLabel.AutoSize = true;
-            this.lblVDOPLabel.Location = new System.Drawing.Point(6, 111);
+            this.lblVDOPLabel.Location = new System.Drawing.Point(6, 129);
             this.lblVDOPLabel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblVDOPLabel.Name = "lblVDOPLabel";
             this.lblVDOPLabel.Size = new System.Drawing.Size(37, 13);
@@ -833,7 +874,7 @@
             // lblHDOP
             // 
             this.lblHDOP.AutoSize = true;
-            this.lblHDOP.Location = new System.Drawing.Point(149, 93);
+            this.lblHDOP.Location = new System.Drawing.Point(149, 111);
             this.lblHDOP.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblHDOP.Name = "lblHDOP";
             this.lblHDOP.Size = new System.Drawing.Size(10, 13);
@@ -843,7 +884,7 @@
             // lblHDOPLabel
             // 
             this.lblHDOPLabel.AutoSize = true;
-            this.lblHDOPLabel.Location = new System.Drawing.Point(6, 93);
+            this.lblHDOPLabel.Location = new System.Drawing.Point(6, 111);
             this.lblHDOPLabel.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblHDOPLabel.Name = "lblHDOPLabel";
             this.lblHDOPLabel.Size = new System.Drawing.Size(38, 13);
@@ -1095,6 +1136,11 @@
             this.linkUrl.Text = "http://anysense.de/support/";
             this.linkUrl.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkUrl_LinkClicked);
             // 
+            // toolTip1
+            // 
+            this.toolTip1.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.toolTip1.ToolTipTitle = "Battery Info";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1135,6 +1181,7 @@
             this.grpChannelStats.PerformLayout();
             this.gpGenerall.ResumeLayout(false);
             this.gpGenerall.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbCells)).EndInit();
             this.groupTelemetry.ResumeLayout(false);
             this.groupTelemetry.PerformLayout();
             this.groupGPS.ResumeLayout(false);
@@ -1237,6 +1284,10 @@
         private System.Windows.Forms.Label lblInfo;
         private System.Windows.Forms.LinkLabel linkUrl;
         private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Label lblCurrent;
+        private System.Windows.Forms.Label lblCurrentLabel;
+        private System.Windows.Forms.PictureBox pbCells;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
 

@@ -290,6 +290,7 @@ namespace KonfigurationTool
             {
                 Msg_sys_status sys = (msg as Msg_sys_status);
                 lblBattery.Text = (sys.voltage_battery / 1000f).ToString("0.00 V");
+                lblCurrent.Text = (sys.current_battery / 100f).ToString("0.00 A");
                 lblStatLost.Text = sys.errors_count1.ToString();
                 lblStatDrop.Text = sys.errors_count2.ToString();
                 lblStatCorrupted.Text = sys.errors_count3.ToString();
@@ -337,6 +338,30 @@ namespace KonfigurationTool
                 lblRC8.Text = rc.chan10_raw.ToString();
 
             }
+            else if (t == typeof(Msg_battery_status))
+            {
+                Msg_battery_status batt = (msg as Msg_battery_status);
+
+                lblCurrent.Text = (batt.current_battery / 100f).ToString("0.00 A");
+
+                string text = "";
+                int index = 1;
+                foreach (ushort cell in batt.voltages)
+                {
+                    if (!string.IsNullOrEmpty(text))
+                        text += Environment.NewLine;
+
+                    text += string.Format("{0}. {1:0.00} V", index, ((float)cell / 1000f));
+                    index++;
+                }
+
+                if (!string.IsNullOrEmpty(text))
+                {
+                    toolTip1.SetToolTip(pbCells, text);
+                    pbCells.Visible = true;
+                }
+            }
+
         }
 
         private void ClearLiveData()
@@ -345,6 +370,7 @@ namespace KonfigurationTool
             lblPort1.Text = "-";
             lblPort2.Text = "-";
             lblBattery.Text = "-";
+            lblCurrent.Text = "-";
             lblStatLost.Text = "-";
             lblStatDrop.Text = "-";
             lblStatCorrupted.Text = "-";
@@ -370,6 +396,7 @@ namespace KonfigurationTool
             lblRC6.Text = "-";
             lblRC7.Text = "-";
             lblRC8.Text = "-";
+            toolTip1.RemoveAll();
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -477,6 +504,7 @@ namespace KonfigurationTool
                     cmbPort.Enabled = true;
                     tsFCHearbeat.Visible = false;
                     tsUniAdapterHeartbeat.Visible = false;
+                    pbCells.Visible = false;
                     break;
                 case StateMachineStep.Open:
                     btnConnect.Text = "Close";
@@ -497,6 +525,7 @@ namespace KonfigurationTool
                     cmbPort.Enabled = false;
                     tsFCHearbeat.Visible = false;
                     tsUniAdapterHeartbeat.Visible = false;
+                    pbCells.Visible = false;
                     break;
                 case StateMachineStep.Connected:
                     btnUpdate.Visible = false;
@@ -515,6 +544,7 @@ namespace KonfigurationTool
                     tsUniAdapterHeartbeat.Visible = true;
                     tsUniAdapterHeartbeat.BackColor = Color.Green;
                     tsFWVersion.Visible = true;
+                    pbCells.Visible = false;
 
                     /*
                     Task.Factory.StartNew(() =>
@@ -567,6 +597,7 @@ namespace KonfigurationTool
                     btnPort1Configure.Enabled = false;
                     btnPort2Configure.Enabled = false;
                     cmbPort.Enabled = false;
+                    pbCells.Visible = false;
                     break;
                 default:
                     break;
@@ -692,6 +723,20 @@ namespace KonfigurationTool
         {
             if (currentStep == StateMachineStep.Connected && e.KeyCode == Keys.U)
                 btnUpdate.Visible = true;
+
+            if (currentStep == StateMachineStep.None && e.KeyCode == Keys.L)
+            {
+                try
+                {
+                    serialPort.Open();
+                    StateMachineUpdate(StateMachineStep.Connected);
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, "Error while open serial port:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
 
         private void linkUrl_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
