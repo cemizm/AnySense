@@ -453,6 +453,7 @@ static void RX_Callback(uint8_t* id)
 						{
 							if (session->voltageSensors[i].SensorId == session->currentSensorId)
 							{
+								session->voltageSensors[i].payload[0] = cells;
 								break;
 							}
 							else
@@ -467,6 +468,8 @@ static void RX_Callback(uint8_t* id)
 							break;
 						}
 					}
+
+					simpleTelemtryData.cellCount = startCell + cells;
 
 					simpleTelemtryData.cells[startCell + battnumber] = (uint16_t) (((lipo & 0x000FFF00) >> 8) / 5) * 10;
 					if (battnumber + 1 < cells)
