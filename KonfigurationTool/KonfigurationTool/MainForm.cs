@@ -342,8 +342,7 @@ namespace KonfigurationTool
             {
                 Msg_battery_status batt = (msg as Msg_battery_status);
 
-                lblCurrent.Text = (batt.current_battery / 100f).ToString("0.00 A");
-
+                
                 string text = "";
                 int index = 1;
                 foreach (ushort cell in batt.voltages)
@@ -351,7 +350,7 @@ namespace KonfigurationTool
                     if (!string.IsNullOrEmpty(text))
                         text += Environment.NewLine;
 
-                    text += string.Format("{0}. {1:0.00} V", index, ((float)cell / 1000f));
+                    text += string.Format("{0:00}. {1:0.00} V", index, ((float)cell / 1000f));
                     index++;
                 }
 
@@ -528,6 +527,7 @@ namespace KonfigurationTool
                     pbCells.Visible = false;
                     break;
                 case StateMachineStep.Connected:
+                    btnConnect.Text = "Close";
                     btnUpdate.Visible = false;
                     timer.Enabled = false;
                     tsStatus.Text = "connected";
