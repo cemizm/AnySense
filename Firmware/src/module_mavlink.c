@@ -90,8 +90,7 @@ uint16_t mavlink_pack_rc_out(mavlink_message_t* msg)
 uint16_t mavlink_pack_battery(mavlink_message_t* msg)
 {
 	return mavlink_msg_battery_status_pack(MAVLINK_SYSTEM_ID, MAVLINK_COMP_ID, msg, 1, MAV_BATTERY_FUNCTION_ALL,
-			MAV_BATTERY_TYPE_LIPO, simpleTelemtryData.temp1, simpleTelemtryData.cells, simpleTelemtryData.current * 100, -1, -1,
-			-1);
+			MAV_BATTERY_TYPE_LIPO, simpleTelemtryData.temp1, simpleTelemtryData.cells, -1, -1, -1, -1);
 
 }
 

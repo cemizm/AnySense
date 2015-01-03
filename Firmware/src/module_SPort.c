@@ -144,8 +144,6 @@ void sport_task(void* pData)
 						crc += byte; //0-1FF
 						crc += crc >> 8; //0-100
 						crc &= 0x00FF;
-						crc += crc >> 8; //0-0FF
-						crc &= 0x00FF;
 					}
 
 					FIFO64_write(session->send_buffer, 0xFF - crc);
@@ -424,20 +422,18 @@ static void RX_Callback(uint8_t* id)
 			short crc = 0;
 			for (uint8_t i = 0; i < SPORT_DATA_SIZE; i++)
 			{
-				crc += data[i]; //0-1FF
-				crc += crc >> 8; //0-100
-				crc &= 0x00FF;
-				crc += crc >> 8; //0-0FF
-				crc &= 0x00FF;
+				crc += data[i]; // 0-1FE
+				crc += crc >> 8;  // 0-1FF
+				crc &= 0x00ff;    // 0-FF
 			}
-			if (crc == 0x00ff)
+			if (crc == 0x00ff || session->rxPacket.Id == SENSOR_CELLS)
 			{
 				session->sensorRespsone = 1;
 
 				switch (session->rxPacket.Id)
 				{
 				case SENSOR_CURR:
-					simpleTelemtryData.current = ((float)SPORT_DATA_U32(session->rxPacket)) / 10;
+					simpleTelemtryData.current = ((float) SPORT_DATA_U32(session->rxPacket)) / 10;
 					break;
 				case SENSOR_CELLS:
 				{
@@ -453,6 +449,12 @@ static void RX_Callback(uint8_t* id)
 						{
 							if (session->voltageSensors[i].SensorId == session->currentSensorId)
 							{
+								if (cells < session->voltageSensors[i].payload[0])
+								{
+									for (uint8_t j = 0; j < session->voltageSensors[i].payload[0]; j++)
+										simpleTelemtryData.cells[startCell + j] = 0;
+								}
+
 								session->voltageSensors[i].payload[0] = cells;
 								break;
 							}
@@ -469,11 +471,19 @@ static void RX_Callback(uint8_t* id)
 						}
 					}
 
-					simpleTelemtryData.cellCount = startCell + cells;
+					simpleTelemtryData.cellCount = 0;
+					for (uint8_t i = 0; i < SPORT_ACTIVE_VOLTAGE_SENSORS; i++)
+					{
+						if (session->voltageSensors[i].active == 1)
+							simpleTelemtryData.cellCount += session->voltageSensors[i].payload[0];
+						else
+							break;
+					}
 
 					simpleTelemtryData.cells[startCell + battnumber] = (uint16_t) (((lipo & 0x000FFF00) >> 8) / 5) * 10;
 					if (battnumber + 1 < cells)
 						simpleTelemtryData.cells[startCell + battnumber + 1] = (uint16_t) (((lipo & 0xFFF00000) >> 20) / 5) * 10;
+
 				}
 					break;
 				case SENSOR_AIR_SPEED:
@@ -564,15 +574,15 @@ static void RX_Callback(uint8_t* id)
 						uint32_t gps_time_date = SPORT_DATA_U32(session->rxPacket);
 						if (gps_time_date & 0x000000ff)
 						{
-							simpleTelemtryData.year = gps_time_date << 24;
-							simpleTelemtryData.month = gps_time_date << 16;
-							simpleTelemtryData.day = gps_time_date << 8;
+							simpleTelemtryData.year = gps_time_date >> 24;
+							simpleTelemtryData.month = gps_time_date >> 16;
+							simpleTelemtryData.day = gps_time_date >> 8;
 						}
 						else
 						{
-							simpleTelemtryData.hour = gps_time_date << 24;
-							simpleTelemtryData.minute = gps_time_date << 16;
-							simpleTelemtryData.second = gps_time_date << 8;
+							simpleTelemtryData.hour = gps_time_date >> 24;
+							simpleTelemtryData.minute = gps_time_date >> 16;
+							simpleTelemtryData.second = gps_time_date >> 8;
 						}
 					}
 						break;
