@@ -140,6 +140,8 @@ static void naza_main_task(void* pData)
 	float avg[3] = { 0 };
 	uint8_t avg_curr = 0;
 
+	uint8_t smartBatteryPresent = 0;
+
 	while (1)
 	{
 
@@ -253,14 +255,15 @@ static void naza_main_task(void* pData)
 			else if (channel->msg.header.id == 0x1009)
 			{ //raw io
 				struct msg_raw_io* raw_io = (struct msg_raw_io*) &channel->msg.bytes;
-				simpleTelemtryData.battery = raw_io->batVolt;
 
 				for (uint8_t j = 0; j < 10; j++)
 				{
 					simpleTelemtryData.rcIn[j] = raw_io->rcIn[j];
 				}
 
-				simpleTelemtryData.battery = raw_io->batVolt;
+				if (smartBatteryPresent == 0)
+					simpleTelemtryData.battery = raw_io->batVolt;
+
 				simpleTelemtryData.roll = raw_io->roll;
 				simpleTelemtryData.pitch = raw_io->pitch;
 				simpleTelemtryData.mode = (enum flightMode) raw_io->flightMode;
@@ -270,6 +273,18 @@ static void naza_main_task(void* pData)
 				simpleTelemtryData.homeLon = raw_io->homeLon / M_PI * 180.0;
 				simpleTelemtryData.homeAltBaro = raw_io->homeAltBaro;
 
+			}
+			else if (channel->msg.header.id == 0x0926)
+			{
+				struct msg_smartBattery* smart = (struct msg_smartBattery*) &channel->msg.bytes;
+				simpleTelemtryData.battery = smart->voltage;
+				simpleTelemtryData.cellCount = 3;
+				simpleTelemtryData.cells[0] = smart->cell1;
+				simpleTelemtryData.cells[1] = smart->cell2;
+				simpleTelemtryData.cells[2] = smart->cell3;
+				simpleTelemtryData.current = smart->current / 1000;
+
+				smartBatteryPresent = 1;
 			}
 			else if (channel->msg.header.id == 0x0922)
 			{ //PMU Heartbeat
@@ -401,7 +416,7 @@ void CEC_CAN_IRQHandler()
 
 						if (channel->msg.header.id == 0x1002 || channel->msg.header.id == 0x1003
 								|| channel->msg.header.id == 0x1009 || channel->msg.header.id == 0x1007
-								|| channel->msg.header.id == 0x0922)
+								|| channel->msg.header.id == 0x0922 || channel->msg.header.id == 0x0926)
 						{
 							channel->state = Processing;
 
