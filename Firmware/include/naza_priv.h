@@ -149,11 +149,10 @@ struct msg_smartBattery
 	uint16_t temperature;			// (230 * 0.1 degrees Celsius)		16
 	uint16_t dischargedCount;		// discharging times (21)			18
 	uint16_t serialNumber;			// serial number (6585)				20
-	uint8_t unk1;					//									22
-	uint16_t cell3;					//cell 3 (3934mV)					23
+	uint16_t cell3;					//cell 3 (3934mV)					22
 	uint16_t cell2;					//cell 2 (3934mV)					24
 	uint16_t cell1;					//cell 1 (3911mV)					26
-	uint8_t unk2[10];											//		28
+	uint8_t unk2[7];											//		28
 }__attribute__((packed, aligned(1)));
 
 struct naza_channel

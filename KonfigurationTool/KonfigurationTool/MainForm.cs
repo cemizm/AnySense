@@ -291,6 +291,7 @@ namespace KonfigurationTool
                 Msg_sys_status sys = (msg as Msg_sys_status);
                 lblBattery.Text = (sys.voltage_battery / 1000f).ToString("0.00 V");
                 lblCurrent.Text = (sys.current_battery / 100f).ToString("0.00 A");
+                //lblCurrent.Text = sys.drop_rate_comm.ToString();
                 lblStatLost.Text = sys.errors_count1.ToString();
                 lblStatDrop.Text = sys.errors_count2.ToString();
                 lblStatCorrupted.Text = sys.errors_count3.ToString();
