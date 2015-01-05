@@ -103,6 +103,36 @@ namespace KonfigurationTool.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap led_aus {
+            get {
+                object obj = ResourceManager.GetObject("led_aus", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap led_b_an {
+            get {
+                object obj = ResourceManager.GetObject("led_b_an", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap led_g_an {
+            get {
+                object obj = ResourceManager.GetObject("led_g_an", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Logo_Quadratisch_100 {
             get {
                 object obj = ResourceManager.GetObject("Logo_Quadratisch_100", resourceCulture);

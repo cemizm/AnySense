@@ -249,7 +249,7 @@ namespace KonfigurationTool
             {
                 Msg_heartbeat heartbeat = (msg as Msg_heartbeat);
                 lblFlightMode.Text = ((FlightMode)heartbeat.custom_mode).ToString();
-                tsUniAdapterHeartbeat.BackColor = Color.LawnGreen;
+                tsUniAdapterHeartbeat.BackgroundImage = KonfigurationTool.Properties.Resources.led_g_an;
                 if (UAHeartbeat == null || UAHeartbeat.Status == TaskStatus.RanToCompletion)
                 {
                     UAHeartbeat = Task.Factory.StartNew(() =>
@@ -260,7 +260,7 @@ namespace KonfigurationTool
                             BeginInvoke(((Action)(() =>
                             {
                                 if (!Disposing && !IsDisposed)
-                                    tsUniAdapterHeartbeat.BackColor = Color.Green;
+                                    tsUniAdapterHeartbeat.BackgroundImage = KonfigurationTool.Properties.Resources.led_aus;
                             })));
                         }
                     });
@@ -268,7 +268,7 @@ namespace KonfigurationTool
             }
             else if (t == typeof(Msg_configuration_naza_heartbeat))
             {
-                tsFCHearbeat.BackColor = Color.LawnGreen;
+                tsFCHearbeat.BackgroundImage = KonfigurationTool.Properties.Resources.led_b_an;
                 if (FCHeartbeat == null || FCHeartbeat.Status == TaskStatus.RanToCompletion)
                 {
                     FCHeartbeat = Task.Factory.StartNew(() =>
@@ -280,7 +280,7 @@ namespace KonfigurationTool
                             BeginInvoke(((Action)(() =>
                             {
                                 if (!Disposing && !IsDisposed)
-                                    tsFCHearbeat.BackColor = Color.Green;
+                                    tsFCHearbeat.BackgroundImage = KonfigurationTool.Properties.Resources.led_aus;
                             })));
                         }
                     });
@@ -291,7 +291,6 @@ namespace KonfigurationTool
                 Msg_sys_status sys = (msg as Msg_sys_status);
                 lblBattery.Text = (sys.voltage_battery / 1000f).ToString("0.00 V");
                 lblCurrent.Text = (sys.current_battery / 100f).ToString("0.00 A");
-                //lblCurrent.Text = sys.drop_rate_comm.ToString();
                 lblStatLost.Text = sys.errors_count1.ToString();
                 lblStatDrop.Text = sys.errors_count2.ToString();
                 lblStatCorrupted.Text = sys.errors_count3.ToString();
@@ -502,8 +501,6 @@ namespace KonfigurationTool
                     btnPort1Configure.Enabled = false;
                     btnPort2Configure.Enabled = false;
                     cmbPort.Enabled = true;
-                    tsFCHearbeat.Visible = false;
-                    tsUniAdapterHeartbeat.Visible = false;
                     pbCells.Visible = false;
                     break;
                 case StateMachineStep.Open:
@@ -517,8 +514,6 @@ namespace KonfigurationTool
                     tsFWVersion.Text = "-";
                     tsFWVersion.Visible = false;
                     tsLoading.Visible = true;
-                    tsFCHearbeat.Visible = false;
-                    tsUniAdapterHeartbeat.Visible = false;
                     ClearLiveData();
                     btnPort1Configure.Enabled = false;
                     btnPort2Configure.Enabled = false;
@@ -535,15 +530,11 @@ namespace KonfigurationTool
                     tsStatus.ForeColor = Color.Green;
                     Cursor = Cursors.Default;
                     tsLoading.Visible = false;
-                    tsFCHearbeat.Visible = true;
-                    tsUniAdapterHeartbeat.Visible = true;
                     btnPort1Configure.Enabled = false;
                     btnPort2Configure.Enabled = false;
                     cmbPort.Enabled = false;
                     tsFCHearbeat.Visible = true;
-                    tsFCHearbeat.BackColor = Color.Green;
                     tsUniAdapterHeartbeat.Visible = true;
-                    tsUniAdapterHeartbeat.BackColor = Color.Green;
                     tsFWVersion.Visible = true;
                     pbCells.Visible = false;
 

@@ -963,23 +963,23 @@
             this.toolStripStatusLabel3,
             this.tsFCHearbeat,
             this.tsUniAdapterHeartbeat});
-            this.statusStrip.Location = new System.Drawing.Point(0, 463);
+            this.statusStrip.Location = new System.Drawing.Point(0, 462);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(666, 24);
+            this.statusStrip.Size = new System.Drawing.Size(666, 25);
             this.statusStrip.TabIndex = 3;
             this.statusStrip.Text = "statusStrip1";
             // 
             // tsStatusLabel
             // 
             this.tsStatusLabel.Name = "tsStatusLabel";
-            this.tsStatusLabel.Size = new System.Drawing.Size(42, 19);
+            this.tsStatusLabel.Size = new System.Drawing.Size(42, 20);
             this.tsStatusLabel.Text = "Status:";
             // 
             // tsStatus
             // 
             this.tsStatus.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.tsStatus.Name = "tsStatus";
-            this.tsStatus.Size = new System.Drawing.Size(81, 19);
+            this.tsStatus.Size = new System.Drawing.Size(81, 20);
             this.tsStatus.Text = "disconnected";
             // 
             // tsLoading
@@ -987,45 +987,47 @@
             this.tsLoading.BackColor = System.Drawing.Color.White;
             this.tsLoading.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(11)))), ((int)(((byte)(16)))));
             this.tsLoading.Name = "tsLoading";
-            this.tsLoading.Size = new System.Drawing.Size(100, 18);
+            this.tsLoading.Size = new System.Drawing.Size(100, 19);
             this.tsLoading.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             // 
             // tsFWVersionLabel
             // 
             this.tsFWVersionLabel.Margin = new System.Windows.Forms.Padding(10, 3, 0, 2);
             this.tsFWVersionLabel.Name = "tsFWVersionLabel";
-            this.tsFWVersionLabel.Size = new System.Drawing.Size(98, 19);
+            this.tsFWVersionLabel.Size = new System.Drawing.Size(98, 20);
             this.tsFWVersionLabel.Text = "Firmware Version";
             // 
             // tsFWVersion
             // 
             this.tsFWVersion.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.tsFWVersion.Name = "tsFWVersion";
-            this.tsFWVersion.Size = new System.Drawing.Size(24, 19);
+            this.tsFWVersion.Size = new System.Drawing.Size(24, 20);
             this.tsFWVersion.Text = "1.1";
             // 
             // toolStripStatusLabel3
             // 
             this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            this.toolStripStatusLabel3.Size = new System.Drawing.Size(246, 19);
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(209, 20);
             this.toolStripStatusLabel3.Spring = true;
             // 
             // tsFCHearbeat
             // 
             this.tsFCHearbeat.AutoSize = false;
-            this.tsFCHearbeat.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
-            this.tsFCHearbeat.Margin = new System.Windows.Forms.Padding(5, 3, 0, 2);
+            this.tsFCHearbeat.BackgroundImage = global::KonfigurationTool.Properties.Resources.led_aus;
+            this.tsFCHearbeat.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.tsFCHearbeat.Margin = new System.Windows.Forms.Padding(0, 0, 3, 1);
             this.tsFCHearbeat.Name = "tsFCHearbeat";
-            this.tsFCHearbeat.Size = new System.Drawing.Size(19, 19);
+            this.tsFCHearbeat.Size = new System.Drawing.Size(24, 24);
             this.tsFCHearbeat.ToolTipText = "FC Heartbeat";
             // 
             // tsUniAdapterHeartbeat
             // 
             this.tsUniAdapterHeartbeat.AutoSize = false;
-            this.tsUniAdapterHeartbeat.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
-            this.tsUniAdapterHeartbeat.Margin = new System.Windows.Forms.Padding(5, 3, 0, 2);
+            this.tsUniAdapterHeartbeat.BackgroundImage = global::KonfigurationTool.Properties.Resources.led_aus;
+            this.tsUniAdapterHeartbeat.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.tsUniAdapterHeartbeat.Margin = new System.Windows.Forms.Padding(0, 0, 3, 1);
             this.tsUniAdapterHeartbeat.Name = "tsUniAdapterHeartbeat";
-            this.tsUniAdapterHeartbeat.Size = new System.Drawing.Size(19, 19);
+            this.tsUniAdapterHeartbeat.Size = new System.Drawing.Size(24, 24);
             this.tsUniAdapterHeartbeat.ToolTipText = "UniAdapter Heartbeat";
             // 
             // lblPort1Label
