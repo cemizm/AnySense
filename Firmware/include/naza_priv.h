@@ -138,21 +138,21 @@ struct msg_raw_io
 
 struct msg_smartBattery
 {
-	struct naza_header header;									//		0
-	uint16_t capacity_design; 		// design capacity (5200mAh)		4
-	uint16_t capacity_full; 		// full capacity (5003mAH)			6
-	uint16_t capacity_current;		// current capacity (3115mAh)		8
-	uint16_t voltage; 				// voltage (11725mV)				10
-	int16_t current;				// current (-371mA)					12
-	uint8_t percentage_life;		// percentage of life (93%)			14
-	uint8_t percentage_charge;		// percentage of charge (62%)		15
-	uint16_t temperature;			// (230 * 0.1 degrees Celsius)		16
-	uint16_t dischargedCount;		// discharging times (21)			18
-	uint16_t serialNumber;			// serial number (6585)				20
-	uint16_t cell3;					//cell 3 (3934mV)					22
-	uint16_t cell2;					//cell 2 (3934mV)					24
-	uint16_t cell1;					//cell 1 (3911mV)					26
-	uint8_t unk2[7];											//		28
+	struct naza_header header;									//
+	uint16_t capacity_design; 		// design capacity (5200mAh)		2
+	uint16_t capacity_full; 		// full capacity (5003mAH)			4
+	uint16_t capacity_current;		// current capacity (3115mAh)		6
+	uint16_t voltage; 				// voltage (11725mV)				8
+	int16_t current;				// current (-371mA)					10
+	uint8_t percentage_life;		// percentage of life (93%)			11
+	uint8_t percentage_charge;		// percentage of charge (62%)		12
+	uint16_t temperature;			// (230 * 0.1 degrees Celsius)		14
+	uint16_t dischargedCount;		// discharging times (21)			16
+	uint16_t serialNumber;			// serial number (6585)				18
+	uint16_t cell1;					//cell 3 (3934mV)					20
+	uint16_t cell2;					//cell 2 (3934mV)					22
+	uint16_t cell3;					//cell 1 (3911mV)					24
+	uint8_t unk2[11];											//		26
 }__attribute__((packed, aligned(1)));
 
 struct naza_channel
