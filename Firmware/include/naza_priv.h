@@ -99,6 +99,41 @@ struct msg_gps
 	uint16_t seqNum;   // sequence number - increases with every message
 }__attribute__((packed));
 
+struct msg_raw_io_phantom
+{
+	struct naza_header header;
+	uint8_t unk1[4];
+	uint16_t motorOut[8];  // motor output (M1/M2/M3/M4/M5/M6/F1/F2)
+	uint8_t unk2[4];
+	int16_t rcIn[10]; // RC controller input (order: unused/A/E/R/U/T/unused/X1/X2/unused)
+	uint8_t unk3[11];
+	uint8_t flightMode; // (0 - manual, 1 - GPS, 2 - failsafe, 3 - atti)
+	uint8_t unk4[8];
+	double homeLat;      // home lattitude (radians)
+	double homeLon;      // home longitude (radians)
+	float homeAltBaro; // home altitude from barometric sensor plus 20m (meters)
+	uint16_t seqNum; // sequence number - increases with every message
+	uint8_t unk5[2];
+	float stabRollIn; // attitude stabilizer roll input (-1000~1000)
+	float stabPitchIn; // attitude stabilizer pitch input (-1000~1000)
+	float stabThroIn; // altitude stabilizer throttle input (-1000~1000)
+	uint8_t unk6[4];
+	float actAileIn; // actual aileron input, mode and arm state dependent (-1000~1000)
+	float actElevIn; // actual elevator input, mode and arm state dependent (-1000~1000)
+	float actThroIn; // actual throttle input, mode and arm state dependent (-1000~1000)
+	uint8_t unk7[4];
+	uint8_t controlMode; // (0 - GPS/failsafe, 1 - waypoint mode?, 3 - manual, 6 - atti)
+	uint8_t unk8[5];
+	int16_t gyrScalX;     // ???
+	int16_t gyrScalY;     // ???
+	int16_t gyrScalZ;     // ???
+	uint8_t unk9[32];
+	float downVelocity; // downward velocity (m/s)
+	float altBaro;      // altitude from barometric sensor (meters)
+	float roll;         // roll angle (radians)
+	float pitch;        // pitch angle (radians)
+}__attribute__((packed));
+
 struct msg_raw_io
 {
 	struct naza_header header;
