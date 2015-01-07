@@ -358,7 +358,7 @@ struct hott_distance_alarm_exec
 
 void module_hott_task(void* pData);
 
-__inline__ uint8_t getVoltagePercent(uint16_t voltage, uint8_t cells);
+__inline__ uint8_t getVoltagePercent(uint16_t cellVoltage);
 __inline__ uint16_t getFraction(float value, uint8_t precision);
 __inline__ double getDistance(double lon1, double lat1, double lon2, double lat2);
 __inline__ double calculateAngle(double long1, double lat1, double long2, double lat2);

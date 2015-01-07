@@ -183,7 +183,21 @@ void module_hott_task(void* pData)
 		memset(msg.buffer, 0, MODULE_HOTT_MSG_BUFFER_SIZE);
 		ticks = CoGetOSTime();
 
-		voltagePercent = getVoltagePercent(simpleTelemtryData.battery, session->config->num_cells);
+
+		if (simpleTelemtryData.cellCount > 0)
+		{
+			uint16_t lowest = simpleTelemtryData.cells[0];
+			for (uint8_t i = 1; i < simpleTelemtryData.cellCount && i < MODULE_HOTT_GAM_CELLS; i++)
+			{
+				if (simpleTelemtryData.cells[i] < lowest)
+					lowest = simpleTelemtryData.cells[i];
+			}
+
+			voltagePercent = getVoltagePercent(lowest);
+		}
+		else if (session->config->num_cells > 0)
+			voltagePercent = getVoltagePercent(simpleTelemtryData.battery / session->config->num_cells);
+
 		if (simpleTelemtryData.homeLon != 0 && simpleTelemtryData.homeLat != 0)
 		{
 			distance = getDistance(simpleTelemtryData.lon, simpleTelemtryData.lat, simpleTelemtryData.homeLon,
@@ -221,20 +235,22 @@ void module_hott_task(void* pData)
 
 				if (simpleTelemtryData.cellCount > 0)
 				{
-					uint8_t lowest = simpleTelemtryData.cells[0] / 20;
+					uint16_t lowest = simpleTelemtryData.cells[0];
 					for (uint8_t i = 0; i < simpleTelemtryData.cellCount && i < MODULE_HOTT_GAM_CELLS; i++)
 					{
 						msg.gam.cell[i] = simpleTelemtryData.cells[i] / 20;
-						if (msg.gam.cell[i] < lowest)
-							lowest = msg.gam.cell[i];
+						if (simpleTelemtryData.cells[i] < lowest)
+							lowest = simpleTelemtryData.cells[i];
 					}
 
-					msg.gam.min_cell_volt = lowest;
+					msg.gam.min_cell_volt = lowest / 20;
+					msg.gam.fuel_percent = getVoltagePercent(lowest);
 				}
 				else if (session->config->num_cells > 0)
+				{
 					msg.gam.min_cell_volt = (simpleTelemtryData.battery / session->config->num_cells) / 20;
-
-				msg.gam.fuel_percent = getVoltagePercent(simpleTelemtryData.battery, session->config->num_cells);
+					msg.gam.fuel_percent = getVoltagePercent(simpleTelemtryData.battery / session->config->num_cells);
+				}
 
 				size = sizeof(struct hott_msg_gam);
 			} //session->sensor == hott_sensor_id_gam
@@ -649,7 +665,7 @@ void module_hott_task(void* pData)
 			if (delay > ticks)
 				CoTickDelay(delay - ticks);
 
-			if(ledEnabled)
+			if (ledEnabled)
 				hardware_led_toggle_red();
 
 			crc = 0;
@@ -716,13 +732,8 @@ static void RX_Callback(uint8_t* id)
 	}
 }
 
-__inline__ uint8_t getVoltagePercent(uint16_t voltage, uint8_t cells)
+__inline__ uint8_t getVoltagePercent(uint16_t cellVoltage)
 {
-	if (cells == 0)
-		return 0;
-
-	uint16_t cellVoltage = voltage / cells;
-
 	if (cellVoltage > 4150) // 4,15V 100%
 		return 100;
 	else if (cellVoltage > 4100) // 4,10V 90%
