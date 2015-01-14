@@ -97,7 +97,7 @@ void configManager_task(void* pdata)
 
 	U64 exitIn = CoGetOSTime() + delay_ms(5600);
 	U64 ticks = 0;
-	U64 lastNazaHeartbeatSend = 0;
+	U64 nextFCHeartbeat = CoGetOSTime() + delay_sec(2);
 	uint8_t established = 0;
 	uint8_t exit = 0;
 
@@ -207,12 +207,12 @@ void configManager_task(void* pdata)
 		}
 		else if (established)
 		{
-			if (simpleTelemtryData.lastHeartbeat > lastNazaHeartbeatSend)
+			if (ticks > nextFCHeartbeat && (simpleTelemtryData.lastHeartbeat + delay_sec(1))  > ticks)
 			{
 				msg_len = mavlink_msg_configuration_naza_heartbeat_pack(MAVLINK_SYSTEM_ID, MAVLINK_COMP_ID, &msg_tmp,
 						ticks - simpleTelemtryData.lastHeartbeat);
 
-				lastNazaHeartbeatSend = simpleTelemtryData.lastHeartbeat;
+				nextFCHeartbeat = ticks + delay_sec(2);
 			}
 			else
 				msg_len = mavlink_pack_nextData(&msg_tmp, &currentValue);

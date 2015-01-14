@@ -103,6 +103,10 @@ void naza_initialize()
 	CAN_FilterInitStructure.CAN_FilterIdHigh = 0x7F8 << 5;
 	CAN_FilterInit(&CAN_FilterInitStructure);
 
+	CAN_FilterInitStructure.CAN_FilterNumber = 3;
+	CAN_FilterInitStructure.CAN_FilterIdHigh = 0x388 << 5;
+	CAN_FilterInit(&CAN_FilterInitStructure);
+
 	NVIC_InitTypeDef def;
 	def.NVIC_IRQChannelCmd = ENABLE;
 	def.NVIC_IRQChannel = CEC_CAN_IRQn;
@@ -135,7 +139,8 @@ static void naza_main_task(void* pData)
 	StatusType status;
 	struct naza_channel* channel;
 
-	U64 nextOSDHeartbeat = CoGetOSTime();
+	U64 nextOSDHeartbeat = CoGetOSTime() + delay_sec(3);
+	U64 nextToggle = CoGetOSTime();
 	U64 tmpTick = 0;
 	U64 spdTick = 0;
 
@@ -170,7 +175,7 @@ static void naza_main_task(void* pData)
 
 		tmpTick = CoGetOSTime();
 		if (tmpTick < simpleTelemtryData.lastHeartbeat + delay_sec(3))
-		{ //PMU available
+		{ //FC available
 
 			if (tmpTick > nextOSDHeartbeat)
 			{ //No OSD available, fake OSD Heartbeat
@@ -180,14 +185,28 @@ static void naza_main_task(void* pData)
 
 				nextOSDHeartbeat = tmpTick + delay_sec(2); //next heartbeat in 2 sec
 			}
+
+			if (nextToggle < tmpTick)
+			{
+				nextToggle = tmpTick + delay_sec(1);
+				hardware_led_toggle_green();
+			}
 		}
 
 		if (status == E_OK)
 		{
+			simpleTelemtryData.lastHeartbeat = CoGetOSTime();
 
 			if (channel->msg.header.id == 0x1002)
 			{ //osd
+
 				struct msg_osd* osd = (struct msg_osd*) &channel->msg.bytes;
+
+				if (osd->mask != 0)
+				{
+					for (uint8_t i = 4; i < (osd->header.length + 4); i++)
+						channel->msg.bytes[i] ^= osd->mask;
+				}
 
 				cosRoll = cosf(simpleTelemtryData.roll);
 				sinRoll = sinf(simpleTelemtryData.roll);
@@ -331,11 +350,6 @@ static void naza_main_task(void* pData)
 
 				smartBatteryPresent = 1;
 			}
-			else if (channel->msg.header.id == 0x0922)
-			{ //PMU Heartbeat
-				simpleTelemtryData.lastHeartbeat = CoGetOSTime();
-				hardware_led_toggle_green();
-			}
 			else if (channel->msg.header.id == 0x1007)
 			{ //osd heartbeat available
 				nextOSDHeartbeat = CoGetOSTime() + delay_sec(3);
@@ -461,7 +475,7 @@ void CEC_CAN_IRQHandler()
 
 						if (channel->msg.header.id == 0x1002 || channel->msg.header.id == 0x1003
 								|| channel->msg.header.id == 0x1009 || channel->msg.header.id == 0x1007
-								|| channel->msg.header.id == 0x0922 || channel->msg.header.id == 0x0926)
+								|| channel->msg.header.id == 0x0926)
 						{
 							channel->state = Processing;
 

@@ -69,7 +69,7 @@ struct msg_osd
 	int16_t magCalZ;       // calibrated magnetometer Y axis data
 	uint8_t unk2[10];
 	uint8_t numSat;        // number of locked satellites
-	uint8_t unk3;
+	uint8_t mask;
 	uint16_t seqNum;       // sequence number - increases with every message
 }__attribute__((packed));
 
