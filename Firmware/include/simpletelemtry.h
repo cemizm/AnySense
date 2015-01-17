@@ -55,6 +55,7 @@ struct simpleTelemetry
 	int16_t rcIn[SIMPLE_TELEMETRY_RC]; //RC stick input (-1000~1000), use rcInChan_t enum to index the table
 	int16_t throttle;
 	enum flightMode mode; //flight mode (see mode_t enum)
+	uint8_t armed;
 	U64 lastHeartbeat;
 	float current; //current consumption in 0.1 A
 	float temp1;

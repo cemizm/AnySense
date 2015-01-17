@@ -107,6 +107,10 @@ void naza_initialize()
 	CAN_FilterInitStructure.CAN_FilterIdHigh = 0x388 << 5;
 	CAN_FilterInit(&CAN_FilterInitStructure);
 
+	CAN_FilterInitStructure.CAN_FilterNumber = 4;
+	CAN_FilterInitStructure.CAN_FilterIdHigh = 0x308 << 5;
+	CAN_FilterInit(&CAN_FilterInitStructure);
+
 	NVIC_InitTypeDef def;
 	def.NVIC_IRQChannelCmd = ENABLE;
 	def.NVIC_IRQChannel = CEC_CAN_IRQn;
@@ -143,6 +147,9 @@ static void naza_main_task(void* pData)
 	U64 nextToggle = CoGetOSTime();
 	U64 tmpTick = 0;
 	U64 spdTick = 0;
+	U64 saveHome = 0;
+
+	uint8_t countFS = 0;
 
 	CanTxMsg Heartbeat1 = { 0x108, 0, CAN_Id_Standard, CAN_RTR_Data, 8, { 0x55, 0xAA, 0x55, 0xAA, 0x07, 0x10, 0x00, 0x00 } };
 	CanTxMsg Heartbeat2 = { 0x108, 0, CAN_Id_Standard, CAN_RTR_Data, 4, { 0x66, 0xCC, 0x66, 0xCC } };
@@ -166,7 +173,9 @@ static void naza_main_task(void* pData)
 	float avg[3] = { 0 };
 	uint8_t avg_curr = 0;
 
-	uint8_t smartBatteryPresent = 0;
+	enum fc_type fcType = fc_type_naza;
+
+	uint8_t tmpFS = 0;
 
 	while (1)
 	{
@@ -248,8 +257,26 @@ static void naza_main_task(void* pData)
 					spdTick = tmpTick + delay_ms(200);
 				}
 
-				simpleTelemtryData.vsi = -osd->downVelocity;
+				if (fcType == fc_type_wookong)
+				{
+					if (simpleTelemtryData.numSat >= 7)
+					{
+						if (saveHome == 0)
+							saveHome = tmpTick + delay_sec(10);
 
+						if (tmpTick > saveHome && simpleTelemtryData.armed == 0)
+						{
+							simpleTelemtryData.homeLat = simpleTelemtryData.lat;
+							simpleTelemtryData.homeLon = simpleTelemtryData.lon;
+							simpleTelemtryData.homeAltBaro = simpleTelemtryData.alt + 20;
+						}
+					}
+					else
+						saveHome = 0;
+
+				}
+
+				simpleTelemtryData.vsi = -osd->downVelocity;
 			}
 			else if (channel->msg.header.id == 0x1003)
 			{ //gps
@@ -295,47 +322,65 @@ static void naza_main_task(void* pData)
 			else if (channel->msg.header.id == 0x1009)
 			{ //raw io
 
-				if (smartBatteryPresent == 0)
+				struct msg_raw_io* raw_io = (struct msg_raw_io*) &channel->msg.bytes;
+
+				for (uint8_t j = 0; j < 10; j++)
 				{
-					struct msg_raw_io* raw_io = (struct msg_raw_io*) &channel->msg.bytes;
+					simpleTelemtryData.rcIn[j] = raw_io->rcIn[j];
+				}
 
-					for (uint8_t j = 0; j < 10; j++)
+				if (channel->id == 0x388)
+					fcType = fc_type_wookong;
+
+				if (fcType == fc_type_wookong)
+				{
+					if (tmpFS == 1)
 					{
-						simpleTelemtryData.rcIn[j] = raw_io->rcIn[j];
+						simpleTelemtryData.mode = flightMode_failsafe;
 					}
-
-					simpleTelemtryData.battery = raw_io->batVolt;
-
-					simpleTelemtryData.roll = raw_io->roll;
-					simpleTelemtryData.pitch = raw_io->pitch;
-					simpleTelemtryData.mode = (enum flightMode) raw_io->flightMode;
-					simpleTelemtryData.throttle = raw_io->actThroIn;
-
-					simpleTelemtryData.homeLat = raw_io->homeLat / M_PI * 180.0;
-					simpleTelemtryData.homeLon = raw_io->homeLon / M_PI * 180.0;
-					simpleTelemtryData.homeAltBaro = raw_io->homeAltBaro;
+					else
+					{
+						switch (raw_io->controlMode)
+						{
+						case 3:
+							simpleTelemtryData.mode = flightMode_manual;
+							break;
+						case 6:
+							simpleTelemtryData.mode = flightMode_atti;
+							break;
+						default:
+							simpleTelemtryData.mode = flightMode_gps;
+							break;
+						}
+					}
 				}
 				else
 				{
-
-					struct msg_raw_io_phantom* raw_io = (struct msg_raw_io_phantom*) &channel->msg.bytes;
-
-					for (uint8_t j = 0; j < 10; j++)
-					{
-						simpleTelemtryData.rcIn[j] = raw_io->rcIn[j];
-					}
-
-					simpleTelemtryData.roll = raw_io->roll;
-					simpleTelemtryData.pitch = raw_io->pitch;
-					simpleTelemtryData.mode = (enum flightMode) raw_io->flightMode;
-					simpleTelemtryData.throttle = raw_io->actThroIn;
-
 					simpleTelemtryData.homeLat = raw_io->homeLat / M_PI * 180.0;
 					simpleTelemtryData.homeLon = raw_io->homeLon / M_PI * 180.0;
 					simpleTelemtryData.homeAltBaro = raw_io->homeAltBaro;
 
+					simpleTelemtryData.mode = raw_io->flightMode;
 				}
 
+				if (fcType != fc_type_phantom)
+				{
+					simpleTelemtryData.battery = raw_io->batVolt;
+				}
+
+				if (fcType == fc_type_naza)
+				{
+					simpleTelemtryData.roll = raw_io->roll;
+					simpleTelemtryData.pitch = raw_io->pitch;
+				}
+				else
+				{
+					simpleTelemtryData.roll = -(raw_io->stabRollIn * ((M_PI / 2) / 1000.0));
+					simpleTelemtryData.pitch = -(raw_io->stabPitchIn * ((M_PI / 2) / 1000.0));
+				}
+
+				simpleTelemtryData.armed = raw_io->armed;
+				simpleTelemtryData.throttle = raw_io->actThroIn;
 			}
 			else if (channel->msg.header.id == 0x0926)
 			{
@@ -348,7 +393,27 @@ static void naza_main_task(void* pData)
 				simpleTelemtryData.current = -(((float) smart->current) / 1000);
 				simpleTelemtryData.temp1 = ((float) smart->temperature) / 10;
 
-				smartBatteryPresent = 1;
+				fcType = fc_type_phantom;
+
+			}
+			else if (channel->msg.header.id == 0x0909)
+			{
+				if (channel->msg.bytes[4] == 0x00 && channel->msg.bytes[5] == 0x00 && channel->msg.bytes[6] == 0x00
+						&& channel->msg.bytes[7] == 0x00 && channel->msg.bytes[8] == 0xFF && channel->msg.bytes[9] == 0x03)
+				{
+					//Failsafe
+					tmpFS = 1;
+					countFS = 0;
+				}
+				else
+				{
+					if (countFS > 10)
+					{
+						tmpFS = 0;
+					}
+					else
+						countFS++;
+				}
 			}
 			else if (channel->msg.header.id == 0x1007)
 			{ //osd heartbeat available
@@ -475,7 +540,7 @@ void CEC_CAN_IRQHandler()
 
 						if (channel->msg.header.id == 0x1002 || channel->msg.header.id == 0x1003
 								|| channel->msg.header.id == 0x1009 || channel->msg.header.id == 0x1007
-								|| channel->msg.header.id == 0x0926)
+								|| channel->msg.header.id == 0x0926 || channel->msg.header.id == 0x0909)
 						{
 							channel->state = Processing;
 

@@ -17,7 +17,7 @@ namespace KonfigurationTool
         private const int MAX_RETRY = 100;
 
         private const int MAV_SYSTEM_ID = 0xCE;
-        private const uint FIRMWARE_VERSION = 0x00000A03;
+        private const uint FIRMWARE_VERSION = 0x00000A04;
 
         private int retry;
         private StateMachineStep currentStep = StateMachineStep.None;
@@ -322,8 +322,8 @@ namespace KonfigurationTool
             else if (t == typeof(Msg_attitude))
             {
                 Msg_attitude att = (msg as Msg_attitude);
-                lblRoll.Text = (att.roll * 180.0 / Math.PI).ToString("0.00 *");
-                lblPitch.Text = (att.pitch * 180.0 / Math.PI).ToString("0.00 *");
+                lblRoll.Text = (att.roll * 180.0 / Math.PI).ToString("0.00 °");
+                lblPitch.Text = (att.pitch * 180.0 / Math.PI).ToString("0.00 °");
             }
             else if (t == typeof(Msg_rc_channels))
             {
@@ -342,7 +342,7 @@ namespace KonfigurationTool
             {
                 Msg_battery_status batt = (msg as Msg_battery_status);
 
-                
+
                 string text = "";
                 int index = 1;
                 foreach (ushort cell in batt.voltages)
@@ -728,6 +728,22 @@ namespace KonfigurationTool
                 {
                     MessageBox.Show(this, "Error while open serial port:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+            }
+            else if (currentStep == StateMachineStep.None && e.KeyCode == Keys.F)
+            {
+                try
+                {
+                    Enabled = false;
+                    UpdateForm.ShowDialog(this, serialPort.PortName, String.Empty);
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, "Error while communication:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
+                Enabled = true;
+
             }
         }
 
