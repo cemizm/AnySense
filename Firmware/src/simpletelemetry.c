@@ -43,6 +43,8 @@ void simpleTelemetry_initialize()
 	simpleTelemtryData.temp1 = 0;
 	simpleTelemtryData.temp2 = 0;
 	simpleTelemtryData.cellCount = 0;
+	simpleTelemtryData.capacity_current = 0;
+	simpleTelemtryData.percentage_charge = 0;
 
 
 	memset(simpleTelemtryData.cells, 0, SIMPLE_TELEMETRY_CELLS);

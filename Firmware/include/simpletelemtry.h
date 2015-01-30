@@ -62,6 +62,8 @@ struct simpleTelemetry
 	float temp2;
 	uint16_t cells[SIMPLE_TELEMETRY_CELLS]; //battery voltage in mV
 	uint8_t cellCount;
+	uint16_t capacity_current; // current capacity (3115mAh)
+	uint8_t percentage_charge; // percentage of charge (62%)
 
 	//errors
 	uint16_t packets_drop;
