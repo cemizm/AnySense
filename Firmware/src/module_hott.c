@@ -183,7 +183,6 @@ void module_hott_task(void* pData)
 		memset(msg.buffer, 0, MODULE_HOTT_MSG_BUFFER_SIZE);
 		ticks = CoGetOSTime();
 
-
 		if (simpleTelemtryData.cellCount > 0)
 		{
 			uint16_t lowest = simpleTelemtryData.cells[0];
@@ -233,9 +232,11 @@ void module_hott_task(void* pData)
 				msg.gam.temp1 = 20 + simpleTelemtryData.temp1;
 				msg.gam.temp2 = 20 + simpleTelemtryData.temp2;
 
+				uint16_t lowest = 0;
+
 				if (simpleTelemtryData.cellCount > 0)
 				{
-					uint16_t lowest = simpleTelemtryData.cells[0];
+					lowest = simpleTelemtryData.cells[0];
 					for (uint8_t i = 0; i < simpleTelemtryData.cellCount && i < MODULE_HOTT_GAM_CELLS; i++)
 					{
 						msg.gam.cell[i] = simpleTelemtryData.cells[i] / 20;
@@ -243,14 +244,16 @@ void module_hott_task(void* pData)
 							lowest = simpleTelemtryData.cells[i];
 					}
 
-					msg.gam.min_cell_volt = lowest / 20;
-					msg.gam.fuel_percent = getVoltagePercent(lowest);
 				}
 				else if (session->config->num_cells > 0)
-				{
-					msg.gam.min_cell_volt = (simpleTelemtryData.battery / session->config->num_cells) / 20;
-					msg.gam.fuel_percent = getVoltagePercent(simpleTelemtryData.battery / session->config->num_cells);
-				}
+					lowest = simpleTelemtryData.battery / session->config->num_cells;
+
+				msg.gam.min_cell_volt = lowest / 20;
+
+				if (simpleTelemtryData.percentage_charge > 0)
+					msg.gam.fuel_percent = simpleTelemtryData.percentage_charge;
+				else
+					msg.gam.fuel_percent = getVoltagePercent(lowest);
 
 				size = sizeof(struct hott_msg_gam);
 			} //session->sensor == hott_sensor_id_gam
@@ -318,6 +321,7 @@ void module_hott_task(void* pData)
 				msg.eam.current = simpleTelemtryData.current * 10;
 				msg.eam.temp1 = 20 + simpleTelemtryData.temp1;
 				msg.eam.temp2 = 20 + simpleTelemtryData.temp2;
+				msg.eam.capacity = simpleTelemtryData.capacity_current;
 
 				for (uint8_t i = 0; i < simpleTelemtryData.cellCount && i < MODULE_HOTT_EAM_CELLS; i++)
 					msg.eam.cells[i] = simpleTelemtryData.cells[i] / 20;
