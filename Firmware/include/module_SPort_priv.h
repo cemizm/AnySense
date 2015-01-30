@@ -46,7 +46,6 @@ enum SPort_State
 #define SPORT_DATA_IS_FLAG_SET(session, flag)	((session->firstFlag & flag) == flag)
 #define SPORT_DATA_FLAG_SET(session, flag)		session->firstFlag = session->firstFlag | flag
 
-
 /* Types */
 
 struct SPort_Packet
@@ -118,7 +117,7 @@ struct SPort_Config
 }__attribute__((packed, aligned(1)));
 
 static const uint8_t SPort_SensorIds[] = { 0x00, 0x16, 0xA1, 0xCB, 0x95, 0x83, 0x0D, 0xB7, 0xE4, 0x8E, 0x98, 0xC6, 0xD0, 0xBA,
-										   0x48, 0xF2, 0x7E, 0x6A, 0x34, 0x22, 0xAC, 0x39, 0x45, 0x2F, 0x1B, 0x67, 0x71, 0xE9, 0x53 };
+		0x48, 0xF2, 0x7E, 0x6A, 0x34, 0x22, 0xAC, 0x39, 0x45, 0x2F, 0x1B, 0x67, 0x71, 0xE9, 0x53 };
 
 struct SPort_GroupedSensor
 {
@@ -171,8 +170,8 @@ static const struct SPort_Config sport_defaultConfig =
 	.version = SPORT_CONFIG_CURRENT_VERSION,
 	.minFix = fixType_2D,
 	.map =
-	{	tv_numSat, tv_gps_fix, tv_none, tv_none, tv_alt, tv_vsi, tv_roll, tv_pitch, tv_none, tv_none,
-		tv_battery, tv_none, tv_lon_lat, tv_gpsAlt, tv_speed, tv_heading, tv_gpsTime, tv_none, tv_none, tv_none},
+	{	tv_numSat, tv_gps_fix, tv_none, tv_none, tv_alt, tv_vsi, tv_roll, tv_pitch, tv_none, tv_current,
+		tv_battery,tv_cells, tv_lon_lat, tv_gpsAlt, tv_speed, tv_heading, tv_gpsTime, tv_none, tv_none, tv_none},
 };
 
 /* functions */
