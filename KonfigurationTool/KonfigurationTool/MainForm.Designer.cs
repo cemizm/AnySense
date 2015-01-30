@@ -144,7 +144,7 @@
             // 
             // lblPort
             // 
-            this.lblPort.Location = new System.Drawing.Point(1, 8);
+            this.lblPort.Location = new System.Drawing.Point(8, 5);
             this.lblPort.Name = "lblPort";
             this.lblPort.Size = new System.Drawing.Size(58, 25);
             this.lblPort.TabIndex = 0;
@@ -156,7 +156,6 @@
             this.pnlTop.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.pnlTop.BackColor = System.Drawing.Color.Transparent;
             this.pnlTop.Controls.Add(this.panel2);
-            this.pnlTop.Controls.Add(this.lblUpdateHint);
             this.pnlTop.Controls.Add(this.btnUpdate);
             this.pnlTop.Controls.Add(this.btnConnect);
             this.pnlTop.Controls.Add(this.cmbPort);
@@ -168,28 +167,29 @@
             this.pnlTop.Name = "pnlTop";
             this.pnlTop.Padding = new System.Windows.Forms.Padding(5);
             this.pnlTop.Size = new System.Drawing.Size(666, 59);
-            this.pnlTop.TabIndex = 1;
+            this.pnlTop.TabIndex = 0;
             // 
             // panel2
             // 
             this.panel2.BackgroundImage = global::KonfigurationTool.Properties.Resources.anysense_80;
             this.panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.panel2.Location = new System.Drawing.Point(477, -2);
+            this.panel2.Location = new System.Drawing.Point(477, 4);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(183, 52);
             this.panel2.TabIndex = 5;
             // 
             // lblUpdateHint
             // 
-            this.lblUpdateHint.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.lblUpdateHint.AutoSize = true;
+            this.lblUpdateHint.BackColor = System.Drawing.Color.White;
+            this.lblUpdateHint.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblUpdateHint.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblUpdateHint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(11)))), ((int)(((byte)(16)))));
-            this.lblUpdateHint.Location = new System.Drawing.Point(245, 36);
+            this.lblUpdateHint.Location = new System.Drawing.Point(3, 16);
             this.lblUpdateHint.Name = "lblUpdateHint";
-            this.lblUpdateHint.Size = new System.Drawing.Size(224, 16);
+            this.lblUpdateHint.Size = new System.Drawing.Size(312, 65);
             this.lblUpdateHint.TabIndex = 4;
             this.lblUpdateHint.Text = "Please Update your AnySense.";
+            this.lblUpdateHint.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblUpdateHint.Visible = false;
             // 
             // btnUpdate
@@ -199,7 +199,8 @@
             this.btnUpdate.FlatAppearance.MouseDownBackColor = System.Drawing.Color.White;
             this.btnUpdate.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(11)))), ((int)(((byte)(16)))));
             this.btnUpdate.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnUpdate.Location = new System.Drawing.Point(320, 8);
+            this.btnUpdate.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnUpdate.Location = new System.Drawing.Point(395, 24);
             this.btnUpdate.Name = "btnUpdate";
             this.btnUpdate.Size = new System.Drawing.Size(75, 25);
             this.btnUpdate.TabIndex = 3;
@@ -215,7 +216,7 @@
             this.btnConnect.FlatAppearance.MouseDownBackColor = System.Drawing.Color.White;
             this.btnConnect.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(11)))), ((int)(((byte)(16)))));
             this.btnConnect.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnConnect.Location = new System.Drawing.Point(239, 8);
+            this.btnConnect.Location = new System.Drawing.Point(314, 24);
             this.btnConnect.Name = "btnConnect";
             this.btnConnect.Size = new System.Drawing.Size(75, 25);
             this.btnConnect.TabIndex = 2;
@@ -229,10 +230,10 @@
             this.cmbPort.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbPort.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbPort.FormattingEnabled = true;
-            this.cmbPort.Location = new System.Drawing.Point(63, 9);
+            this.cmbPort.Location = new System.Drawing.Point(11, 27);
             this.cmbPort.MinimumSize = new System.Drawing.Size(150, 0);
             this.cmbPort.Name = "cmbPort";
-            this.cmbPort.Size = new System.Drawing.Size(170, 21);
+            this.cmbPort.Size = new System.Drawing.Size(299, 21);
             this.cmbPort.TabIndex = 1;
             this.cmbPort.SelectedIndexChanged += new System.EventHandler(this.cmbPort_SelectedIndexChanged);
             // 
@@ -265,7 +266,7 @@
             // lblRC8
             // 
             this.lblRC8.AutoSize = true;
-            this.lblRC8.Location = new System.Drawing.Point(149, 147);
+            this.lblRC8.Location = new System.Drawing.Point(115, 147);
             this.lblRC8.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblRC8.Name = "lblRC8";
             this.lblRC8.Size = new System.Drawing.Size(10, 13);
@@ -285,7 +286,7 @@
             // lblRC7
             // 
             this.lblRC7.AutoSize = true;
-            this.lblRC7.Location = new System.Drawing.Point(149, 129);
+            this.lblRC7.Location = new System.Drawing.Point(115, 129);
             this.lblRC7.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblRC7.Name = "lblRC7";
             this.lblRC7.Size = new System.Drawing.Size(10, 13);
@@ -305,7 +306,7 @@
             // lblRC6
             // 
             this.lblRC6.AutoSize = true;
-            this.lblRC6.Location = new System.Drawing.Point(149, 111);
+            this.lblRC6.Location = new System.Drawing.Point(115, 111);
             this.lblRC6.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblRC6.Name = "lblRC6";
             this.lblRC6.Size = new System.Drawing.Size(10, 13);
@@ -326,7 +327,7 @@
             // 
             this.lblRC5.AccessibleName = "";
             this.lblRC5.AutoSize = true;
-            this.lblRC5.Location = new System.Drawing.Point(149, 93);
+            this.lblRC5.Location = new System.Drawing.Point(115, 93);
             this.lblRC5.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblRC5.Name = "lblRC5";
             this.lblRC5.Size = new System.Drawing.Size(10, 13);
@@ -357,7 +358,7 @@
             // 
             this.lblRC4.AccessibleName = "";
             this.lblRC4.AutoSize = true;
-            this.lblRC4.Location = new System.Drawing.Point(149, 75);
+            this.lblRC4.Location = new System.Drawing.Point(115, 75);
             this.lblRC4.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblRC4.Name = "lblRC4";
             this.lblRC4.Size = new System.Drawing.Size(10, 13);
@@ -368,7 +369,7 @@
             // 
             this.lblRC2.AccessibleName = "";
             this.lblRC2.AutoSize = true;
-            this.lblRC2.Location = new System.Drawing.Point(149, 39);
+            this.lblRC2.Location = new System.Drawing.Point(115, 39);
             this.lblRC2.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblRC2.Name = "lblRC2";
             this.lblRC2.Size = new System.Drawing.Size(10, 13);
@@ -399,7 +400,7 @@
             // 
             this.lblRC1.AccessibleName = "";
             this.lblRC1.AutoSize = true;
-            this.lblRC1.Location = new System.Drawing.Point(149, 21);
+            this.lblRC1.Location = new System.Drawing.Point(115, 21);
             this.lblRC1.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblRC1.Name = "lblRC1";
             this.lblRC1.Size = new System.Drawing.Size(10, 13);
@@ -410,7 +411,7 @@
             // 
             this.lblRC3.AccessibleName = "";
             this.lblRC3.AutoSize = true;
-            this.lblRC3.Location = new System.Drawing.Point(149, 57);
+            this.lblRC3.Location = new System.Drawing.Point(115, 57);
             this.lblRC3.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblRC3.Name = "lblRC3";
             this.lblRC3.Size = new System.Drawing.Size(10, 13);
@@ -439,7 +440,7 @@
             this.grpChannelStats.Location = new System.Drawing.Point(12, 144);
             this.grpChannelStats.Name = "grpChannelStats";
             this.grpChannelStats.Size = new System.Drawing.Size(316, 77);
-            this.grpChannelStats.TabIndex = 5;
+            this.grpChannelStats.TabIndex = 2;
             this.grpChannelStats.TabStop = false;
             this.grpChannelStats.Text = "Channel Stats";
             // 
@@ -520,7 +521,7 @@
             this.gpGenerall.Location = new System.Drawing.Point(12, 54);
             this.gpGenerall.Name = "gpGenerall";
             this.gpGenerall.Size = new System.Drawing.Size(316, 84);
-            this.gpGenerall.TabIndex = 4;
+            this.gpGenerall.TabIndex = 1;
             this.gpGenerall.TabStop = false;
             this.gpGenerall.Text = "General";
             // 
@@ -779,7 +780,7 @@
             // 
             this.lblSpeed.AutoSize = true;
             this.lblSpeed.BackColor = System.Drawing.Color.Transparent;
-            this.lblSpeed.Location = new System.Drawing.Point(149, 93);
+            this.lblSpeed.Location = new System.Drawing.Point(115, 93);
             this.lblSpeed.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblSpeed.Name = "lblSpeed";
             this.lblSpeed.Size = new System.Drawing.Size(10, 13);
@@ -827,14 +828,14 @@
             this.groupGPS.Location = new System.Drawing.Point(334, 144);
             this.groupGPS.Name = "groupGPS";
             this.groupGPS.Size = new System.Drawing.Size(318, 145);
-            this.groupGPS.TabIndex = 2;
+            this.groupGPS.TabIndex = 5;
             this.groupGPS.TabStop = false;
             this.groupGPS.Text = "GPS";
             // 
             // lblNumSat
             // 
             this.lblNumSat.AutoSize = true;
-            this.lblNumSat.Location = new System.Drawing.Point(149, 21);
+            this.lblNumSat.Location = new System.Drawing.Point(115, 21);
             this.lblNumSat.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblNumSat.Name = "lblNumSat";
             this.lblNumSat.Size = new System.Drawing.Size(10, 13);
@@ -854,7 +855,7 @@
             // lblVDOP
             // 
             this.lblVDOP.AutoSize = true;
-            this.lblVDOP.Location = new System.Drawing.Point(149, 129);
+            this.lblVDOP.Location = new System.Drawing.Point(115, 129);
             this.lblVDOP.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblVDOP.Name = "lblVDOP";
             this.lblVDOP.Size = new System.Drawing.Size(10, 13);
@@ -874,7 +875,7 @@
             // lblHDOP
             // 
             this.lblHDOP.AutoSize = true;
-            this.lblHDOP.Location = new System.Drawing.Point(149, 111);
+            this.lblHDOP.Location = new System.Drawing.Point(115, 111);
             this.lblHDOP.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblHDOP.Name = "lblHDOP";
             this.lblHDOP.Size = new System.Drawing.Size(10, 13);
@@ -894,7 +895,7 @@
             // lblGPSFix
             // 
             this.lblGPSFix.AutoSize = true;
-            this.lblGPSFix.Location = new System.Drawing.Point(149, 37);
+            this.lblGPSFix.Location = new System.Drawing.Point(115, 37);
             this.lblGPSFix.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblGPSFix.Name = "lblGPSFix";
             this.lblGPSFix.Size = new System.Drawing.Size(10, 13);
@@ -914,7 +915,7 @@
             // lblLongitude
             // 
             this.lblLongitude.AutoSize = true;
-            this.lblLongitude.Location = new System.Drawing.Point(149, 75);
+            this.lblLongitude.Location = new System.Drawing.Point(115, 75);
             this.lblLongitude.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblLongitude.Name = "lblLongitude";
             this.lblLongitude.Size = new System.Drawing.Size(10, 13);
@@ -934,7 +935,7 @@
             // lblLatitude
             // 
             this.lblLatitude.AutoSize = true;
-            this.lblLatitude.Location = new System.Drawing.Point(149, 57);
+            this.lblLatitude.Location = new System.Drawing.Point(115, 57);
             this.lblLatitude.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblLatitude.Name = "lblLatitude";
             this.lblLatitude.Size = new System.Drawing.Size(10, 13);
@@ -1007,7 +1008,7 @@
             // toolStripStatusLabel3
             // 
             this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            this.toolStripStatusLabel3.Size = new System.Drawing.Size(209, 20);
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(240, 20);
             this.toolStripStatusLabel3.Spring = true;
             // 
             // tsFCHearbeat
@@ -1043,7 +1044,7 @@
             // lblPort1
             // 
             this.lblPort1.AutoSize = true;
-            this.lblPort1.Location = new System.Drawing.Point(149, 24);
+            this.lblPort1.Location = new System.Drawing.Point(115, 24);
             this.lblPort1.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblPort1.Name = "lblPort1";
             this.lblPort1.Size = new System.Drawing.Size(10, 13);
@@ -1068,6 +1069,7 @@
             // grpPorts
             // 
             this.grpPorts.BackColor = System.Drawing.Color.Transparent;
+            this.grpPorts.Controls.Add(this.lblUpdateHint);
             this.grpPorts.Controls.Add(this.btnPort2Configure);
             this.grpPorts.Controls.Add(this.lblPort2);
             this.grpPorts.Controls.Add(this.btnPort1Configure);
@@ -1077,7 +1079,7 @@
             this.grpPorts.Location = new System.Drawing.Point(334, 54);
             this.grpPorts.Name = "grpPorts";
             this.grpPorts.Size = new System.Drawing.Size(318, 84);
-            this.grpPorts.TabIndex = 7;
+            this.grpPorts.TabIndex = 4;
             this.grpPorts.TabStop = false;
             this.grpPorts.Text = "Port Configuration";
             // 
@@ -1099,7 +1101,7 @@
             // lblPort2
             // 
             this.lblPort2.AutoSize = true;
-            this.lblPort2.Location = new System.Drawing.Point(149, 53);
+            this.lblPort2.Location = new System.Drawing.Point(115, 53);
             this.lblPort2.Margin = new System.Windows.Forms.Padding(3, 5, 3, 0);
             this.lblPort2.Name = "lblPort2";
             this.lblPort2.Size = new System.Drawing.Size(10, 13);
@@ -1145,6 +1147,7 @@
             // 
             // MainForm
             // 
+            this.AcceptButton = this.btnConnect;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
@@ -1176,7 +1179,6 @@
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyUp);
             this.pnlTop.ResumeLayout(false);
-            this.pnlTop.PerformLayout();
             this.groupRC.ResumeLayout(false);
             this.groupRC.PerformLayout();
             this.grpChannelStats.ResumeLayout(false);

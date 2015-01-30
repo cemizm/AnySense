@@ -56,6 +56,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -75,12 +76,16 @@
     <Compile Include="..\..\shared\mavlink\ConfigTool\UniAdapter_codec.generated.cs">
       <Link>Mavlink\UniAdapter_codec.generated.cs</Link>
     </Compile>
+    <Compile Include="ComponentModel\EnumDescrptionTypeConverter.cs" />
+    <Compile Include="ComponentModel\YesNoConverter.cs" />
     <Compile Include="Enums\FixType.cs" />
     <Compile Include="Enums\FlightMode.cs" />
     <Compile Include="Enums\FrSkySensorIds.cs" />
     <Compile Include="Enums\HoTTAlarmTone.cs" />
     <Compile Include="Enums\ProtocolType.cs" />
     <Compile Include="Enums\TelemetryValue.cs" />
+    <Compile Include="Extensions\EnumExtensions.cs" />
+    <Compile Include="Extensions\SerialPortExtensions.cs" />
     <Compile Include="Extensions\TaskExtensions.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -89,6 +94,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\PortConfiguration.cs" />
+    <Compile Include="Model\ProtocolFutabaConfiguration.cs" />
     <Compile Include="Model\ProtocolHoTTConfiguration.cs" />
     <Compile Include="PortConfigurationForm.cs">
       <SubType>Form</SubType>

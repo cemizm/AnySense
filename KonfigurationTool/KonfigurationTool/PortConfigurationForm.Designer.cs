@@ -39,25 +39,35 @@
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.BackColor = System.Drawing.Color.White;
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(11)))), ((int)(((byte)(16)))));
+            this.btnCancel.FlatAppearance.MouseDownBackColor = System.Drawing.Color.White;
+            this.btnCancel.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(11)))), ((int)(((byte)(16)))));
+            this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancel.Location = new System.Drawing.Point(562, 502);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 0;
             this.btnCancel.Text = "Cancel";
-            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.UseVisualStyleBackColor = false;
             // 
             // protocolConfiguration
             // 
             this.protocolConfiguration.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.protocolConfiguration.HelpVisible = false;
+            this.protocolConfiguration.BackColor = System.Drawing.Color.White;
+            this.protocolConfiguration.HelpBackColor = System.Drawing.Color.White;
+            this.protocolConfiguration.HelpForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(11)))), ((int)(((byte)(16)))));
+            this.protocolConfiguration.LineColor = System.Drawing.Color.WhiteSmoke;
             this.protocolConfiguration.Location = new System.Drawing.Point(12, 39);
             this.protocolConfiguration.Name = "protocolConfiguration";
+            this.protocolConfiguration.SelectedObject = this.btnCancel;
             this.protocolConfiguration.Size = new System.Drawing.Size(625, 457);
             this.protocolConfiguration.TabIndex = 7;
             this.protocolConfiguration.ToolbarVisible = false;
+            this.protocolConfiguration.ViewBackColor = System.Drawing.Color.White;
             // 
             // lblProtocol
             // 
@@ -71,7 +81,9 @@
             // 
             // cmbProtocol
             // 
+            this.cmbProtocol.BackColor = System.Drawing.Color.White;
             this.cmbProtocol.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbProtocol.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbProtocol.FormattingEnabled = true;
             this.cmbProtocol.Items.AddRange(new object[] {
             "FrSky S.Port"});
@@ -84,19 +96,27 @@
             // btnOK
             // 
             this.btnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnOK.BackColor = System.Drawing.Color.White;
             this.btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.btnOK.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(11)))), ((int)(((byte)(16)))));
+            this.btnOK.FlatAppearance.MouseDownBackColor = System.Drawing.Color.White;
+            this.btnOK.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(11)))), ((int)(((byte)(16)))));
+            this.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnOK.Location = new System.Drawing.Point(481, 502);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 8;
             this.btnOK.Text = "OK";
-            this.btnOK.UseVisualStyleBackColor = true;
+            this.btnOK.UseVisualStyleBackColor = false;
             // 
             // PortConfigurationForm
             // 
             this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.White;
+            this.BackgroundImage = global::KonfigurationTool.Properties.Resources.KonfigurationManager;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(649, 537);
             this.Controls.Add(this.btnOK);
@@ -104,6 +124,7 @@
             this.Controls.Add(this.lblProtocol);
             this.Controls.Add(this.cmbProtocol);
             this.Controls.Add(this.btnCancel);
+            this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "PortConfigurationForm";
             this.ShowInTaskbar = false;

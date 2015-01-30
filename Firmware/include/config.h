@@ -12,18 +12,21 @@
 
 #define CONFIG_PARSER_LENGTH	128
 #define CONFIG_VERSION			1
-#define FIRMWARE_VERSION		0x00000A04
+#define FIRMWARE_VERSION		0x00000A05
 
-typedef enum parserTypeEnum {
-	parser_none = 0, parser_frsky = 1, parser_mavlink = 2, parser_hott = 3, parser_jeti = 4,
-}parserType;
+typedef enum parserTypeEnum
+{
+	parser_none = 0, parser_frsky = 1, parser_mavlink = 2, parser_hott = 3, parser_jeti = 4, parser_futaba = 5,
+} parserType;
 
-struct portParserStruct {
+struct portParserStruct
+{
 	parserType type;
 	uint8_t parserConfig[CONFIG_PARSER_LENGTH];
 };
 
-struct configStruct {
+struct configStruct
+{
 	uint16_t configVersion;
 	struct portParserStruct port1;
 	struct portParserStruct port2;

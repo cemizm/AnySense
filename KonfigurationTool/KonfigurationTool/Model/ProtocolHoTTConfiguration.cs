@@ -16,7 +16,7 @@ namespace KonfigurationTool
         public ProtocolHoTTConfiguration()
             : base()
         {
-            Version = 2;
+            Version = 4;
 
             Cells = 3;
             GPSAltSource = AltSourceEnum.Baro;
@@ -44,7 +44,7 @@ namespace KonfigurationTool
 
         [Category("1. General")]
         [DisplayName("Number of cells")]
-        [Description("Defines the number of cells used")]
+        [Description("Defines the number of cells used. For Phantom 2 or FrSky Lipo Sensors, this value will be ignored.")]
         public byte Cells
         {
             get { return cells; }
@@ -69,37 +69,67 @@ namespace KonfigurationTool
 
         [Category("1. General")]
         [DisplayName("GPS Flightdirection Source")]
-        [Description("Defines the source of GPS Flightdirectio")]
+        [Description("Set the source for Flightdirection shown in GPS Sensor Screen.")]
         public FlightDirSourceEnum GPSFlightdirectionSource { get; set; }
 
         [Category("2. Active Sensors")]
         [DisplayName("General Air Modul")]
-        [Description("General Air modul enabled")]
+        [Description("General Air Modul enabled")]
+        [TypeConverter(typeof(YesNoConverter))]
         public bool ActiveGAM { get; set; }
 
         [Category("2. Active Sensors")]
         [DisplayName("Electric Air Modul")]
         [Description("Electric Air Modul enbabled")]
+        [TypeConverter(typeof(YesNoConverter))]
         public bool ActiveEAM { get; set; }
 
         [Category("2. Active Sensors")]
         [DisplayName("GPS")]
         [Description("GPS enbabled")]
+        [TypeConverter(typeof(YesNoConverter))]
         public bool ActiveGPS { get; set; }
 
         [Category("2. Active Sensors")]
         [DisplayName("Vario")]
         [Description("Vario enbabled")]
+        [TypeConverter(typeof(YesNoConverter))]
         public bool ActiveVario { get; set; }
 
-        [Category("3. Alarms")]
-        [DisplayName("Voltage Alarms")]
-        [Description("Defines alarms for Voltage")]
+        [Category("3. Voltage Alarms")]
+        [DisplayName("Alarm 1")]
+        [Description("Alarm 1 for Voltage")]
+        public VoltageAlarm VoltageAlarm1 { get { return VoltageAlarms[0]; } }
+
+        [Category("3. Voltage Alarms")]
+        [DisplayName("Alarm 2")]
+        [Description("Alarm 2 for Voltage")]
+        public VoltageAlarm VoltageAlarm2 { get { return VoltageAlarms[1]; } }
+
+        [Category("3. Voltage Alarms")]
+        [DisplayName("Alarm 3")]
+        [Description("Alarm 3 for Voltage")]
+        public VoltageAlarm VoltageAlarm3 { get { return VoltageAlarms[2]; } }
+
+        [Category("4. Distance Alarms")]
+        [DisplayName("Alarm 1")]
+        [Description("Alarm 1 for Distance")]
+        public DistanceAlarm DistanceAlarm1 { get { return DistanceAlarms[0]; } }
+
+        [Category("4. Distance Alarms")]
+        [DisplayName("Alarm 2")]
+        [Description("Alarm 2 for Distance")]
+        public DistanceAlarm DistanceAlarm2 { get { return DistanceAlarms[1]; } }
+
+        [Category("4. Distance Alarms")]
+        [DisplayName("Alarm 3")]
+        [Description("Alarm 3 for Distance")]
+        public DistanceAlarm DistanceAlarm3 { get { return DistanceAlarms[2]; } }
+
+        [Browsable(false)]
         public VoltageAlarm[] VoltageAlarms { get; private set; }
 
-        [Category("3. Alarms")]
-        [DisplayName("Distance Alarms")]
-        [Description("Defines alarms for distance")]
+        [Browsable(false)]
         public DistanceAlarm[] DistanceAlarms { get; private set; }
 
         public override void DeSerialize(byte[] data)
@@ -217,19 +247,23 @@ namespace KonfigurationTool
         {
             [Category("2. Action")]
             [DisplayName("Alarm Tone")]
-            [Description("Defines alarms for distance")]
+            [Description("Select the tone to play if alarm condition mets.")]
             public HoTTAlarmTone Tone { get; set; }
 
             [Category("2. Action")]
             [DisplayName("Repeat Alarm")]
+            [Description("How often the alarm tone should be played when condition mets. Set 0 for endless repeat.")]
             public byte Repeat { get; set; }
 
             [Category("2. Action")]
             [DisplayName("Interval in seconds")]
+            [Description("The interval between two alarm tones.")]
             public byte Interval { get; set; }
 
             [Category("2. Action")]
             [DisplayName("Invert Text Column")]
+            [Description("Should the value representation be inverted if alarm condition mets.")]
+            [TypeConverter(typeof(YesNoConverter))]
             public bool Invert { get; set; }
 
             public abstract string GetTitle();
@@ -243,7 +277,7 @@ namespace KonfigurationTool
 
             [Category("1. Event")]
             [DisplayName("Voltage in percent")]
-            [Description("Defines the voltage to deceed in percent.")]
+            [Description("Defines the voltage to deceed in percent. Set to 0 to disable Alarm. The percentage is not linear to voltage. Please read manual for more information.")]
             public byte Voltage
             {
                 get { return voltage; }
@@ -261,7 +295,10 @@ namespace KonfigurationTool
 
             public override string GetTitle()
             {
-                return "lower " + Voltage + "% -> " + Tone;
+                if (Voltage == 0)
+                    return "Disabled";
+
+                return "lower " + Voltage + "% -> " + Tone.GetDescription();
             }
         }
 
@@ -271,13 +308,16 @@ namespace KonfigurationTool
         {
             [Category("1. Event")]
             [DisplayName("Distance in meters")]
-            [Description("Defines the distance to exceed.")]
+            [Description("Defines the distance in meters to exceed. Set to 0 to disable Alarm.")]
             public UInt16 Distance { get; set; }
 
 
             public override string GetTitle()
             {
-                return "exceed " + Distance + "m -> " + Tone;
+                if (Distance == 0)
+                    return "Disabled";
+
+                return "exeeds " + Distance + "m -> " + Tone.GetDescription();
             }
         }
 

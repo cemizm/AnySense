@@ -32,6 +32,9 @@ namespace KonfigurationTool
                         case ProtocolType.HOTT:
                             Configuration = new ProtocolHoTTConfiguration();
                             break;
+                        case ProtocolType.Futaba:
+                            Configuration = new ProtocolFutabaConfiguration();
+                            break;
                         case ProtocolType.Jeti:
                         default:
                             throw new NotImplementedException(string.Format("Protocol {0} not implemented yet.", value));

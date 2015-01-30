@@ -16,7 +16,9 @@ namespace KonfigurationTool
         public PortConfigurationForm()
         {
             InitializeComponent();
-            cmbProtocol.DataSource = Enum.GetValues(typeof(ProtocolType));
+            cmbProtocol.DataSource = typeof(ProtocolType).GetDataSource();
+            cmbProtocol.DisplayMember = "Value";
+            cmbProtocol.ValueMember = "Key";
         }
 
         public PortConfiguration Configuration
@@ -25,7 +27,7 @@ namespace KonfigurationTool
             set
             {
                 configuration = value;
-                cmbProtocol.SelectedItem = configuration.Protocol;
+                cmbProtocol.SelectedValue = configuration.Protocol;
                 protocolConfiguration.SelectedObject = configuration.Configuration;
                 //protocolConfiguration.ExpandAllGridItems();
             }
@@ -33,17 +35,17 @@ namespace KonfigurationTool
 
         private void cmbProtocol_SelectedValueChanged(object sender, EventArgs e)
         {
-            if (configuration != null && configuration.Protocol != (ProtocolType)cmbProtocol.SelectedItem)
+            if (configuration != null && configuration.Protocol != (ProtocolType)cmbProtocol.SelectedValue)
             {
                 try
                 {
-                    configuration.Protocol = (ProtocolType)cmbProtocol.SelectedItem;
+                    configuration.Protocol = (ProtocolType)cmbProtocol.SelectedValue;
                     protocolConfiguration.SelectedObject = configuration.Configuration;
                     //protocolConfiguration.ExpandAllGridItems();
                 }
                 catch (NotImplementedException ex)
                 {
-                    cmbProtocol.SelectedItem = configuration.Protocol;
+                    cmbProtocol.SelectedValue = configuration.Protocol;
                     MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }

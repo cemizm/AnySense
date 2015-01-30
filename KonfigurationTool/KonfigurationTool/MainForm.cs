@@ -1,10 +1,12 @@
 ﻿using MavLink;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Management;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +19,7 @@ namespace KonfigurationTool
         private const int MAX_RETRY = 100;
 
         private const int MAV_SYSTEM_ID = 0xCE;
-        private const uint FIRMWARE_VERSION = 0x00000A04;
+        private const uint FIRMWARE_VERSION = 0x00000A05;
 
         private int retry;
         private StateMachineStep currentStep = StateMachineStep.None;
@@ -26,6 +28,8 @@ namespace KonfigurationTool
 
         private Task UAHeartbeat = null;
         private Task FCHeartbeat = null;
+
+        private ManagementEventWatcher deviceChanged;
 
         public MainForm()
         {
@@ -38,17 +42,11 @@ namespace KonfigurationTool
             mavlink_packet.ComponentId = (int)MAV_COMPONENT.MAV_COMP_ID_SYSTEM_CONTROL;
             mavlink_packet.SystemId = 0xCE;
 
-
             mavlink = new Mavlink();
             mavlink.PacketReceived += mavlink_PacketReceived;
 
-            cmbPort.Items.Clear();
-            foreach (string sport in System.IO.Ports.SerialPort.GetPortNames())
-                cmbPort.Items.Add(sport);
-
-            if (cmbPort.Items.Count > 0)
-                cmbPort.SelectedIndex = 0;
-
+            MonitorDeviceChanges();
+            UpdateDeviceList();
 
             byte[] ver = BitConverter.GetBytes(FIRMWARE_VERSION);
 
@@ -95,11 +93,11 @@ namespace KonfigurationTool
 
                         if (msg_control.param1 == (byte)CONFIG_PORT.CONFIG_PORT_1)
                         {
-                            lblPort1.Text = ((ProtocolType)msg_control.param2).ToString();
+                            lblPort1.Text = ((ProtocolType)msg_control.param2).GetDescription();
                         }
                         else if (msg_control.param1 == (byte)CONFIG_PORT.CONFIG_PORT_2)
                         {
-                            lblPort2.Text = ((ProtocolType)msg_control.param2).ToString();
+                            lblPort2.Text = ((ProtocolType)msg_control.param2).GetDescription();
                         }
 
                         tsLoading.Visible = false;
@@ -221,8 +219,8 @@ namespace KonfigurationTool
                 {
                     //0x0009
                     Msg_configuration_version msg_version = (msg as Msg_configuration_version);
-                    lblPort1.Text = ((ProtocolType)msg_version.port1).ToString();
-                    lblPort2.Text = ((ProtocolType)msg_version.port2).ToString();
+                    lblPort1.Text = ((ProtocolType)msg_version.port1).GetDescription();
+                    lblPort2.Text = ((ProtocolType)msg_version.port2).GetDescription();
 
                     version = msg_version.fw_version;
                     version = version << 8;
@@ -233,22 +231,25 @@ namespace KonfigurationTool
                     Msg_configuration_version2 msg_version = (msg as Msg_configuration_version2);
                     version = msg_version.fw_version;
 
-                    lblPort1.Text = ((ProtocolType)msg_version.port1).ToString();
-                    lblPort2.Text = ((ProtocolType)msg_version.port2).ToString();
+                    lblPort1.Text = ((ProtocolType)msg_version.port1).GetDescription();
+                    lblPort2.Text = ((ProtocolType)msg_version.port2).GetDescription();
                 }
 
                 tsFWVersion.Text = string.Format("{0}.{1}.{2}", (byte)(version >> 16), (byte)(version >> 8), (byte)version);
 
                 btnUpdate.Visible = FIRMWARE_VERSION > version;
                 lblUpdateHint.Visible = FIRMWARE_VERSION != version;
-                lblUpdateHint.Text = (FIRMWARE_VERSION > version ? "Please Update your AnySense." : "Please Update your Application.");
+
+                lblUpdateHint.Text = (FIRMWARE_VERSION > version ? "Your Fimrware ist outdated.\n Please click Update to flash your AnySense with latest Firmware Version." :
+                                                                   "Your Konfiguration Manager is outdated.\nPlease visit our support page for more information.");
+
                 btnPort1Configure.Enabled = FIRMWARE_VERSION == version;
                 btnPort2Configure.Enabled = FIRMWARE_VERSION == version;
             }
             else if (t == typeof(Msg_heartbeat))
             {
                 Msg_heartbeat heartbeat = (msg as Msg_heartbeat);
-                lblFlightMode.Text = ((FlightMode)heartbeat.custom_mode).ToString();
+                lblFlightMode.Text = ((FlightMode)heartbeat.custom_mode).GetDescription();
                 tsUniAdapterHeartbeat.BackgroundImage = KonfigurationTool.Properties.Resources.led_g_an;
                 if (UAHeartbeat == null || UAHeartbeat.Status == TaskStatus.RanToCompletion)
                 {
@@ -300,7 +301,7 @@ namespace KonfigurationTool
                 Msg_gps_raw_int gps = (msg as Msg_gps_raw_int);
                 lblCOG.Text = (gps.cog / 100f).ToString("0.00 °");
                 lblAltitude.Text = (gps.alt / 1000f).ToString("0.00 m");
-                lblGPSFix.Text = ((FixType)gps.fix_type).ToString();
+                lblGPSFix.Text = ((FixType)gps.fix_type).GetDescription();
                 lblHDOP.Text = (gps.eph / 100f).ToString("0.00");
                 lblVDOP.Text = (gps.epv / 100f).ToString("0.00");
                 lblLatitude.Text = (gps.lat / 10000000.0f).ToString("0.000000");
@@ -472,12 +473,14 @@ namespace KonfigurationTool
                 }
                 serialPort.Close();
 
-                StateMachineUpdate(StateMachineStep.None);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(this, "Error while communication:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            if (!serialPort.IsOpen)
+                StateMachineUpdate(StateMachineStep.None);
         }
 
         private void StateMachineUpdate(StateMachineStep step)
@@ -502,6 +505,7 @@ namespace KonfigurationTool
                     btnPort2Configure.Enabled = false;
                     cmbPort.Enabled = true;
                     pbCells.Visible = false;
+                    lblUpdateHint.Visible = false;
                     break;
                 case StateMachineStep.Open:
                     btnConnect.Text = "Close";
@@ -521,6 +525,7 @@ namespace KonfigurationTool
                     tsFCHearbeat.Visible = false;
                     tsUniAdapterHeartbeat.Visible = false;
                     pbCells.Visible = false;
+                    lblUpdateHint.Visible = false;
                     break;
                 case StateMachineStep.Connected:
                     btnConnect.Text = "Close";
@@ -537,6 +542,7 @@ namespace KonfigurationTool
                     tsUniAdapterHeartbeat.Visible = true;
                     tsFWVersion.Visible = true;
                     pbCells.Visible = false;
+                    lblUpdateHint.Visible = false;
 
                     /*
                     Task.Factory.StartNew(() =>
@@ -590,6 +596,7 @@ namespace KonfigurationTool
                     btnPort2Configure.Enabled = false;
                     cmbPort.Enabled = false;
                     pbCells.Visible = false;
+                    lblUpdateHint.Visible = false;
                     break;
                 default:
                     break;
@@ -600,8 +607,11 @@ namespace KonfigurationTool
 
         private void cmbPort_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cmbPort.SelectedItem != null && !string.IsNullOrEmpty(cmbPort.SelectedItem.ToString()))
-                serialPort.PortName = cmbPort.SelectedItem.ToString();
+            if (serialPort.IsOpen)
+                return;
+
+            if (!string.IsNullOrEmpty(cmbPort.SelectedValue.ToString()))
+                serialPort.PortName = cmbPort.SelectedValue.ToString();
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -614,6 +624,12 @@ namespace KonfigurationTool
                 byte[] bytes = mavlink.Send(mavlink_packet);
                 serialPort.Write(bytes, 0, bytes.Length);
                 serialPort.Close();
+
+                try
+                {
+                    deviceChanged.Stop();
+                }
+                catch { }
             }
         }
 
@@ -758,6 +774,85 @@ namespace KonfigurationTool
             }
         }
 
+        private void MonitorDeviceChanges()
+        {
+            try
+            {
+                var deviceChangedQuery = new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent WHERE EventType = 2 or EventType = 3 GROUP WITHIN 3");
+
+                deviceChanged = new ManagementEventWatcher(deviceChangedQuery);
+
+                deviceChanged.EventArrived += (o, args) =>
+                {
+                    UpdateDeviceList();
+                };
+
+                // Start listening for events
+                deviceChanged.Start();
+            }
+            catch { }
+        }
+
+
+        private void UpdateDeviceList()
+        {
+            if (InvokeRequired)
+                BeginInvoke((Action)UpdateDeviceList);
+            else
+            {
+                IList ports = serialPort.GetPortInformations();
+                cmbPort.DataSource = ports;
+                cmbPort.ValueMember = "Key";
+                cmbPort.DisplayMember = "Value";
+                cmbPort.Refresh();
+
+                if (currentStep == StateMachineStep.None)
+                {
+                    bool found = false;
+
+                    foreach (KeyValuePair<string, string> pair in ports)
+                    {
+                        if (pair.Value.ToLower().Contains("prolific"))
+                        {
+                            cmbPort.SelectedValue = pair.Key;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found)
+                    {
+                        foreach (KeyValuePair<string, string> pair in ports)
+                        {
+                            if (pair.Value.ToLower().Contains("silicon"))
+                            {
+                                cmbPort.SelectedValue = pair.Key;
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (!found && ports.Count > 0)
+                        cmbPort.SelectedValue = ((KeyValuePair<string, string>)ports[0]).Key;
+
+                }
+                else if (!serialPort.IsOpen)
+                {
+                    Disconnect(false);
+                }
+                else
+                {
+                    foreach (KeyValuePair<string, string> pair in ports)
+                    {
+                        if (string.Compare(serialPort.PortName, pair.Key, true) == 0)
+                        {
+                            cmbPort.SelectedValue = pair.Key;
+                            break;
+                        }
+                    }
+
+                }
+            }
+        }
 
     }
 }
