@@ -29,8 +29,10 @@ namespace KonfigurationTool
             GPS_LONG_LATI = TelemetryValue.GPS_Position;
             GPS_ALT = TelemetryValue.GPS_Altitude;
             GPS_SPEED = TelemetryValue.Speed;
-            GPS_COURS = TelemetryValue.Heading;
+            GPS_COURS = TelemetryValue.HeadingComp;
             GPS_TIME_DATE = TelemetryValue.GPS_Time;
+            CELLS = TelemetryValue.Cells;
+            CURR = TelemetryValue.Current;
         }
 
         public override void DeSerialize(byte[] data)
@@ -106,12 +108,12 @@ namespace KonfigurationTool
 
         [Category("1. General")]
         [DisplayName("Sensor Id")]
-        [Description("Defines the Id to use on this Port")]
+        [Description("Defines the FrSky Sensor Id to use")]
         public FrSkySensorId SensorId { get; set; }
 
         [Category("1. General")]
         [DisplayName("Min. Fix Type")]
-        [Description("Defines minimum GPS Fix for certain values")]
+        [Description("Defines minimum GPS Fix for transmission of GPS depending values")]
         public FixType MinFixType { get; set; }
 
         [Category("1. General")]
