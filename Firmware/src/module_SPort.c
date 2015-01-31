@@ -466,16 +466,15 @@ static void RX_Callback(uint8_t* id)
 							session->voltageSensors[i].active = 1;
 							session->voltageSensors[i].SensorId = session->currentSensorId;
 							session->voltageSensors[i].payload[0] = cells;
-							simpleTelemtryData.cellCount += cells;
 							break;
 						}
 					}
 
-					simpleTelemtryData.cellCount = 0;
+					cells = 0;
 					for (uint8_t i = 0; i < SPORT_ACTIVE_VOLTAGE_SENSORS; i++)
 					{
 						if (session->voltageSensors[i].active == 1)
-							simpleTelemtryData.cellCount += session->voltageSensors[i].payload[0];
+							cells += session->voltageSensors[i].payload[0];
 						else
 							break;
 					}
@@ -483,6 +482,8 @@ static void RX_Callback(uint8_t* id)
 					simpleTelemtryData.cells[startCell + battnumber] = (uint16_t) (((lipo & 0x000FFF00) >> 8) / 5) * 10;
 					if (battnumber + 1 < cells)
 						simpleTelemtryData.cells[startCell + battnumber + 1] = (uint16_t) (((lipo & 0xFFF00000) >> 20) / 5) * 10;
+
+					simpleTelemtryData.cellCount = cells;
 
 				}
 					break;

@@ -103,9 +103,12 @@ uint8_t simpleTelemetry_stickConfigPosition()
 
 uint16_t simpleTelemetry_getLowestCell()
 {
-	uint16_t cell = simpleTelemtryData.cells[0];
+	if(simpleTelemtryData.cellCount == 0)
+		return 0;
 
-	for(uint8_t i=1;cell<simpleTelemtryData.cellCount; i++)
+	uint16_t cell = 0xFFFF;
+
+	for(uint8_t i=0;i<simpleTelemtryData.cellCount; i++)
 	{
 		if(simpleTelemtryData.cells[i] < cell)
 			cell = simpleTelemtryData.cells[i];

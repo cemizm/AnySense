@@ -390,8 +390,8 @@ static void naza_main_task(void* pData)
 				simpleTelemtryData.cells[0] = smart->cell1;
 				simpleTelemtryData.cells[1] = smart->cell2;
 				simpleTelemtryData.cells[2] = smart->cell3;
-				simpleTelemtryData.current = -(((float) smart->current) / 1000);
-				simpleTelemtryData.temp1 = ((float) smart->temperature) / 10;
+				simpleTelemtryData.current = -(((float) smart->current) / 1000.0f);
+				simpleTelemtryData.temp1 = ((float) smart->temperature) / 10.0f;
 				simpleTelemtryData.capacity_current = smart->capacity_current;
 				simpleTelemtryData.percentage_charge = smart->percentage_charge;
 
