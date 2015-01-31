@@ -14,6 +14,8 @@
 #define SIMPLE_TELEMETRY_RC		10
 #define SIMPLE_TELEMETRY_CELLS	12
 
+#define MATH_MAP(A,B,X,C,D)   				((uint8_t) (((float)(X-A)/(B-A)) * (D-C) + C))
+
 enum fixType
 {
 	fixType_No = 0, fixType_2D = 2, fixType_3D = 3, fixType_DGPS = 4
@@ -79,6 +81,59 @@ int16_t simpleTelemetry_getRCIn(uint8_t chan);
 uint8_t simpleTelemetry_isStickConfig();
 uint8_t simpleTelemetry_stickConfigPosition();
 uint8_t simpleTelemetry_isAlive();
-uint16_t simpleTelemetry_getLowestCell();
 
+
+__inline__ uint16_t simpleTelemetry_getLowestCell(uint8_t cellCount)
+{
+	if(simpleTelemtryData.cellCount == 0)
+	{
+		if(cellCount == 0)
+			return 0;
+
+		return simpleTelemtryData.battery / cellCount;
+	}
+
+	uint16_t lowest = simpleTelemtryData.cells[0];
+
+	for(uint8_t i=1;i<simpleTelemtryData.cellCount; i++)
+	{
+		if(simpleTelemtryData.cells[i] < lowest)
+			lowest = simpleTelemtryData.cells[i];
+	}
+
+	return lowest;
+}
+
+__inline__ uint8_t simpleTelemetry_getPercentage(uint16_t cellVoltage)
+{
+	if(simpleTelemtryData.percentage_charge > 0)
+		return simpleTelemtryData.percentage_charge;
+
+	if (cellVoltage > 4150) // 4,15V 100%
+		return 100;
+	else if (cellVoltage > 4100) // 4,10V 90%
+		return MATH_MAP(4100, 4150, cellVoltage, 90, 100);
+	else if (cellVoltage > 3970) //3,97V 80% - 90%
+		return MATH_MAP(3970, 4100, cellVoltage, 80, 90);
+	else if (cellVoltage > 3920) //3,92V 70% - 80%,
+		return MATH_MAP(3920, 3970, cellVoltage, 70, 80);
+	else if (cellVoltage > 3870) //3,87 60% - 70%
+		return MATH_MAP(3870, 3920, cellVoltage, 60, 70);
+	else if (cellVoltage > 3830) //3,83 50% - 60%
+		return MATH_MAP(3830, 3870, cellVoltage, 50, 60);
+	else if (cellVoltage > 3790) //3,79V 40%-50%
+		return MATH_MAP(3790, 3830, cellVoltage, 40, 50);
+	else if (cellVoltage > 3750) //3,75V 30%-40%
+		return MATH_MAP(3750, 3790, cellVoltage, 30, 40);
+	else if (cellVoltage > 3700) //3,70V 20%-30%
+		return MATH_MAP(3700, 3750, cellVoltage, 20, 30);
+	else if (cellVoltage > 3600) //3,60V 10%-20%
+		return MATH_MAP(3600, 3700, cellVoltage, 10, 20);
+	else if (cellVoltage > 3300) //3,30V 5% - 10%
+		return MATH_MAP(3300, 3600, cellVoltage, 5, 10);
+	else if (cellVoltage > 3000) //3,00V 0% - 5%
+		return MATH_MAP(3000, 3300, cellVoltage, 0, 5);
+
+	return 0;
+}
 #endif /* SIMPLETELEMTRY_H_ */

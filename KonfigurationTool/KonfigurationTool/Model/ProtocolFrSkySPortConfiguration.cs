@@ -11,7 +11,7 @@ namespace KonfigurationTool
     internal class ProtocolFrSkySPortConfiguration : ProtocolConfiguration
     {
 
-        private const UInt16 CONFIG_VERSION = 0x0002;
+        private const UInt16 CONFIG_VERSION = 0x0001;
 
         public ProtocolFrSkySPortConfiguration()
         {

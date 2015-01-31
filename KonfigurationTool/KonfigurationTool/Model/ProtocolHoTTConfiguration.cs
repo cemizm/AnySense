@@ -16,7 +16,7 @@ namespace KonfigurationTool
         public ProtocolHoTTConfiguration()
             : base()
         {
-            Version = 4;
+            Version = 1;
 
             Cells = 3;
             GPSAltSource = AltSourceEnum.Baro;

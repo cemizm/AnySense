@@ -58,6 +58,8 @@ void sport_start(const struct hardware_port_cfg* port, uint8_t* config)
 	session->config = (struct SPort_Config*) config;
 	session->foundSensor = 0;
 	session->currentSensor = 0;
+	session->nextCurrentMeasure = 0;
+	session->currentElapsed = 0;
 
 	memset(session->foundSensors, 0, SPORT_ACTIVE_SENSORS * 6);
 	memset(session->voltageSensors, 0, SPORT_ACTIVE_VOLTAGE_SENSORS * 6);
@@ -433,7 +435,24 @@ static void RX_Callback(uint8_t* id)
 				switch (session->rxPacket.Id)
 				{
 				case SENSOR_CURR:
-					simpleTelemtryData.current = ((float) SPORT_DATA_U32(session->rxPacket)) / 10;
+				{
+					// mAh = current / time elapsed
+
+					simpleTelemtryData.current = ((float) SPORT_DATA_U32(session->rxPacket)) / 10.0f;
+
+					if (CoGetOSTime() > session->nextCurrentMeasure)
+					{
+						session->currentElapsed += (SPORT_DATA_U32(session->rxPacket) * 10);
+
+						while (session->currentElapsed > SPORT_CAPACITY_COUNTER_LIMIT)
+						{
+							simpleTelemtryData.capacity_current++;
+							session->currentElapsed -= SPORT_CAPACITY_COUNTER_LIMIT;
+						}
+
+						session->nextCurrentMeasure = CoGetOSTime() + delay_ms(SPORT_CAPACITY_UPDATE_INTERVAL);
+					}
+				}
 					break;
 				case SENSOR_CELLS:
 				{

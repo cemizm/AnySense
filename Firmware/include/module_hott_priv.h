@@ -36,7 +36,6 @@
 #define MODULE_HOTT_GAM_CELLS				6
 #define MODULE_HOTT_EAM_CELLS				14
 
-#define MATH_MAP(A,B,X,C,D)   				((uint8_t) (((float)(X-A)/(B-A)) * (D-C) + C))
 
 #define HOTT_INIT_MSG(msg, sensor)	{ 		\
 	msg.start = MODULE_HOTT_MSG_START;		\
@@ -358,7 +357,6 @@ struct hott_distance_alarm_exec
 
 void module_hott_task(void* pData);
 
-__inline__ uint8_t getVoltagePercent(uint16_t cellVoltage);
 __inline__ uint16_t getFraction(float value, uint8_t precision);
 __inline__ double getDistance(double lon1, double lat1, double lon2, double lat2);
 __inline__ double calculateAngle(double long1, double lat1, double long2, double lat2);

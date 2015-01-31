@@ -28,7 +28,7 @@ enum SPort_State
 
 #define SPORT_STARTSTOP					0x7E
 #define SPORT_DATAFRAME					0x10
-#define SPORT_CONFIG_CURRENT_VERSION	((uint16_t)0x0002)
+#define SPORT_CONFIG_CURRENT_VERSION	((uint16_t)0x0001)
 #define SPORT_VALUES_MAX				20
 #define SPORT_DATA_SIZE					8
 #define SPORT_SENSORS					29
@@ -45,6 +45,9 @@ enum SPort_State
 
 #define SPORT_DATA_IS_FLAG_SET(session, flag)	((session->firstFlag & flag) == flag)
 #define SPORT_DATA_FLAG_SET(session, flag)		session->firstFlag = session->firstFlag | flag
+
+#define SPORT_CAPACITY_UPDATE_INTERVAL		50 //ms
+#define SPORT_CAPACITY_COUNTER_LIMIT 		(36000 / SPORT_CAPACITY_UPDATE_INTERVAL)
 
 /* Types */
 
@@ -146,6 +149,8 @@ struct SPort_SessionStruct
 	struct SPort_GroupedSensor voltageSensors[SPORT_ACTIVE_VOLTAGE_SENSORS];
 	struct SPort_GroupedSensor currentSensors[SPORT_ACTIVE_CURRENT_SENSORS];
 	uint8_t firstFlag;
+	U64 nextCurrentMeasure;
+	uint32_t currentElapsed;
 
 	OS_FlagID flag;
 	OS_TID task_id;

@@ -11,9 +11,9 @@ void hott_initializeConfig(void* config)
 {
 	struct hott_config* cfg = (struct hott_config*) config;
 
-	if (cfg->version != 4)
+	if (cfg->version != 1)
 	{
-		cfg->version = 4;
+		cfg->version = 1;
 		cfg->num_cells = 3;
 		cfg->active_sensors = simulate_sensor_gam | simulate_sensor_gps | simulate_sensor_vario | simulate_sensor_eam;
 		cfg->gps_altitude_source = value_source_alt_sensor;
@@ -151,6 +151,7 @@ void module_hott_task(void* pData)
 	uint8_t exec_alarm = 0;
 	double distance = 0;
 	uint8_t voltagePercent = 0;
+	uint16_t lowest_cell = 0;
 	double tmp_conv = 0;
 	int8_t page = 0;
 	uint8_t line = 0;
@@ -183,19 +184,8 @@ void module_hott_task(void* pData)
 		memset(msg.buffer, 0, MODULE_HOTT_MSG_BUFFER_SIZE);
 		ticks = CoGetOSTime();
 
-		if (simpleTelemtryData.cellCount > 0)
-		{
-			uint16_t lowest = simpleTelemtryData.cells[0];
-			for (uint8_t i = 1; i < simpleTelemtryData.cellCount && i < MODULE_HOTT_GAM_CELLS; i++)
-			{
-				if (simpleTelemtryData.cells[i] < lowest)
-					lowest = simpleTelemtryData.cells[i];
-			}
-
-			voltagePercent = getVoltagePercent(lowest);
-		}
-		else if (session->config->num_cells > 0)
-			voltagePercent = getVoltagePercent(simpleTelemtryData.battery / session->config->num_cells);
+		lowest_cell = simpleTelemetry_getLowestCell(session->config->num_cells);
+		voltagePercent = simpleTelemetry_getPercentage(lowest_cell);
 
 		if (simpleTelemtryData.homeLon != 0 && simpleTelemtryData.homeLat != 0)
 		{
@@ -221,7 +211,6 @@ void module_hott_task(void* pData)
 			{
 				HOTT_INIT_MSG(msg.gam, hott_sensor_id_gam);
 
-				//TODO: fix missing values
 				msg.gam.altitude = 500 + simpleTelemtryData.alt - (simpleTelemtryData.homeAltBaro - 20);
 				msg.gam.battery1 = simpleTelemtryData.battery / 100;
 				msg.gam.main_voltage = simpleTelemtryData.battery / 100;
@@ -232,28 +221,15 @@ void module_hott_task(void* pData)
 				msg.gam.temp1 = 20 + simpleTelemtryData.temp1;
 				msg.gam.temp2 = 20 + simpleTelemtryData.temp2;
 
-				uint16_t lowest = 0;
-
 				if (simpleTelemtryData.cellCount > 0)
 				{
-					lowest = simpleTelemtryData.cells[0];
 					for (uint8_t i = 0; i < simpleTelemtryData.cellCount && i < MODULE_HOTT_GAM_CELLS; i++)
-					{
 						msg.gam.cell[i] = simpleTelemtryData.cells[i] / 20;
-						if (simpleTelemtryData.cells[i] < lowest)
-							lowest = simpleTelemtryData.cells[i];
-					}
-
 				}
-				else if (session->config->num_cells > 0)
-					lowest = simpleTelemtryData.battery / session->config->num_cells;
 
-				msg.gam.min_cell_volt = lowest / 20;
-
-				if (simpleTelemtryData.percentage_charge > 0)
-					msg.gam.fuel_percent = simpleTelemtryData.percentage_charge;
-				else
-					msg.gam.fuel_percent = getVoltagePercent(lowest);
+				msg.gam.min_cell_volt = lowest_cell / 20;
+				msg.gam.fuel_percent = voltagePercent;
+				msg.gam.batt_cap = simpleTelemtryData.capacity_current / 10;
 
 				size = sizeof(struct hott_msg_gam);
 			} //session->sensor == hott_sensor_id_gam
@@ -734,36 +710,6 @@ static void RX_Callback(uint8_t* id)
 		session->state = hott_session_state_idle;
 		break;
 	}
-}
-
-__inline__ uint8_t getVoltagePercent(uint16_t cellVoltage)
-{
-	if (cellVoltage > 4150) // 4,15V 100%
-		return 100;
-	else if (cellVoltage > 4100) // 4,10V 90%
-		return MATH_MAP(4100, 4150, cellVoltage, 90, 100);
-	else if (cellVoltage > 3970) //3,97V 80% - 90%
-		return MATH_MAP(3970, 4100, cellVoltage, 80, 90);
-	else if (cellVoltage > 3920) //3,92V 70% - 80%,
-		return MATH_MAP(3920, 3970, cellVoltage, 70, 80);
-	else if (cellVoltage > 3870) //3,87 60% - 70%
-		return MATH_MAP(3870, 3920, cellVoltage, 60, 70);
-	else if (cellVoltage > 3830) //3,83 50% - 60%
-		return MATH_MAP(3830, 3870, cellVoltage, 50, 60);
-	else if (cellVoltage > 3790) //3,79V 40%-50%
-		return MATH_MAP(3790, 3830, cellVoltage, 40, 50);
-	else if (cellVoltage > 3750) //3,75V 30%-40%
-		return MATH_MAP(3750, 3790, cellVoltage, 30, 40);
-	else if (cellVoltage > 3700) //3,70V 20%-30%
-		return MATH_MAP(3700, 3750, cellVoltage, 20, 30);
-	else if (cellVoltage > 3600) //3,60V 10%-20%
-		return MATH_MAP(3600, 3700, cellVoltage, 10, 20);
-	else if (cellVoltage > 3300) //3,30V 5% - 10%
-		return MATH_MAP(3300, 3600, cellVoltage, 5, 10);
-	else if (cellVoltage > 3000) //3,00V 0% - 5%
-		return MATH_MAP(3000, 3300, cellVoltage, 0, 5);
-
-	return 0;
 }
 
 __inline__ uint16_t getFraction(float value, uint8_t precision)
