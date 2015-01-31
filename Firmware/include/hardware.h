@@ -12,9 +12,12 @@
 #include "stm32f0xx_usart.h"
 #include "stm32f0xx_gpio.h"
 #include "stm32f0xx_rcc.h"
+#include "stm32f0xx_tim.h"
 
 #define delay_ms(ms) ms
 #define delay_sec(sec) delay_ms(sec * 1000)
+#define tick_ms(tick) tick
+#define tick_sec(tick) tick_ms(tick / 1000)
 
 #ifdef STM32F072B
 
@@ -89,6 +92,13 @@ struct hardware_gpio_cfg_struct
 	struct hardware_rcc_cfg_struct clock;
 };
 
+struct hardware_tim_cfg_struct
+{
+	TIM_TypeDef* tim;
+	struct hardware_rcc_cfg_struct rcc;
+	uint8_t nvic_ch;
+};
+
 struct hardware_port_cfg
 {
 	USART_TypeDef* port;
@@ -97,12 +107,16 @@ struct hardware_port_cfg
 	struct hardware_gpio_cfg_struct rx;
 	struct hardware_gpio_cfg_struct tx;
 	struct hardware_rcc_cfg_struct clock;
+	struct hardware_tim_cfg_struct timer;
 };
 
 //availible ports
 
 extern const struct hardware_port_cfg usart_port1;
 extern const struct hardware_port_cfg usart_port2;
+
+void hardware_register_callback2(const struct hardware_port_cfg* port, IRQ_Callback rx_callback, IRQ_Callback tx_callback,
+		IRQ_Callback timer_callback, uint8_t* id);
 
 void hardware_register_callback(const struct hardware_port_cfg* port, IRQ_Callback rx_callback, IRQ_Callback tx_callback,
 		uint8_t* id);
@@ -124,7 +138,6 @@ inline void hardware_led_toggle_red()
 {
 	GPIO_WriteBit(LED_PORT, LED_PIN_RED, GPIO_ReadOutputDataBit(LED_PORT, LED_PIN_RED) ? Bit_RESET : Bit_SET);
 }
-
 
 inline void hardware_led_off_red()
 {

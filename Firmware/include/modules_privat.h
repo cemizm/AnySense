@@ -23,6 +23,7 @@
 #include "module_SPort.h"
 #include "module_mavlink.h"
 #include "module_hott.h"
+#include "module_futaba.h"
 
 #define CONFIGMANAGER_TASK_STACK		512
 #define WAIT_RETRY						5

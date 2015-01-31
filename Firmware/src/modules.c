@@ -68,6 +68,9 @@ void modules_initialize_config(struct portParserStruct* parser)
 	case parser_mavlink:
 		mavlink_initializeConfig(parser->parserConfig);
 		break;
+	case parser_futaba:
+		module_futaba_initializeConfig(parser->parserConfig);
+		break;
 	default:
 		break;
 	}
@@ -272,7 +275,11 @@ void configManager_task(void* pdata)
 						case 2:
 							configuration.port1.type = parser_hott;
 							break;
+						case 3:
+							configuration.port1.type = parser_futaba;
 						}
+
+						memset(configuration.port1.parserConfig, 0, CONFIG_PARSER_LENGTH);
 
 						modules_initialize_config(&configuration.port1);
 						config_save();
@@ -366,6 +373,9 @@ void configManager_start(struct portParserStruct* parser, const struct hardware_
 		break;
 	case parser_mavlink:
 		mavlink_start(port, parser->parserConfig);
+		break;
+	case parser_futaba:
+		module_futaba_start(port, parser->parserConfig);
 		break;
 	default:
 		break;

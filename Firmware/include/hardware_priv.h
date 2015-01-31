@@ -52,6 +52,14 @@ const struct hardware_port_cfg usart_port1 = {
 				.cmd = RCC_APB2PeriphClockCmd,
 				.periph = RCC_APB2Periph_USART1,
 		},
+		.timer = {
+				.tim = TIM16,
+				.nvic_ch = TIM16_IRQn,
+				.rcc = {
+					.cmd = RCC_APB2PeriphClockCmd,
+					.periph = RCC_APB2Periph_TIM16,
+				},
+		},
 };
 
 const struct hardware_port_cfg usart_port2 = {
@@ -91,6 +99,14 @@ const struct hardware_port_cfg usart_port2 = {
 		.clock = {
 				.cmd = RCC_APB1PeriphClockCmd,
 				.periph = RCC_APB1Periph_USART3,
+		},
+		.timer = {
+				.tim = TIM17,
+				.nvic_ch = TIM17_IRQn,
+				.rcc = {
+					.cmd = RCC_APB2PeriphClockCmd,
+					.periph = RCC_APB2Periph_TIM17,
+				},
 		},
 };
 
@@ -134,6 +150,14 @@ const struct hardware_port_cfg usart_port1 = {
 				.cmd = RCC_APB2PeriphClockCmd,
 				.periph = RCC_APB2Periph_USART1,
 		},
+		.timer = {
+				.tim = TIM16,
+				.nvic_ch = TIM16_IRQn,
+				.rcc = {
+					.cmd = RCC_APB2PeriphClockCmd,
+					.periph = RCC_APB2Periph_TIM16,
+				},
+		},
 };
 
 const struct hardware_port_cfg usart_port2 = {
@@ -174,6 +198,14 @@ const struct hardware_port_cfg usart_port2 = {
 				.cmd = RCC_APB1PeriphClockCmd,
 				.periph = RCC_APB1Periph_USART2,
 		},
+		.timer = {
+				.tim = TIM17,
+				.nvic_ch = TIM17_IRQn,
+				.rcc = {
+					.cmd = RCC_APB2PeriphClockCmd,
+					.periph = RCC_APB2Periph_TIM17,
+				},
+		},
 };
 
 #endif
@@ -184,6 +216,7 @@ struct IRQ_CallbackInfoStruct {
 	const struct hardware_port_cfg* port;
 	IRQ_Callback rx_callback;
 	IRQ_Callback tx_callback;
+	IRQ_Callback timer_callback;
 	uint8_t* id;
 };
 
