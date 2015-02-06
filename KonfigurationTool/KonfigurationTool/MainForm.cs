@@ -45,24 +45,317 @@ namespace KonfigurationTool
             mavlink = new Mavlink();
             mavlink.PacketReceived += mavlink_PacketReceived;
 
-            MonitorDeviceChanges();
-            UpdateDeviceList();
 
             byte[] ver = BitConverter.GetBytes(FIRMWARE_VERSION);
 
             Text = string.Format("AnySense {0}.{1}.{2} - Konfiguration Manager", ver[2], ver[1], ver[0]);
         }
 
-        private void serialPort_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
+        #region UI Handling
+
+        protected override void OnShown(EventArgs e)
         {
-            List<byte> bytes = new List<byte>();
-            while (serialPort.IsOpen && serialPort.BytesToRead > 0)
+            base.OnShown(e);
+
+            MonitorDeviceChanges();
+            UpdateDeviceList();
+        }
+
+        private void btnConnect_Click(object sender, EventArgs e)
+        {
+            if (!serialPort.IsOpen)
+                Connect();
+            else
+                Disconnect(true);
+        }
+
+        private void cmbPort_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (serialPort.IsOpen)
+                return;
+
+            if (!string.IsNullOrEmpty(cmbPort.SelectedValue.ToString()))
+                serialPort.PortName = cmbPort.SelectedValue.ToString();
+        }
+
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (serialPort.IsOpen)
             {
-                if (serialPort.IsOpen)
-                    bytes.Add((byte)serialPort.ReadByte());
+                Msg_configuration_control msg = new Msg_configuration_control();
+                msg.command = (byte)CONFIG_COMMAND.CONFIG_COMMAND_EXIT;
+                mavlink_packet.Message = msg;
+                byte[] bytes = mavlink.Send(mavlink_packet);
+
+                try
+                {
+                    serialPort.Write(bytes, 0, bytes.Length);
+                    serialPort.Close();
+
+                    deviceChanged.Stop();
+                }
+                catch { }
+            }
+        }
+
+        private void MainForm_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (currentStep == StateMachineStep.Connected && e.KeyCode == Keys.U)
+                btnUpdate.Visible = true;
+
+            if (currentStep == StateMachineStep.None && e.KeyCode == Keys.L)
+            {
+                try
+                {
+                    serialPort.Open();
+                    StateMachineUpdate(StateMachineStep.Connected);
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, "Error while open serial port:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else if (currentStep == StateMachineStep.None && e.KeyCode == Keys.F)
+            {
+                try
+                {
+                    Enabled = false;
+                    UpdateForm.ShowDialog(this, serialPort.PortName, String.Empty);
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, "Error while communication:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+
+                Enabled = true;
+
+            }
+        }
+
+        private void linkUrl_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start("http://anysense.de/support/");
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        private void btnPort1Configure_Click(object sender, EventArgs e)
+        {
+            ConfigurePort(CONFIG_PORT.CONFIG_PORT_1);
+        }
+
+        private void btnPort2Configure_Click(object sender, EventArgs e)
+        {
+            ConfigurePort(CONFIG_PORT.CONFIG_PORT_2);
+        }
+
+        #endregion
+
+        #region State Machine
+
+        private void timer_Tick(object sender, EventArgs e)
+        {
+
+            if (retry > MAX_RETRY)
+            {
+                try
+                {
+                    serialPort.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error while closing serial port:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                }
+                StateMachineUpdate(StateMachineStep.None);
+
+                MessageBox.Show(this, string.Format("No AnySense found on {0}\nMaybe wrong Port?", serialPort.PortName), "Connection failed", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            else
+            {
+                retry++;
+
+                try
+                {
+                    Msg_configuration_control msg = new Msg_configuration_control();
+                    msg.command = (byte)CONFIG_COMMAND.CONFIG_COMMAND_GET_VERSION;
+                    mavlink_packet.Message = msg;
+                    byte[] bytes = mavlink.Send(mavlink_packet);
+                    serialPort.Write(bytes, 0, bytes.Length);
+                }
+                catch (Exception ex)
+                {
+                    StateMachineUpdate(StateMachineStep.None);
+                    MessageBox.Show(this, "Error while communicating:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void StateMachineUpdate(StateMachineStep step)
+        {
+            switch (step)
+            {
+                case StateMachineStep.None:
+                    btnConnect.Text = "Open";
+                    btnUpdate.Visible = false;
+                    timer.Enabled = false;
+                    retry = 0;
+                    tsStatus.Text = "disconnected";
+                    tsStatus.ForeColor = Color.FromArgb(204, 11, 16);
+                    tsFWVersion.Text = "-";
+                    tsFWVersion.Visible = false;
+                    tsLoading.Visible = false;
+                    Cursor = Cursors.Default;
+                    tsFCHearbeat.Visible = false;
+                    tsUniAdapterHeartbeat.Visible = false;
+                    ClearLiveData();
+                    btnPort1Configure.Enabled = false;
+                    btnPort2Configure.Enabled = false;
+                    cmbPort.Enabled = true;
+                    pbCells.Visible = false;
+                    lblUpdateHint.Visible = false;
+                    break;
+                case StateMachineStep.Open:
+                    btnConnect.Text = "Close";
+                    btnUpdate.Visible = false;
+                    retry = 0;
+                    timer.Enabled = true;
+                    tsStatus.Text = "connecting";
+                    tsStatus.ForeColor = Color.Orange;
+                    Cursor = Cursors.WaitCursor;
+                    tsFWVersion.Text = "-";
+                    tsFWVersion.Visible = false;
+                    tsLoading.Visible = true;
+                    ClearLiveData();
+                    btnPort1Configure.Enabled = false;
+                    btnPort2Configure.Enabled = false;
+                    cmbPort.Enabled = false;
+                    tsFCHearbeat.Visible = false;
+                    tsUniAdapterHeartbeat.Visible = false;
+                    pbCells.Visible = false;
+                    lblUpdateHint.Visible = false;
+                    break;
+                case StateMachineStep.Connected:
+                    btnConnect.Text = "Close";
+                    btnUpdate.Visible = false;
+                    timer.Enabled = false;
+                    tsStatus.Text = "connected";
+                    tsStatus.ForeColor = Color.Green;
+                    Cursor = Cursors.Default;
+                    tsLoading.Visible = false;
+                    btnPort1Configure.Enabled = false;
+                    btnPort2Configure.Enabled = false;
+                    cmbPort.Enabled = false;
+                    tsFCHearbeat.Visible = true;
+                    tsUniAdapterHeartbeat.Visible = true;
+                    tsFWVersion.Visible = true;
+                    pbCells.Visible = false;
+                    lblUpdateHint.Visible = false;
+
+                    /*
+                    Task.Factory.StartNew(() =>
+                    {
+                        try
+                        {
+                            string cid = "";
+
+                            try
+                            {
+                                if (string.IsNullOrWhiteSpace(cid))
+                                    cid = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("xeniC").OpenSubKey("AnySense").GetValue("user", "").ToString();
+                            }
+                            catch { }
+
+                            try
+                            {
+                                if (string.IsNullOrWhiteSpace(cid))
+                                {
+                                    cid = Guid.NewGuid().ToString();
+                                    Microsoft.Win32.Registry.CurrentUser.CreateSubKey("Software").CreateSubKey("xeniC").CreateSubKey("AnySense").SetValue("user", cid);
+                                }
+                            }
+                            catch { }
+
+                            using (WebClient client = new WebClient())
+                            {
+                                byte[] response =
+                                client.UploadValues("http://www.google-analytics.com/collect", new NameValueCollection() {
+                                { "v", "1" },
+                                { "tid", "UA-57362047-1" },
+                                { "cid", cid },
+                                { "t", "pageview" },
+                                { "dh", "anysense.de" },
+                                { "dp", "/checkupdate/"+ tsFWVersion.Text + "/" },
+                                { "dt", "Check for AnySense Update" }
+                                });
+
+                                string result = System.Text.Encoding.UTF8.GetString(response);
+                            }
+                        }
+                        catch { }
+                    });
+                     * */
+
+                    break;
+                case StateMachineStep.Updating:
+                    tsFWVersion.Text = "-";
+                    ClearLiveData();
+                    btnPort1Configure.Enabled = false;
+                    btnPort2Configure.Enabled = false;
+                    cmbPort.Enabled = false;
+                    pbCells.Visible = false;
+                    lblUpdateHint.Visible = false;
+                    break;
+                default:
+                    break;
             }
 
-            mavlink.ParseBytes(bytes.ToArray());
+            currentStep = step;
+        }
+
+        #endregion
+
+        #region AnySense Handling
+
+        private void ClearLiveData()
+        {
+            lblFlightMode.Text = "-";
+            lblPort1.Text = "-";
+            lblPort2.Text = "-";
+            lblBattery.Text = "-";
+            lblCurrent.Text = "-";
+            lblStatLost.Text = "-";
+            lblStatDrop.Text = "-";
+            lblStatCorrupted.Text = "-";
+            lblCOG.Text = "-";
+            lblAltitude.Text = "-";
+            lblGPSFix.Text = "-";
+            lblHDOP.Text = "-";
+            lblVDOP.Text = "-";
+            lblLatitude.Text = "-";
+            lblLongitude.Text = "-";
+            lblSpeed.Text = "-";
+            lblNumSat.Text = "-";
+            lblClimb.Text = "-";
+            lblHeading.Text = "-";
+            lblThrottle.Text = "-";
+            lblRoll.Text = "-";
+            lblPitch.Text = "-";
+            lblRC1.Text = "-";
+            lblRC2.Text = "-";
+            lblRC3.Text = "-";
+            lblRC4.Text = "-";
+            lblRC5.Text = "-";
+            lblRC6.Text = "-";
+            lblRC7.Text = "-";
+            lblRC8.Text = "-";
+            toolTip1.RemoveAll();
         }
 
         private void mavlink_PacketReceived(object sender, MavlinkPacket e)
@@ -364,87 +657,6 @@ namespace KonfigurationTool
 
         }
 
-        private void ClearLiveData()
-        {
-            lblFlightMode.Text = "-";
-            lblPort1.Text = "-";
-            lblPort2.Text = "-";
-            lblBattery.Text = "-";
-            lblCurrent.Text = "-";
-            lblStatLost.Text = "-";
-            lblStatDrop.Text = "-";
-            lblStatCorrupted.Text = "-";
-            lblCOG.Text = "-";
-            lblAltitude.Text = "-";
-            lblGPSFix.Text = "-";
-            lblHDOP.Text = "-";
-            lblVDOP.Text = "-";
-            lblLatitude.Text = "-";
-            lblLongitude.Text = "-";
-            lblSpeed.Text = "-";
-            lblNumSat.Text = "-";
-            lblClimb.Text = "-";
-            lblHeading.Text = "-";
-            lblThrottle.Text = "-";
-            lblRoll.Text = "-";
-            lblPitch.Text = "-";
-            lblRC1.Text = "-";
-            lblRC2.Text = "-";
-            lblRC3.Text = "-";
-            lblRC4.Text = "-";
-            lblRC5.Text = "-";
-            lblRC6.Text = "-";
-            lblRC7.Text = "-";
-            lblRC8.Text = "-";
-            toolTip1.RemoveAll();
-        }
-
-        private void timer_Tick(object sender, EventArgs e)
-        {
-
-            if (retry > MAX_RETRY)
-            {
-                try
-                {
-                    serialPort.Close();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error while closing serial port:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-                }
-                StateMachineUpdate(StateMachineStep.None);
-
-                MessageBox.Show(this, string.Format("No AnySense found on {0}\nMaybe wrong Port?", serialPort.PortName), "Connection failed", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-            }
-            else
-            {
-                retry++;
-
-                try
-                {
-                    Msg_configuration_control msg = new Msg_configuration_control();
-                    msg.command = (byte)CONFIG_COMMAND.CONFIG_COMMAND_GET_VERSION;
-                    mavlink_packet.Message = msg;
-                    byte[] bytes = mavlink.Send(mavlink_packet);
-                    serialPort.Write(bytes, 0, bytes.Length);
-                }
-                catch (Exception ex)
-                {
-                    StateMachineUpdate(StateMachineStep.None);
-                    MessageBox.Show(this, "Error while communicating:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-
-        private void btnConnect_Click(object sender, EventArgs e)
-        {
-            if (!serialPort.IsOpen)
-                Connect();
-            else
-                Disconnect(true);
-        }
-
         private void Connect()
         {
             try
@@ -483,164 +695,33 @@ namespace KonfigurationTool
                 StateMachineUpdate(StateMachineStep.None);
         }
 
-        private void StateMachineUpdate(StateMachineStep step)
+        private void btnUpdate_Click(object sender, EventArgs e)
         {
-            switch (step)
-            {
-                case StateMachineStep.None:
-                    btnConnect.Text = "Open";
-                    btnUpdate.Visible = false;
-                    timer.Enabled = false;
-                    retry = 0;
-                    tsStatus.Text = "disconnected";
-                    tsStatus.ForeColor = Color.FromArgb(204, 11, 16);
-                    tsFWVersion.Text = "-";
-                    tsFWVersion.Visible = false;
-                    tsLoading.Visible = false;
-                    Cursor = Cursors.Default;
-                    tsFCHearbeat.Visible = false;
-                    tsUniAdapterHeartbeat.Visible = false;
-                    ClearLiveData();
-                    btnPort1Configure.Enabled = false;
-                    btnPort2Configure.Enabled = false;
-                    cmbPort.Enabled = true;
-                    pbCells.Visible = false;
-                    lblUpdateHint.Visible = false;
-                    break;
-                case StateMachineStep.Open:
-                    btnConnect.Text = "Close";
-                    btnUpdate.Visible = false;
-                    retry = 0;
-                    timer.Enabled = true;
-                    tsStatus.Text = "connecting";
-                    tsStatus.ForeColor = Color.Orange;
-                    Cursor = Cursors.WaitCursor;
-                    tsFWVersion.Text = "-";
-                    tsFWVersion.Visible = false;
-                    tsLoading.Visible = true;
-                    ClearLiveData();
-                    btnPort1Configure.Enabled = false;
-                    btnPort2Configure.Enabled = false;
-                    cmbPort.Enabled = false;
-                    tsFCHearbeat.Visible = false;
-                    tsUniAdapterHeartbeat.Visible = false;
-                    pbCells.Visible = false;
-                    lblUpdateHint.Visible = false;
-                    break;
-                case StateMachineStep.Connected:
-                    btnConnect.Text = "Close";
-                    btnUpdate.Visible = false;
-                    timer.Enabled = false;
-                    tsStatus.Text = "connected";
-                    tsStatus.ForeColor = Color.Green;
-                    Cursor = Cursors.Default;
-                    tsLoading.Visible = false;
-                    btnPort1Configure.Enabled = false;
-                    btnPort2Configure.Enabled = false;
-                    cmbPort.Enabled = false;
-                    tsFCHearbeat.Visible = true;
-                    tsUniAdapterHeartbeat.Visible = true;
-                    tsFWVersion.Visible = true;
-                    pbCells.Visible = false;
-                    lblUpdateHint.Visible = false;
-
-                    /*
-                    Task.Factory.StartNew(() =>
-                    {
-                        try
-                        {
-                            string cid = "";
-
-                            try
-                            {
-                                if (string.IsNullOrWhiteSpace(cid))
-                                    cid = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("Software").OpenSubKey("xeniC").OpenSubKey("AnySense").GetValue("user", "").ToString();
-                            }
-                            catch { }
-
-                            try
-                            {
-                                if (string.IsNullOrWhiteSpace(cid))
-                                {
-                                    cid = Guid.NewGuid().ToString();
-                                    Microsoft.Win32.Registry.CurrentUser.CreateSubKey("Software").CreateSubKey("xeniC").CreateSubKey("AnySense").SetValue("user", cid);
-                                }
-                            }
-                            catch { }
-
-                            using (WebClient client = new WebClient())
-                            {
-                                byte[] response =
-                                client.UploadValues("http://www.google-analytics.com/collect", new NameValueCollection() {
-                                { "v", "1" },
-                                { "tid", "UA-57362047-1" },
-                                { "cid", cid },
-                                { "t", "pageview" },
-                                { "dh", "anysense.de" },
-                                { "dp", "/checkupdate/"+ tsFWVersion.Text + "/" },
-                                { "dt", "Check for AnySense Update" }
-                                });
-
-                                string result = System.Text.Encoding.UTF8.GetString(response);
-                            }
-                        }
-                        catch { }
-                    });
-                     * */
-
-                    break;
-                case StateMachineStep.Updating:
-                    tsFWVersion.Text = "-";
-                    ClearLiveData();
-                    btnPort1Configure.Enabled = false;
-                    btnPort2Configure.Enabled = false;
-                    cmbPort.Enabled = false;
-                    pbCells.Visible = false;
-                    lblUpdateHint.Visible = false;
-                    break;
-                default:
-                    break;
-            }
-
-            currentStep = step;
-        }
-
-        private void cmbPort_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (serialPort.IsOpen)
+            if (tsLoading.Visible)
                 return;
 
-            if (!string.IsNullOrEmpty(cmbPort.SelectedValue.ToString()))
-                serialPort.PortName = cmbPort.SelectedValue.ToString();
-        }
 
-        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            if (serialPort.IsOpen)
+            string path = string.Empty;
+
+            try
             {
                 Msg_configuration_control msg = new Msg_configuration_control();
-                msg.command = (byte)CONFIG_COMMAND.CONFIG_COMMAND_EXIT;
+                msg.command = (byte)CONFIG_COMMAND.CONFIG_COMMAND_BOOTLOADER;
                 mavlink_packet.Message = msg;
                 byte[] bytes = mavlink.Send(mavlink_packet);
                 serialPort.Write(bytes, 0, bytes.Length);
-                serialPort.Close();
 
-                try
-                {
-                    deviceChanged.Stop();
-                }
-                catch { }
+                Disconnect(false);
+                Enabled = false;
+                UpdateForm.ShowDialog(this, serialPort.PortName, path);
+
             }
-        }
-
-        private void btnPort1Configure_Click(object sender, EventArgs e)
-        {
-            ConfigurePort(CONFIG_PORT.CONFIG_PORT_1);
-        }
-
-        private void btnPort2Configure_Click(object sender, EventArgs e)
-        {
-            ConfigurePort(CONFIG_PORT.CONFIG_PORT_2);
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, "Error while communication:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            Enabled = true;
+            Connect();
         }
 
         private void ConfigurePort(CONFIG_PORT port)
@@ -686,92 +767,20 @@ namespace KonfigurationTool
 
         }
 
-        private void btnUpdate_Click(object sender, EventArgs e)
+        #endregion
+
+        #region Serial Port Handling
+
+        private void serialPort_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
         {
-            if (tsLoading.Visible)
-                return;
-
-
-            string path = string.Empty;
-
-
-#if DEBUG
-            using (OpenFileDialog dlg = new OpenFileDialog())
+            List<byte> bytes = new List<byte>();
+            while (serialPort.IsOpen && serialPort.BytesToRead > 0)
             {
-                dlg.Filter = "Binary Files|*.bin";
-                dlg.CheckFileExists = true;
-
-                if (dlg.ShowDialog() == DialogResult.OK)
-                    path = dlg.FileName;
+                if (serialPort.IsOpen)
+                    bytes.Add((byte)serialPort.ReadByte());
             }
-#endif
 
-            try
-            {
-                Msg_configuration_control msg = new Msg_configuration_control();
-                msg.command = (byte)CONFIG_COMMAND.CONFIG_COMMAND_BOOTLOADER;
-                mavlink_packet.Message = msg;
-                byte[] bytes = mavlink.Send(mavlink_packet);
-                serialPort.Write(bytes, 0, bytes.Length);
-
-                Disconnect(false);
-                Enabled = false;
-                UpdateForm.ShowDialog(this, serialPort.PortName, path);
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, "Error while communication:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            Enabled = true;
-            Connect();
-        }
-
-        private void MainForm_KeyUp(object sender, KeyEventArgs e)
-        {
-            if (currentStep == StateMachineStep.Connected && e.KeyCode == Keys.U)
-                btnUpdate.Visible = true;
-
-            if (currentStep == StateMachineStep.None && e.KeyCode == Keys.L)
-            {
-                try
-                {
-                    serialPort.Open();
-                    StateMachineUpdate(StateMachineStep.Connected);
-
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(this, "Error while open serial port:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            else if (currentStep == StateMachineStep.None && e.KeyCode == Keys.F)
-            {
-                try
-                {
-                    Enabled = false;
-                    UpdateForm.ShowDialog(this, serialPort.PortName, String.Empty);
-
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(this, "Error while communication:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-
-                Enabled = true;
-
-            }
-        }
-
-        private void linkUrl_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        {
-            try
-            {
-                System.Diagnostics.Process.Start("http://anysense.de/support/");
-            }
-            catch (Exception ex)
-            {
-            }
+            mavlink.ParseBytes(bytes.ToArray());
         }
 
         private void MonitorDeviceChanges()
@@ -784,7 +793,11 @@ namespace KonfigurationTool
 
                 deviceChanged.EventArrived += (o, args) =>
                 {
-                    UpdateDeviceList();
+                    try
+                    {
+                        UpdateDeviceList();
+                    }
+                    catch { }
                 };
 
                 // Start listening for events
@@ -792,7 +805,6 @@ namespace KonfigurationTool
             }
             catch { }
         }
-
 
         private void UpdateDeviceList()
         {
@@ -853,6 +865,8 @@ namespace KonfigurationTool
                 }
             }
         }
+
+        #endregion
 
     }
 }

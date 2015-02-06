@@ -35,11 +35,11 @@
             this.lblPort = new System.Windows.Forms.Label();
             this.pnlTop = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.lblUpdateHint = new System.Windows.Forms.Label();
             this.btnUpdate = new System.Windows.Forms.Button();
             this.btnConnect = new System.Windows.Forms.Button();
             this.cmbPort = new System.Windows.Forms.ComboBox();
-            this.groupRC = new System.Windows.Forms.GroupBox();
+            this.lblUpdateHint = new System.Windows.Forms.Label();
+            this.grpRC = new System.Windows.Forms.GroupBox();
             this.lblRC8 = new System.Windows.Forms.Label();
             this.lblRC8Label = new System.Windows.Forms.Label();
             this.lblRC7 = new System.Windows.Forms.Label();
@@ -71,7 +71,7 @@
             this.lblBatteryLabel = new System.Windows.Forms.Label();
             this.lblFlightMode = new System.Windows.Forms.Label();
             this.lblFlightModeLabel = new System.Windows.Forms.Label();
-            this.groupTelemetry = new System.Windows.Forms.GroupBox();
+            this.grpTelemetry = new System.Windows.Forms.GroupBox();
             this.lblPitch = new System.Windows.Forms.Label();
             this.lblPitchLabel = new System.Windows.Forms.Label();
             this.lblRoll = new System.Windows.Forms.Label();
@@ -89,7 +89,7 @@
             this.lblSpeed = new System.Windows.Forms.Label();
             this.lblSpeedLabel = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.groupGPS = new System.Windows.Forms.GroupBox();
+            this.grpGPS = new System.Windows.Forms.GroupBox();
             this.lblNumSat = new System.Windows.Forms.Label();
             this.lblNumSatLabel = new System.Windows.Forms.Label();
             this.lblVDOP = new System.Windows.Forms.Label();
@@ -122,12 +122,12 @@
             this.linkUrl = new System.Windows.Forms.LinkLabel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.pnlTop.SuspendLayout();
-            this.groupRC.SuspendLayout();
+            this.grpRC.SuspendLayout();
             this.grpChannelStats.SuspendLayout();
             this.gpGenerall.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbCells)).BeginInit();
-            this.groupTelemetry.SuspendLayout();
-            this.groupGPS.SuspendLayout();
+            this.grpTelemetry.SuspendLayout();
+            this.grpGPS.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.grpPorts.SuspendLayout();
             this.SuspendLayout();
@@ -178,20 +178,6 @@
             this.panel2.Size = new System.Drawing.Size(183, 52);
             this.panel2.TabIndex = 5;
             // 
-            // lblUpdateHint
-            // 
-            this.lblUpdateHint.BackColor = System.Drawing.Color.White;
-            this.lblUpdateHint.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblUpdateHint.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblUpdateHint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(11)))), ((int)(((byte)(16)))));
-            this.lblUpdateHint.Location = new System.Drawing.Point(3, 16);
-            this.lblUpdateHint.Name = "lblUpdateHint";
-            this.lblUpdateHint.Size = new System.Drawing.Size(312, 65);
-            this.lblUpdateHint.TabIndex = 4;
-            this.lblUpdateHint.Text = "Please Update your AnySense.";
-            this.lblUpdateHint.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblUpdateHint.Visible = false;
-            // 
             // btnUpdate
             // 
             this.btnUpdate.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(11)))), ((int)(((byte)(16)))));
@@ -237,31 +223,45 @@
             this.cmbPort.TabIndex = 1;
             this.cmbPort.SelectedIndexChanged += new System.EventHandler(this.cmbPort_SelectedIndexChanged);
             // 
-            // groupRC
+            // lblUpdateHint
             // 
-            this.groupRC.BackColor = System.Drawing.Color.Transparent;
-            this.groupRC.Controls.Add(this.lblRC8);
-            this.groupRC.Controls.Add(this.lblRC8Label);
-            this.groupRC.Controls.Add(this.lblRC7);
-            this.groupRC.Controls.Add(this.lblRC7Label);
-            this.groupRC.Controls.Add(this.lblRC6);
-            this.groupRC.Controls.Add(this.lblRC6Label);
-            this.groupRC.Controls.Add(this.lblRC5);
-            this.groupRC.Controls.Add(this.lblRC5Label);
-            this.groupRC.Controls.Add(this.lblRC2Label);
-            this.groupRC.Controls.Add(this.lblRC4);
-            this.groupRC.Controls.Add(this.lblRC2);
-            this.groupRC.Controls.Add(this.lblRC4Label);
-            this.groupRC.Controls.Add(this.lblRC1Label);
-            this.groupRC.Controls.Add(this.lblRC1);
-            this.groupRC.Controls.Add(this.lblRC3);
-            this.groupRC.Controls.Add(this.lblRuderLabel);
-            this.groupRC.Location = new System.Drawing.Point(334, 295);
-            this.groupRC.Name = "groupRC";
-            this.groupRC.Size = new System.Drawing.Size(316, 168);
-            this.groupRC.TabIndex = 6;
-            this.groupRC.TabStop = false;
-            this.groupRC.Text = "RC Channels (PPM Modulation)";
+            this.lblUpdateHint.BackColor = System.Drawing.Color.White;
+            this.lblUpdateHint.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lblUpdateHint.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblUpdateHint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(11)))), ((int)(((byte)(16)))));
+            this.lblUpdateHint.Location = new System.Drawing.Point(3, 16);
+            this.lblUpdateHint.Name = "lblUpdateHint";
+            this.lblUpdateHint.Size = new System.Drawing.Size(312, 65);
+            this.lblUpdateHint.TabIndex = 4;
+            this.lblUpdateHint.Text = "Please Update your AnySense.";
+            this.lblUpdateHint.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblUpdateHint.Visible = false;
+            // 
+            // grpRC
+            // 
+            this.grpRC.BackColor = System.Drawing.Color.Transparent;
+            this.grpRC.Controls.Add(this.lblRC8);
+            this.grpRC.Controls.Add(this.lblRC8Label);
+            this.grpRC.Controls.Add(this.lblRC7);
+            this.grpRC.Controls.Add(this.lblRC7Label);
+            this.grpRC.Controls.Add(this.lblRC6);
+            this.grpRC.Controls.Add(this.lblRC6Label);
+            this.grpRC.Controls.Add(this.lblRC5);
+            this.grpRC.Controls.Add(this.lblRC5Label);
+            this.grpRC.Controls.Add(this.lblRC2Label);
+            this.grpRC.Controls.Add(this.lblRC4);
+            this.grpRC.Controls.Add(this.lblRC2);
+            this.grpRC.Controls.Add(this.lblRC4Label);
+            this.grpRC.Controls.Add(this.lblRC1Label);
+            this.grpRC.Controls.Add(this.lblRC1);
+            this.grpRC.Controls.Add(this.lblRC3);
+            this.grpRC.Controls.Add(this.lblRuderLabel);
+            this.grpRC.Location = new System.Drawing.Point(334, 295);
+            this.grpRC.Name = "grpRC";
+            this.grpRC.Size = new System.Drawing.Size(316, 168);
+            this.grpRC.TabIndex = 6;
+            this.grpRC.TabStop = false;
+            this.grpRC.Text = "RC Channels (PPM Modulation)";
             // 
             // lblRC8
             // 
@@ -598,29 +598,29 @@
             this.lblFlightModeLabel.TabIndex = 0;
             this.lblFlightModeLabel.Text = "Flight Mode:";
             // 
-            // groupTelemetry
+            // grpTelemetry
             // 
-            this.groupTelemetry.BackColor = System.Drawing.Color.Transparent;
-            this.groupTelemetry.Controls.Add(this.lblPitch);
-            this.groupTelemetry.Controls.Add(this.lblPitchLabel);
-            this.groupTelemetry.Controls.Add(this.lblRoll);
-            this.groupTelemetry.Controls.Add(this.lblRollLabel);
-            this.groupTelemetry.Controls.Add(this.lblThrottle);
-            this.groupTelemetry.Controls.Add(this.lblThrottleLabel);
-            this.groupTelemetry.Controls.Add(this.lblClimb);
-            this.groupTelemetry.Controls.Add(this.lblClimbLabel);
-            this.groupTelemetry.Controls.Add(this.lblHeadingLabel);
-            this.groupTelemetry.Controls.Add(this.lblCOG);
-            this.groupTelemetry.Controls.Add(this.lblHeading);
-            this.groupTelemetry.Controls.Add(this.lblCOGLabel);
-            this.groupTelemetry.Controls.Add(this.lblAltitudeLabel);
-            this.groupTelemetry.Controls.Add(this.lblAltitude);
-            this.groupTelemetry.Location = new System.Drawing.Point(12, 227);
-            this.groupTelemetry.Name = "groupTelemetry";
-            this.groupTelemetry.Size = new System.Drawing.Size(316, 152);
-            this.groupTelemetry.TabIndex = 3;
-            this.groupTelemetry.TabStop = false;
-            this.groupTelemetry.Text = "Telemetry";
+            this.grpTelemetry.BackColor = System.Drawing.Color.Transparent;
+            this.grpTelemetry.Controls.Add(this.lblPitch);
+            this.grpTelemetry.Controls.Add(this.lblPitchLabel);
+            this.grpTelemetry.Controls.Add(this.lblRoll);
+            this.grpTelemetry.Controls.Add(this.lblRollLabel);
+            this.grpTelemetry.Controls.Add(this.lblThrottle);
+            this.grpTelemetry.Controls.Add(this.lblThrottleLabel);
+            this.grpTelemetry.Controls.Add(this.lblClimb);
+            this.grpTelemetry.Controls.Add(this.lblClimbLabel);
+            this.grpTelemetry.Controls.Add(this.lblHeadingLabel);
+            this.grpTelemetry.Controls.Add(this.lblCOG);
+            this.grpTelemetry.Controls.Add(this.lblHeading);
+            this.grpTelemetry.Controls.Add(this.lblCOGLabel);
+            this.grpTelemetry.Controls.Add(this.lblAltitudeLabel);
+            this.grpTelemetry.Controls.Add(this.lblAltitude);
+            this.grpTelemetry.Location = new System.Drawing.Point(12, 227);
+            this.grpTelemetry.Name = "grpTelemetry";
+            this.grpTelemetry.Size = new System.Drawing.Size(316, 152);
+            this.grpTelemetry.TabIndex = 3;
+            this.grpTelemetry.TabStop = false;
+            this.grpTelemetry.Text = "Telemetry";
             // 
             // lblPitch
             // 
@@ -808,29 +808,29 @@
             this.panel1.Size = new System.Drawing.Size(139, 45);
             this.panel1.TabIndex = 8;
             // 
-            // groupGPS
+            // grpGPS
             // 
-            this.groupGPS.BackColor = System.Drawing.Color.Transparent;
-            this.groupGPS.Controls.Add(this.lblNumSat);
-            this.groupGPS.Controls.Add(this.lblNumSatLabel);
-            this.groupGPS.Controls.Add(this.lblVDOP);
-            this.groupGPS.Controls.Add(this.lblVDOPLabel);
-            this.groupGPS.Controls.Add(this.lblHDOP);
-            this.groupGPS.Controls.Add(this.lblHDOPLabel);
-            this.groupGPS.Controls.Add(this.lblGPSFix);
-            this.groupGPS.Controls.Add(this.lblGPSFixLabel);
-            this.groupGPS.Controls.Add(this.lblLongitude);
-            this.groupGPS.Controls.Add(this.lblLongitudeLabel);
-            this.groupGPS.Controls.Add(this.lblLatitude);
-            this.groupGPS.Controls.Add(this.lblLatitudeLabel);
-            this.groupGPS.Controls.Add(this.lblSpeedLabel);
-            this.groupGPS.Controls.Add(this.lblSpeed);
-            this.groupGPS.Location = new System.Drawing.Point(334, 144);
-            this.groupGPS.Name = "groupGPS";
-            this.groupGPS.Size = new System.Drawing.Size(318, 145);
-            this.groupGPS.TabIndex = 5;
-            this.groupGPS.TabStop = false;
-            this.groupGPS.Text = "GPS";
+            this.grpGPS.BackColor = System.Drawing.Color.Transparent;
+            this.grpGPS.Controls.Add(this.lblNumSat);
+            this.grpGPS.Controls.Add(this.lblNumSatLabel);
+            this.grpGPS.Controls.Add(this.lblVDOP);
+            this.grpGPS.Controls.Add(this.lblVDOPLabel);
+            this.grpGPS.Controls.Add(this.lblHDOP);
+            this.grpGPS.Controls.Add(this.lblHDOPLabel);
+            this.grpGPS.Controls.Add(this.lblGPSFix);
+            this.grpGPS.Controls.Add(this.lblGPSFixLabel);
+            this.grpGPS.Controls.Add(this.lblLongitude);
+            this.grpGPS.Controls.Add(this.lblLongitudeLabel);
+            this.grpGPS.Controls.Add(this.lblLatitude);
+            this.grpGPS.Controls.Add(this.lblLatitudeLabel);
+            this.grpGPS.Controls.Add(this.lblSpeedLabel);
+            this.grpGPS.Controls.Add(this.lblSpeed);
+            this.grpGPS.Location = new System.Drawing.Point(334, 144);
+            this.grpGPS.Name = "grpGPS";
+            this.grpGPS.Size = new System.Drawing.Size(318, 145);
+            this.grpGPS.TabIndex = 5;
+            this.grpGPS.TabStop = false;
+            this.grpGPS.Text = "GPS";
             // 
             // lblNumSat
             // 
@@ -1158,13 +1158,13 @@
             this.Controls.Add(this.lblInfo);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.grpPorts);
-            this.Controls.Add(this.groupRC);
+            this.Controls.Add(this.grpRC);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.gpGenerall);
             this.Controls.Add(this.grpChannelStats);
-            this.Controls.Add(this.groupTelemetry);
+            this.Controls.Add(this.grpTelemetry);
             this.Controls.Add(this.pnlTop);
-            this.Controls.Add(this.groupGPS);
+            this.Controls.Add(this.grpGPS);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -1179,17 +1179,17 @@
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyUp);
             this.pnlTop.ResumeLayout(false);
-            this.groupRC.ResumeLayout(false);
-            this.groupRC.PerformLayout();
+            this.grpRC.ResumeLayout(false);
+            this.grpRC.PerformLayout();
             this.grpChannelStats.ResumeLayout(false);
             this.grpChannelStats.PerformLayout();
             this.gpGenerall.ResumeLayout(false);
             this.gpGenerall.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbCells)).EndInit();
-            this.groupTelemetry.ResumeLayout(false);
-            this.groupTelemetry.PerformLayout();
-            this.groupGPS.ResumeLayout(false);
-            this.groupGPS.PerformLayout();
+            this.grpTelemetry.ResumeLayout(false);
+            this.grpTelemetry.PerformLayout();
+            this.grpGPS.ResumeLayout(false);
+            this.grpGPS.PerformLayout();
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.grpPorts.ResumeLayout(false);
@@ -1222,8 +1222,8 @@
         private System.Windows.Forms.Label lblBatteryLabel;
         private System.Windows.Forms.Label lblFlightMode;
         private System.Windows.Forms.Label lblFlightModeLabel;
-        private System.Windows.Forms.GroupBox groupTelemetry;
-        private System.Windows.Forms.GroupBox groupGPS;
+        private System.Windows.Forms.GroupBox grpTelemetry;
+        private System.Windows.Forms.GroupBox grpGPS;
         private System.Windows.Forms.Label lblLongitude;
         private System.Windows.Forms.Label lblLongitudeLabel;
         private System.Windows.Forms.Label lblLatitude;
@@ -1259,7 +1259,7 @@
         private System.Windows.Forms.Label lblPitchLabel;
         private System.Windows.Forms.Label lblRoll;
         private System.Windows.Forms.Label lblRollLabel;
-        private System.Windows.Forms.GroupBox groupRC;
+        private System.Windows.Forms.GroupBox grpRC;
         private System.Windows.Forms.Label lblRC8;
         private System.Windows.Forms.Label lblRC8Label;
         private System.Windows.Forms.Label lblRC7;
