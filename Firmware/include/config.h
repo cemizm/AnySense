@@ -12,7 +12,7 @@
 
 #define CONFIG_PARSER_LENGTH	128
 #define CONFIG_VERSION			1
-#define FIRMWARE_VERSION		0x00000A07
+#define FIRMWARE_VERSION		0x00000A08
 
 typedef enum parserTypeEnum
 {

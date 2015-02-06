@@ -170,7 +170,7 @@ void module_futaba_task(void* pData)
 			{
 			case Futaba_Values_Vario:
 			{
-				i16tmp = simpleTelemtryData.vsi * 10;
+				i16tmp = simpleTelemtryData.vsi * 100;
 				u16tmp = simpleTelemtryData.alt + 30000;
 
 				session->slotData[slot][0] = i16tmp >> 8;
