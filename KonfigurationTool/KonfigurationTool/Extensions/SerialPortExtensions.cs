@@ -20,10 +20,11 @@ namespace KonfigurationTool
                 using (var erg = searcher.Get())
                 {
                     var ports = erg.Cast<ManagementBaseObject>().ToList();
+
                     var tList = (from n in portnames
                                  from p in ports
-                                 where p["Caption"].ToString().Contains(n)
-                                 select new KeyValuePair<string, string>(n, p != null ? p["Caption"].ToString() : n)).ToList();
+                                 where p["Caption"].ToString().Contains("(" + n + ")")
+                                 select new KeyValuePair<string, string>(n, p != null ? p["Caption"].ToString() : n)).Distinct().ToList();
 
 
                     return tList;
