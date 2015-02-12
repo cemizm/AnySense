@@ -533,7 +533,7 @@ namespace KonfigurationTool
                 btnUpdate.Visible = FIRMWARE_VERSION > version;
                 lblUpdateHint.Visible = FIRMWARE_VERSION != version;
 
-                lblUpdateHint.Text = (FIRMWARE_VERSION > version ? "Your Fimrware ist outdated.\n Please click Update to flash your AnySense with latest Firmware Version." :
+                lblUpdateHint.Text = (FIRMWARE_VERSION > version ? "Your Firmware ist outdated.\n Please click Update to flash your AnySense with latest Firmware Version." :
                                                                    "Your Konfiguration Manager is outdated.\nPlease visit our support page for more information.");
 
                 btnPort1Configure.Enabled = FIRMWARE_VERSION == version;
