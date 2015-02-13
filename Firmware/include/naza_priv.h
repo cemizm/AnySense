@@ -64,7 +64,10 @@ struct msg_osd
 	float gyrY;          // gyroscope Y axis data (??)
 	float gyrZ;          // gyroscope Z axis data (??)
 	float altBaro;       // altitude from barometric sensor (meters)
-	float unk0[7];
+    float headCompX;     // compensated heading X component
+    float unk0[2];
+    float headCompY;     // compensated heading Y component
+    float unk3[3];
 	float northVelocity; // averaged northward velocity or 0 when less than 5 satellites locked (m/s)
 	float eastVelocity; // averaged eastward velocity or 0 when less than 5 satellites locked (m/s)
 	float downVelocity;  // downward velocity (barometric) (m/s)
