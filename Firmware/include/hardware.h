@@ -19,6 +19,10 @@
 #define tick_ms(tick) tick
 #define tick_sec(tick) tick_ms(tick / 1000)
 
+#define PRIORITY_CAN		2
+#define PRIORITY_MAVLINK	3
+#define PRIORITY_TELEMETRY	1
+
 #ifdef STM32F072B
 
 #define LED_PORT		GPIOC

@@ -114,7 +114,7 @@ void naza_initialize()
 	NVIC_InitTypeDef def;
 	def.NVIC_IRQChannelCmd = ENABLE;
 	def.NVIC_IRQChannel = CEC_CAN_IRQn;
-	def.NVIC_IRQChannelPriority = 0;
+	def.NVIC_IRQChannelPriority = PRIORITY_CAN;
 	NVIC_Init(&def);
 }
 

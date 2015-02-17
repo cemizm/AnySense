@@ -74,7 +74,7 @@ void sport_start(const struct hardware_port_cfg* port, uint8_t* config)
 	NVIC_InitTypeDef def;
 	def.NVIC_IRQChannelCmd = ENABLE;
 	def.NVIC_IRQChannel = port->nvic_ch;
-	def.NVIC_IRQChannelPriority = 1;
+	def.NVIC_IRQChannelPriority = PRIORITY_TELEMETRY;
 	NVIC_Init(&def);
 
 	session->flag = CoCreateFlag(Co_TRUE, Co_FALSE);

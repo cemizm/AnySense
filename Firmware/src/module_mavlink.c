@@ -142,7 +142,7 @@ void mavlink_start(const struct hardware_port_cfg* port, uint8_t* config)
 	NVIC_InitTypeDef def;
 	def.NVIC_IRQChannelCmd = ENABLE;
 	def.NVIC_IRQChannel = port->nvic_ch;
-	def.NVIC_IRQChannelPriority = 0;
+	def.NVIC_IRQChannelPriority = PRIORITY_MAVLINK;
 	NVIC_Init(&def);
 
 	session->event_id = CoCreateQueue(session->queue, MODULE_MAVLINK_RX_QUEUE_SIZE, EVENT_SORT_TYPE_PRIO);

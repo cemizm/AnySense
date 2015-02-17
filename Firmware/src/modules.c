@@ -46,7 +46,7 @@ void modules_initialize()
 	NVIC_InitTypeDef def;
 	def.NVIC_IRQChannelCmd = ENABLE;
 	def.NVIC_IRQChannel = usart_port2.nvic_ch;
-	def.NVIC_IRQChannelPriority = 1;
+	def.NVIC_IRQChannelPriority = PRIORITY_TELEMETRY;
 	NVIC_Init(&def);
 
 	FIFO_init(tx_buffer);
