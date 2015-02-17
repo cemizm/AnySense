@@ -99,6 +99,8 @@ void module_futaba_start(const struct hardware_port_cfg* port, uint8_t* config)
 	TIM_TimeBase_InitStructure.TIM_Period = MODULE_FUTABA_TIMING_START;
 	TIM_TimeBaseInit(port->timer.tim, &TIM_TimeBase_InitStructure);
 
+	TIM_ClearITPendingBit(port->timer.tim, TIM_IT_Update);
+
 	TIM_ITConfig(port->timer.tim, TIM_IT_Update, ENABLE);
 
 	def.NVIC_IRQChannel = port->timer.nvic_ch;
@@ -222,8 +224,8 @@ void module_futaba_task(void* pData)
 				break;
 			case Futaba_Values_Kompass:
 			{
-				session->slotData[slot][0] = (uint16_t)simpleTelemtryData.heading;
-				session->slotData[slot][1] = ((uint16_t)simpleTelemtryData.heading) >> 8;
+				session->slotData[slot][0] = (uint16_t) simpleTelemtryData.heading;
+				session->slotData[slot][1] = ((uint16_t) simpleTelemtryData.heading) >> 8;
 				break;
 			}
 			case Futaba_Values_Cell:
