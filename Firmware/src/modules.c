@@ -64,6 +64,7 @@ void modules_initialize_config(struct portParserStruct* parser)
 		hott_initializeConfig(parser->parserConfig);
 		break;
 	case parser_jeti:
+		module_jeti_initializeConfig(parser->parserConfig);
 		break;
 	case parser_mavlink:
 		mavlink_initializeConfig(parser->parserConfig);
@@ -370,6 +371,7 @@ void configManager_start(struct portParserStruct* parser, const struct hardware_
 		hott_start(port, parser->parserConfig);
 		break;
 	case parser_jeti:
+		module_jeti_start(port, parser->parserConfig);
 		break;
 	case parser_mavlink:
 		mavlink_start(port, parser->parserConfig);

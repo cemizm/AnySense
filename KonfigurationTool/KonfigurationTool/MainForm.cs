@@ -19,7 +19,7 @@ namespace KonfigurationTool
         private const int MAX_RETRY = 100;
 
         private const int MAV_SYSTEM_ID = 0xCE;
-        private const uint FIRMWARE_VERSION = 0x00010000;
+        private const uint FIRMWARE_VERSION = 0x00010001;
 
         private int retry;
         private StateMachineStep currentStep = StateMachineStep.None;
@@ -121,7 +121,8 @@ namespace KonfigurationTool
                 try
                 {
                     Enabled = false;
-                    UpdateForm.ShowDialog(this, serialPort.PortName, String.Empty);
+                    if (UpdateForm.ShowDialog(this, serialPort.PortName, String.Empty) == DialogResult.OK)
+                        Connect();
 
                 }
                 catch (Exception ex)

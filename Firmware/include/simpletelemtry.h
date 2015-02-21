@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 #include "CoOS.h"
+#include "math.h"
 
 #define SIMPLE_TELEMETRY_RC		10
 #define SIMPLE_TELEMETRY_CELLS	12
@@ -82,12 +83,21 @@ uint8_t simpleTelemetry_isStickConfig();
 uint8_t simpleTelemetry_stickConfigPosition();
 uint8_t simpleTelemetry_isAlive();
 
+__inline__ uint8_t simpleTelemetry_isHomePointSet()
+{
+	return simpleTelemtryData.homeLon != 0 && simpleTelemtryData.homeLat != 0;
+}
+
+__inline__ uint8_t simpleTelemetry_validGPS()
+{
+	return simpleTelemtryData.fixType >= fixType_2D;
+}
 
 __inline__ uint16_t simpleTelemetry_getLowestCell(uint8_t cellCount)
 {
-	if(simpleTelemtryData.cellCount == 0)
+	if (simpleTelemtryData.cellCount == 0)
 	{
-		if(cellCount == 0)
+		if (cellCount == 0)
 			return 0;
 
 		return simpleTelemtryData.battery / cellCount;
@@ -95,9 +105,9 @@ __inline__ uint16_t simpleTelemetry_getLowestCell(uint8_t cellCount)
 
 	uint16_t lowest = simpleTelemtryData.cells[0];
 
-	for(uint8_t i=1;i<simpleTelemtryData.cellCount; i++)
+	for (uint8_t i = 1; i < simpleTelemtryData.cellCount; i++)
 	{
-		if(simpleTelemtryData.cells[i] < lowest)
+		if (simpleTelemtryData.cells[i] < lowest)
 			lowest = simpleTelemtryData.cells[i];
 	}
 
@@ -106,7 +116,7 @@ __inline__ uint16_t simpleTelemetry_getLowestCell(uint8_t cellCount)
 
 __inline__ uint8_t simpleTelemetry_getPercentage(uint16_t cellVoltage)
 {
-	if(simpleTelemtryData.percentage_charge > 0)
+	if (simpleTelemtryData.percentage_charge > 0)
 		return simpleTelemtryData.percentage_charge;
 
 	if (cellVoltage > 4150) // 4,15V 100%
@@ -136,4 +146,53 @@ __inline__ uint8_t simpleTelemetry_getPercentage(uint16_t cellVoltage)
 
 	return 0;
 }
+
+__inline__ double simpleTelemetry_getDistance()
+{
+	if (simpleTelemetry_validGPS() && simpleTelemetry_isHomePointSet())
+	{
+
+		double delta = (simpleTelemtryData.lon - simpleTelemtryData.homeLon) * (M_PI / 180);
+		double sdlong = sin(delta);
+		double cdlong = cos(delta);
+		double lat1 = simpleTelemtryData.lat * (M_PI / 180);
+		double lat2 = simpleTelemtryData.homeLat * (M_PI / 180);
+		double slat1 = sin(lat1);
+		double clat1 = cos(lat1);
+		double slat2 = sin(lat2);
+		double clat2 = cos(lat2);
+		delta = (clat1 * slat2) - (slat1 * clat2 * cdlong);
+		delta = pow(delta, 2);
+		delta += pow(clat2 * sdlong, 2);
+		delta = sqrt(delta);
+		double denom = (slat1 * slat2) + (clat1 * clat2 * cdlong);
+		delta = atan2(delta, denom);
+
+		return delta * 6372795;
+	}
+
+	return 0;
+}
+
+__inline__ double simpleTelemetry_calculateAngle()
+{
+	if (simpleTelemetry_validGPS() && simpleTelemetry_isHomePointSet())
+	{
+		double off_y = simpleTelemtryData.homeLon - simpleTelemtryData.lon;
+		double off_x = cos(M_PI / 180 * simpleTelemtryData.lon) * (simpleTelemtryData.homeLat - simpleTelemtryData.lat);
+		double bearing = atan2(off_y, off_x) / M_PI * 180;
+
+		if (bearing < 0)
+			bearing += 360;
+
+		return bearing;
+	}
+	return 0;
+}
+
+__inline__ float simpleTelemetry_getRelativeHeight()
+{
+	return simpleTelemtryData.alt - (simpleTelemtryData.homeAltBaro - 20);
+}
+
 #endif /* SIMPLETELEMTRY_H_ */

@@ -36,6 +36,8 @@ namespace KonfigurationTool
                             Configuration = new ProtocolFutabaConfiguration();
                             break;
                         case ProtocolType.Jeti:
+                            Configuration = new ProtocolJetiConfiguration();
+                            break;
                         default:
                             throw new NotImplementedException(string.Format("Protocol {0} not implemented yet.", value));
                     }
