@@ -29,8 +29,18 @@
 
 #define MODULE_JETI_CRC_POLY		0x07
 
+#define MODULE_JETI_EX_DELAY		19
+
 #define MODULE_JETI_LABEL_INIT		5
 #define MODULE_JETI_LABEL_UPDATE	5
+
+#define MODULE_JETI_ALRM_DELAY		10
+#define MODULE_JETI_ALRM_CHECK_RATE	3
+#define MODULE_JETI_ALRM_COUNT		6
+#define MODULE_JETI_ALRM_MAX_TYPE	4
+
+#define MODULE_JETI_LABEL_MAX_NAME	10
+#define MODULE_JETI_LABEL_MAX_UNIT	3
 
 #define MODULE_JETI_EX_MAX_SIZE		29
 #define MODULE_JETI_EX_HEADER_SIZE	8
@@ -41,36 +51,9 @@
 #define MODULE_JETI_EX_PACKETS		15
 #define MODULE_JETI_EX_LABELS		16
 
-struct Jeti_Config
-{
-	uint8_t version;
+#define MODULE_JETI_TELEMETRY_MAX	19
 
-}__attribute__((packed, aligned(1)));
-
-struct Jeti_Session
-{
-	const struct hardware_port_cfg* port;
-	struct Jeti_Config* config;
-
-	FIFO64_t txBuffer;
-	uint8_t lastCommand;
-
-	uint8_t currentData;
-	uint8_t pos;
-	uint8_t parity;
-	uint64_t lastBit;
-
-	OS_FlagID flag;
-	OS_TID task_id;
-	OS_STK task_stack[MODULE_JETI_TASK_STACK];
-
-	struct Jeti_Session* next;
-};
-
-struct Jeti_Simple_Packet
-{
-
-}__attribute__((packed, aligned(1)));
+#define MODULE_JETI_EX_START_BYTE	0x7E
 
 enum Jeti_Tone
 {
@@ -97,6 +80,7 @@ struct Jeti_EX_Header
 	uint16_t manufactureId;		//Upper part of a serial number, Manufacturer ID (Little Endian)
 	uint16_t deviceId;			//Lower part of a serial number, Device ID (Little Endian)
 	uint8_t reserved;			//FIX: 0x00 reserved
+	uint8_t data[MODULE_JETI_EX_CONTENT_SIZE];
 }__attribute__((packed, aligned(1)));
 
 struct Jeti_Type6_t
@@ -127,12 +111,11 @@ struct Jeti_Type30_t
 	uint8_t sign :1;
 }__attribute__((packed, aligned(1)));
 
-
 struct Jeti_TypeGPS
 {
 	uint16_t minutes;
-	uint16_t degree:13;
-	uint8_t latlon:1; //lat=0; lon=1;
+	uint16_t degree :13;
+	uint8_t latlon :1; //lat=0; lon=1;
 	uint8_t ns_ew :1; //North/East = 0; South/West = 1
 	uint8_t sign :1; //unused??
 }__attribute__((packed, aligned(1)));
@@ -149,7 +132,15 @@ struct Jeti_EX_Data
 {
 	uint8_t dataType :4;
 	uint8_t id :4;
-	uint8_t data[4];
+	union
+	{
+		uint8_t data[4];
+		struct Jeti_Type6_t t_u6;
+		struct Jeti_Type14_t t_u14;
+		struct Jeti_Type22_t t_u22;
+		struct Jeti_Type30_t t_u30;
+		struct Jeti_TypeGPS t_gps;
+	} data;
 }__attribute__((packed, aligned(1)));
 
 struct Jeti_EX_Packet
@@ -158,50 +149,110 @@ struct Jeti_EX_Packet
 	struct Jeti_EX_Data data;
 };
 
-static struct Jeti_Session* jeti_sessions;
-
-
-static const struct Jeti_EX_Text module_jeti_labels[MODULE_JETI_EX_LABELS] =
-{														   //1234567890
-	{	.id = 0, .length_desc=8, .length_unit=0, 	.labels="AnySense"},
-	{	.id = 1, .length_desc=8, .length_unit=0, 	.labels="Latitude"},
-	{	.id = 2, .length_desc=9, .length_unit=0, 	.labels="Longitude"},
-	{	.id = 3, .length_desc=10, .length_unit=0, 	.labels="Satelliten" ""},
-	{	.id = 4, .length_desc=9, .length_unit=0, 	.labels="Flugmodus"},
-	{	.id = 5, .length_desc=10, .length_unit=3, 	.labels="Geschwndg." "kmh"},
-	{	.id = 6, .length_desc=10, .length_unit=1, 	.labels="Entfernung" "m"},
-	{	.id = 7, .length_desc=5, .length_unit=1, 	.labels="Hoehe" "m"},
-	{	.id = 8, .length_desc=5, .length_unit=3, 	.labels="Vario" "m/s"},
-	{	.id = 9, .length_desc=7, .length_unit=1, 	.labels="Kompass" "\xB0"},
-	{	.id = 10, .length_desc=10, .length_unit=1, 	.labels="Flugricht." "\xB0"},
-	{	.id = 11, .length_desc=8, .length_unit=1, 	.labels="Spannung" "V"},
-	{	.id = 12, .length_desc=5, .length_unit=1, 	.labels="Strom" "A"},
-	{	.id = 13, .length_desc=10, .length_unit=2, 	.labels="Kapazitaet" "Ah"},
-	{	.id = 14, .length_desc=10, .length_unit=1, 	.labels="Lipo Zelle" "V"},
-	{	.id = 15, .length_desc=10, .length_unit=2, 	.labels="Temp. Lipo" "\xB0" "C"},
-};
-
-static struct Jeti_EX_Packet module_jeti_packets[MODULE_JETI_EX_PACKETS] =
+enum Jeti_Telemetry_Value
 {
-		{	.length = 5, .data = { .id = 1, .dataType = 9}}, //lat
-		{	.length = 5, .data = { .id = 2, .dataType = 9}}, //lon
-		{	.length = 2, .data = { .id = 3, .dataType = 0}}, //sats
-		{	.length = 2, .data = { .id = 4, .dataType = 0}}, //mode
-		{	.length = 3, .data = { .id = 5, .dataType = 1}}, //speed
-		{	.length = 4, .data = { .id = 6, .dataType = 4}}, //distance
-		{	.length = 4, .data = { .id = 7, .dataType = 4}}, //alt
-		{	.length = 3, .data = { .id = 8, .dataType = 1}}, //vario
-		{	.length = 3, .data = { .id = 9, .dataType = 1}}, //heading
-		{	.length = 3, .data = { .id = 10, .dataType = 1}},//cog
-		{	.length = 3, .data = { .id = 11, .dataType = 1}},//volt
-		{	.length = 3, .data = { .id = 12, .dataType = 1}},//current
-		{	.length = 3, .data = { .id = 13, .dataType = 1}},//capacity
-		{	.length = 3, .data = { .id = 14, .dataType = 1}},//cell
-		{	.length = 3, .data = { .id = 15, .dataType = 1}},//temp
+	Jeti_Telemetry_Value_None = 0,
+	Jeti_Telemetry_Value_Latitude = 1,
+	Jeti_Telemetry_Value_Longitude = 2,
+	Jeti_Telemetry_Value_Satellite = 3,
+	Jeti_Telemetry_Value_GPS_Fix = 4,
+	Jeti_Telemetry_Value_Flightmode = 5,
+	Jeti_Telemetry_Value_Speed = 6,
+	Jeti_Telemetry_Value_Distance = 7,
+	Jeti_Telemetry_Value_Altitude = 8,
+	Jeti_Telemetry_Value_VSpeed = 9,
+	Jeti_Telemetry_Value_Compass = 10,
+	Jeti_Telemetry_Value_COG = 11,
+	Jeti_Telemetry_Value_HomeDirection = 12,
+	Jeti_Telemetry_Value_Voltage = 13,
+	Jeti_Telemetry_Value_Current = 14,
+	Jeti_Telemetry_Value_Capacity = 15,
+	Jeti_Telemetry_Value_LipoVoltage = 16,
+	Jeti_Telemetry_Value_LipoTemp = 17,
+	Jeti_Telemetry_Value_Home_Latitude = 18,
+	Jeti_Telemetry_Value_Home_Longitude = 19,
+
 };
+
+struct Jeti_Telemetry_Text
+{
+	uint8_t name[MODULE_JETI_LABEL_MAX_NAME];
+	uint8_t unit[MODULE_JETI_LABEL_MAX_UNIT];
+};
+
+static const struct Jeti_Telemetry_Text module_jeti_telemetry_labels[MODULE_JETI_TELEMETRY_MAX + 1] =
+{
+	{	.name = "AnySense", .unit = ""},
+	{	.name = "Latitude", .unit = ""},
+	{	.name = "Longitude", .unit = ""},
+	{	.name = "Satelliten", .unit = ""},
+	{	.name = "GPS Fix", .unit = ""},
+	{	.name = "Flugmodus", .unit = ""},
+	{	.name = "Geschwndg.", .unit = "kmh"},
+	{	.name = "Entfernung", .unit = "m"},
+	{	.name = "Hoehe", .unit = "m"},
+	{	.name = "Vario", .unit = "m/s"},
+	{	.name = "Kompass", .unit = "\xB0"},
+	{	.name = "Flugricht.", .unit = "\xB0"},
+	{	.name = "Homericht.", .unit = "\xB0"},
+	{	.name = "Spannung", .unit = "V"},
+	{	.name = "Strom", .unit = "A"},
+	{	.name = "Kapazitaet", .unit = "Ah"},
+	{	.name = "Lipo Zelle", .unit = "V"},
+	{	.name = "Lipo Temp.", .unit = "\xB0" "C"},
+	{	.name = "Home Lat.", .unit = ""},
+	{	.name = "Home Long.", .unit = ""},
+};
+
+enum Jeti_Alarm_Type
+{
+	Jeti_Alarm_Type_None = 0,
+	Jeti_Alarm_Type_Altitude = 1,
+	Jeti_Alarm_Type_Capacity = 2,
+	Jeti_Alarm_Type_Distance = 3,
+	Jeti_Alarm_Type_Battery = 4,
+};
+
+struct Jeti_Alarm_Config
+{
+	uint16_t minMaxValue;
+	uint8_t event;
+	enum Jeti_Alarm_Type alarmType; //min=0; max=1
+}__attribute__((packed, aligned(1)));
+
+struct Jeti_Config
+{
+	uint8_t version;
+	enum Jeti_Telemetry_Value values[MODULE_JETI_EX_PACKETS];
+	struct Jeti_Alarm_Config alarms[MODULE_JETI_ALRM_COUNT];
+}__attribute__((packed, aligned(1)));
+
+struct Jeti_Session
+{
+	const struct hardware_port_cfg* port;
+	struct Jeti_Config* config;
+
+	FIFO64_t txBuffer;
+	uint8_t lastCommand;
+
+	uint8_t currentData;
+	uint8_t pos;
+	uint8_t parity;
+	uint64_t lastBit;
+
+	OS_FlagID flag;
+	OS_TID task_id;
+	OS_STK task_stack[MODULE_JETI_TASK_STACK];
+
+	struct Jeti_Session* next;
+};
+
+static struct Jeti_Session* jeti_sessions;
 
 void module_jeti_task(void* pData);
 
 static void module_jeti_tim_callback(uint8_t* id);
+
+int jeti_cmp_alarm(const void * a, const void * b);
 
 #endif /* MODULE_JETI_PRIV_H_ */
