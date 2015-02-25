@@ -19,7 +19,7 @@ namespace KonfigurationTool
         private const int MAX_RETRY = 100;
 
         private const int MAV_SYSTEM_ID = 0xCE;
-        private const uint FIRMWARE_VERSION = 0x00010001;
+        private const uint FIRMWARE_VERSION = 0x00010002;
 
         private int retry;
         private StateMachineStep currentStep = StateMachineStep.None;
@@ -219,7 +219,6 @@ namespace KonfigurationTool
                     btnPort1Configure.Enabled = false;
                     btnPort2Configure.Enabled = false;
                     cmbPort.Enabled = true;
-                    pbCells.Visible = false;
                     lblUpdateHint.Visible = false;
                     break;
                 case StateMachineStep.Open:
@@ -239,7 +238,6 @@ namespace KonfigurationTool
                     cmbPort.Enabled = false;
                     tsFCHearbeat.Visible = false;
                     tsUniAdapterHeartbeat.Visible = false;
-                    pbCells.Visible = false;
                     lblUpdateHint.Visible = false;
                     break;
                 case StateMachineStep.Connected:
@@ -256,7 +254,6 @@ namespace KonfigurationTool
                     tsFCHearbeat.Visible = true;
                     tsUniAdapterHeartbeat.Visible = true;
                     tsFWVersion.Visible = true;
-                    pbCells.Visible = false;
                     lblUpdateHint.Visible = false;
 
                     /*
@@ -310,7 +307,6 @@ namespace KonfigurationTool
                     btnPort1Configure.Enabled = false;
                     btnPort2Configure.Enabled = false;
                     cmbPort.Enabled = false;
-                    pbCells.Visible = false;
                     lblUpdateHint.Visible = false;
                     break;
                 default:
@@ -331,9 +327,6 @@ namespace KonfigurationTool
             lblPort2.Text = "-";
             lblBattery.Text = "-";
             lblCurrent.Text = "-";
-            lblStatLost.Text = "-";
-            lblStatDrop.Text = "-";
-            lblStatCorrupted.Text = "-";
             lblCOG.Text = "-";
             lblAltitude.Text = "-";
             lblGPSFix.Text = "-";
@@ -356,7 +349,17 @@ namespace KonfigurationTool
             lblRC6.Text = "-";
             lblRC7.Text = "-";
             lblRC8.Text = "-";
-            toolTip1.RemoveAll();
+
+            lbCell1.Text = "-";
+            lbCell2.Text = "-";
+            lbCell3.Text = "-";
+            lbCell4.Text = "-";
+            lbCell5.Text = "-";
+            lbCell6.Text = "-";
+            lbCell7.Text = "-";
+            lbCell8.Text = "-";
+            lbCell9.Text = "-";
+            lbCell10.Text = "-";
         }
 
         private void mavlink_PacketReceived(object sender, MavlinkPacket e)
@@ -586,9 +589,6 @@ namespace KonfigurationTool
                 Msg_sys_status sys = (msg as Msg_sys_status);
                 lblBattery.Text = (sys.voltage_battery / 1000f).ToString("0.00 V");
                 lblCurrent.Text = (sys.current_battery / 100f).ToString("0.00 A");
-                lblStatLost.Text = sys.errors_count1.ToString();
-                lblStatDrop.Text = sys.errors_count2.ToString();
-                lblStatCorrupted.Text = sys.errors_count3.ToString();
             }
             else if (t == typeof(Msg_gps_raw_int))
             {
@@ -637,23 +637,17 @@ namespace KonfigurationTool
             {
                 Msg_battery_status batt = (msg as Msg_battery_status);
 
+                lbCell1.Text = string.Format("{0:00}. {1:0.00} V", 1, ((float)batt.voltages[0] / 1000f));
+                lbCell2.Text = string.Format("{0:00}. {1:0.00} V", 2, ((float)batt.voltages[1] / 1000f));
+                lbCell3.Text = string.Format("{0:00}. {1:0.00} V", 3, ((float)batt.voltages[2] / 1000f));
+                lbCell4.Text = string.Format("{0:00}. {1:0.00} V", 4, ((float)batt.voltages[3] / 1000f));
+                lbCell5.Text = string.Format("{0:00}. {1:0.00} V", 5, ((float)batt.voltages[4] / 1000f));
+                lbCell6.Text = string.Format("{0:00}. {1:0.00} V", 6, ((float)batt.voltages[5] / 1000f));
+                lbCell7.Text = string.Format("{0:00}. {1:0.00} V", 7, ((float)batt.voltages[6] / 1000f));
+                lbCell8.Text = string.Format("{0:00}. {1:0.00} V", 8, ((float)batt.voltages[7] / 1000f));
+                lbCell9.Text = string.Format("{0:00}. {1:0.00} V", 9, ((float)batt.voltages[8] / 1000f));
+                lbCell10.Text = string.Format("{0:00}. {1:0.00} V", 10, ((float)batt.voltages[9] / 1000f));
 
-                string text = "";
-                int index = 1;
-                foreach (ushort cell in batt.voltages)
-                {
-                    if (!string.IsNullOrEmpty(text))
-                        text += Environment.NewLine;
-
-                    text += string.Format("{0:00}. {1:0.00} V", index, ((float)cell / 1000f));
-                    index++;
-                }
-
-                if (!string.IsNullOrEmpty(text))
-                {
-                    toolTip1.SetToolTip(pbCells, text);
-                    pbCells.Visible = true;
-                }
             }
 
         }
