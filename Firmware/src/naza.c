@@ -179,7 +179,7 @@ static void naza_main_task(void* pData)
 
 	U64 nextTimeElapsedCheck = CoGetOSTime();
 	U64 lastMeasuredTime = 0;
-	uint16_t elapsedMs;
+	uint16_t elapsedMs = 0;
 
 	while (1)
 	{

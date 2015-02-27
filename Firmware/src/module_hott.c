@@ -302,6 +302,9 @@ void module_hott_task(void* pData)
 				for (uint8_t i = 0; i < simpleTelemtryData.cellCount && i < MODULE_HOTT_EAM_CELLS; i++)
 					msg.eam.cells[i] = simpleTelemtryData.cells[i] / 20;
 
+				msg.eam.minutes = simpleTelemtryData.flightime / 60;
+				msg.eam.seconds = simpleTelemtryData.flightime - (msg.eam.minutes * 60);
+
 				size = sizeof(struct hott_msg_eam);
 			} //session->sensor == hott_sensor_id_eam
 			else if (session->sensor == hott_sensor_id_gps && (session->config->active_sensors & simulate_sensor_gps))
