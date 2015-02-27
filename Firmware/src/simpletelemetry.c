@@ -45,6 +45,7 @@ void simpleTelemetry_initialize()
 	simpleTelemtryData.cellCount = 0;
 	simpleTelemtryData.capacity_current = 0;
 	simpleTelemtryData.percentage_charge = 0;
+	simpleTelemtryData.flightime = 0;
 
 
 	memset(simpleTelemtryData.cells, 0, SIMPLE_TELEMETRY_CELLS);

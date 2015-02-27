@@ -24,6 +24,8 @@
 #define CHANNEL_SIZE 					256
 #define MAIN_TASK_STACK_SIZE			128
 
+#define NAZA_TIME_ELAPSED_MESSURE_DELAY	300
+
 #define HEADER1 			0x55
 #define HEADER2				0xAA
 #define FOOTER1				0x66

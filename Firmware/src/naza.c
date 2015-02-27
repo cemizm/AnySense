@@ -177,6 +177,10 @@ static void naza_main_task(void* pData)
 
 	uint8_t tmpFS = 0;
 
+	U64 nextTimeElapsedCheck = CoGetOSTime();
+	U64 lastMeasuredTime = 0;
+	uint16_t elapsedMs;
+
 	while (1)
 	{
 
@@ -381,6 +385,26 @@ static void naza_main_task(void* pData)
 
 				simpleTelemtryData.armed = raw_io->armed;
 				simpleTelemtryData.throttle = raw_io->actThroIn;
+
+				if (raw_io->armed == 1 && nextTimeElapsedCheck < tmpTick)
+				{
+					if(lastMeasuredTime == 0)
+						lastMeasuredTime = tmpTick;
+
+					elapsedMs += (tmpTick - lastMeasuredTime);
+
+					while (elapsedMs > delay_sec(1))
+					{
+						simpleTelemtryData.flightime++;
+						elapsedMs -= delay_sec(1);
+					}
+
+					nextTimeElapsedCheck = tmpTick + delay_ms(NAZA_TIME_ELAPSED_MESSURE_DELAY);
+					lastMeasuredTime = tmpTick;
+				}
+				else if(raw_io->armed == 0)
+					lastMeasuredTime = 0;
+
 			}
 			else if (channel->msg.header.id == 0x0926)
 			{
