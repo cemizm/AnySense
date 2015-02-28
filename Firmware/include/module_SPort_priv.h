@@ -24,21 +24,24 @@ enum SPort_State
 	WAITING_START_FRAME, WAITING_SESNOR_ID, DATA_FRAME
 };
 
-#define SPORT_TASK_STACK				512
+#define SPORT_TASK_STACK				256
 
 #define SPORT_STARTSTOP					0x7E
 #define SPORT_DATAFRAME					0x10
 #define SPORT_CONFIG_CURRENT_VERSION	((uint16_t)0x0001)
 #define SPORT_VALUES_MAX				20
 #define SPORT_DATA_SIZE					8
-#define SPORT_SENSORS					29
-#define SPORT_ACTIVE_SENSORS			10
-#define SPORT_ACTIVE_VOLTAGE_SENSORS	3
-#define SPORT_ACTIVE_CURRENT_SENSORS	3
 
-#define SPORT_DATA_U8(packet)   (((uint8_t*)packet.Value)[0]])
-#define SPORT_DATA_S32(packet)  (int32_t)packet.Value
-#define SPORT_DATA_U32(packet)  packet.Value
+#define SPORT_SENSORS					29
+#define SPORT_ACTIVE_SENSORS			5
+#define SPORT_ACTIVE_SENSOR_VALUES		10
+#define SPORT_ACTIVE_SENSOR_TIMEOUT		20
+#define SPORT_ACTIVE_SENSOR_DATA		12
+#define SPORT_ACTIVE_SENSOR_CELLS		6
+
+#define SPORT_DATA_U8(packet)   (((uint8_t*)packet)[0]])
+#define SPORT_DATA_S32(packet)  (int32_t)packet
+#define SPORT_DATA_U32(packet)  packet
 
 #define SPORT_DATA_FLAG_ALT_SET 		0b00000001
 #define SPORT_DATA_FLAG_GPS_HOME_SET	0b00000010
@@ -122,11 +125,38 @@ struct SPort_Config
 static const uint8_t SPort_SensorIds[] = { 0x00, 0x16, 0xA1, 0xCB, 0x95, 0x83, 0x0D, 0xB7, 0xE4, 0x8E, 0x98, 0xC6, 0xD0, 0xBA,
 		0x48, 0xF2, 0x7E, 0x6A, 0x34, 0x22, 0xAC, 0x39, 0x45, 0x2F, 0x1B, 0x67, 0x71, 0xE9, 0x53 };
 
-struct SPort_GroupedSensor
+struct SPort_ActiveSensor_Lipo
+{
+	uint8_t cells;
+	uint16_t cell[SPORT_ACTIVE_SENSOR_CELLS];
+};
+
+struct SPort_ActiveSensorValues
+{
+	uint16_t TypeId;
+	uint32_t Value;
+
+	union
+	{
+		uint8_t data[SPORT_ACTIVE_SENSOR_DATA];
+		struct SPort_ActiveSensor_Lipo lipo;
+		uint32_t current;
+	}payload;
+};
+
+struct SPort_ActiveSensor
 {
 	uint8_t SensorId;
-	uint8_t payload[4];
 	uint8_t active;
+	struct SPort_ActiveSensorValues values[SPORT_ACTIVE_SENSOR_VALUES];
+};
+
+struct SPort_LipoData
+{
+	uint8_t StartCell:4;
+	uint8_t TotalCells:4;
+	uint16_t Cell1:12;
+	uint16_t Cell2:12;
 }__attribute__((packed, aligned(1)));
 
 struct SPort_SessionStruct
@@ -138,17 +168,14 @@ struct SPort_SessionStruct
 
 	FIFO64_t send_buffer;
 
-	struct SPort_Packet rxPacket;
+	struct SPort_Packet rxPacketTemp;
 	uint8_t rxPointer;
 
-	uint8_t foundSensors[SPORT_ACTIVE_SENSORS];
 	uint8_t currentSensorId;
-	uint8_t currentSensor;
-	uint8_t foundSensor;
-	uint8_t sensorRespsone;
-	struct SPort_GroupedSensor voltageSensors[SPORT_ACTIVE_VOLTAGE_SENSORS];
-	struct SPort_GroupedSensor currentSensors[SPORT_ACTIVE_CURRENT_SENSORS];
-	uint8_t firstFlag;
+	struct SPort_ActiveSensor activeSensors[SPORT_ACTIVE_SENSORS];
+
+	uint8_t firstFlag; //flag to check for initial value of some value types
+
 	U64 nextCurrentMeasure;
 	uint32_t currentElapsed;
 
@@ -182,8 +209,8 @@ static const struct SPort_Config sport_defaultConfig =
 /* functions */
 
 void sport_task(void* pdata);
-void sport_getValue(enum telemetryValue val, enum fixType minFixTyp, int32_t * result, uint8_t* len);
-uint8_t sport_valueReady(enum telemetryValue val, enum fixType minFixTyp);
+void sport_getValue(SPortSession* session, enum telemetryValue val, enum fixType minFixTyp, int32_t * result, uint8_t* len);
+uint8_t sport_valueReady(SPortSession* session, enum telemetryValue val, enum fixType minFixTyp);
 
 static void RX_Callback(uint8_t* id);
 static void TX_Callback(uint8_t* id);

@@ -51,18 +51,11 @@ void sport_start(const struct hardware_port_cfg* port, uint8_t* config)
 	USART_Cmd(port->port, ENABLE);
 
 	SPortSession* session = (SPortSession*) malloc(sizeof(SPortSession));
+	memset(session, 0, sizeof(SPortSession));
 
 	session->currentState = WAITING_START_FRAME;
 	session->port = port;
-	session->next = NULL;
 	session->config = (struct SPort_Config*) config;
-	session->foundSensor = 0;
-	session->currentSensor = 0;
-	session->nextCurrentMeasure = 0;
-	session->currentElapsed = 0;
-
-	memset(session->foundSensors, 0, SPORT_ACTIVE_SENSORS * 6);
-	memset(session->voltageSensors, 0, SPORT_ACTIVE_VOLTAGE_SENSORS * 6);
 
 	FIFO_init(session->send_buffer);
 
@@ -105,8 +98,11 @@ void sport_task(void* pData)
 	U64 next_toggle = ticks;
 
 	uint16_t delayTime = 100;
-	uint8_t currentSensor = 0;
-	uint8_t sensorSeek = 0;
+
+	uint8_t currentActiveSensor = 0;
+	uint8_t currentInactiveSensor = 0;
+	uint8_t foundSensor = 0;
+	struct SPort_ActiveSensor* activeSensor = NULL;
 
 	while (1)
 	{
@@ -124,7 +120,7 @@ void sport_task(void* pData)
 				packet.Id = mapping[currentValue];
 
 				if (length == 0)
-					sport_getValue(session->config->map[currentValue], session->config->minFix, values, &length);
+					sport_getValue(session, session->config->map[currentValue], session->config->minFix, values, &length);
 
 				if (length > 0)
 				{
@@ -163,7 +159,7 @@ void sport_task(void* pData)
 
 				while (startValue != currentValue
 						&& (session->config->map[startValue] == tv_none
-								|| !sport_valueReady(session->config->map[startValue], session->config->minFix)))
+								|| !sport_valueReady(session, session->config->map[startValue], session->config->minFix)))
 				{
 					startValue = (startValue + 1) % SPORT_VALUES_MAX;
 				}
@@ -174,7 +170,7 @@ void sport_task(void* pData)
 		}
 		else if (ticks > rx_seen_check)
 		{
-			//No Receiver seen last 2 sec
+			//No Receiver seen since 2 sec
 			delayTime = 12;
 			rx_seen_check = ticks;
 
@@ -184,52 +180,42 @@ void sport_task(void* pData)
 				next_toggle = ticks + delay_ms(600);
 			}
 
-			if (sensorSeek == 1 && session->sensorRespsone == 1)
+			activeSensor = NULL;
+			while (currentActiveSensor < SPORT_ACTIVE_SENSORS && activeSensor == NULL)
 			{
-				session->foundSensors[session->foundSensor] = SPort_SensorIds[currentSensor];
-				session->foundSensor++;
-
-				sensorSeek = 0;
+				if (session->activeSensors[currentActiveSensor].active > 0
+						&& session->currentSensorId != session->activeSensors[currentActiveSensor].SensorId)
+				{
+					activeSensor = &session->activeSensors[currentActiveSensor];
+					activeSensor->active--;
+				}
+				currentActiveSensor++;
 			}
 
-			if (session->foundSensor == session->currentSensor)
+			if (activeSensor == NULL)
 			{
-
-				uint8_t found = 1;
 				do
 				{
-					currentSensor = (currentSensor + 1) % SPORT_SENSORS;
-					found = 0;
-
-					if (session->foundSensor > 0)
+					session->currentSensorId = SPort_SensorIds[currentInactiveSensor++];
+					foundSensor = 1;
+					for (uint8_t i = 0; i < SPORT_ACTIVE_SENSORS; i++)
 					{
-						for (uint8_t i = 0; i < session->foundSensor; i++)
+						if (session->activeSensors[i].active > 0
+								&& session->activeSensors[i].SensorId == session->currentSensorId)
 						{
-							if (session->foundSensors[i] == SPort_SensorIds[currentSensor])
-							{
-								found = 1;
-								break;
-							}
+							foundSensor = 0;
+							break;
 						}
 					}
 
-				} while (found == 1);
+					currentInactiveSensor = currentInactiveSensor % SPORT_SENSORS;
 
-				sensorSeek = 1;
+				} while (foundSensor == 0);
 
-				session->currentSensorId = SPort_SensorIds[currentSensor];
-
-				session->currentSensor = 0;
+				currentActiveSensor = 0;
 			}
 			else
-			{
-				session->currentSensorId = session->foundSensors[session->currentSensor];
-
-				session->currentSensor++;
-				sensorSeek = 0;
-			}
-
-			session->sensorRespsone = 0;
+				session->currentSensorId = activeSensor->SensorId;
 
 			FIFO64_write(session->send_buffer, SPORT_STARTSTOP);
 			FIFO64_write(session->send_buffer, session->currentSensorId);
@@ -240,11 +226,11 @@ void sport_task(void* pData)
 	}
 }
 
-void sport_getValue(enum telemetryValue val, enum fixType minFixTyp, int32_t * result, uint8_t* len)
+void sport_getValue(SPortSession* session, enum telemetryValue val, enum fixType minFixTyp, int32_t * result, uint8_t* len)
 {
 	*len = 0;
 
-	if (!sport_valueReady(val, minFixTyp))
+	if (!sport_valueReady(session, val, minFixTyp))
 		return;
 
 	switch (val)
@@ -373,8 +359,9 @@ void sport_getValue(enum telemetryValue val, enum fixType minFixTyp, int32_t * r
 	}
 }
 
-uint8_t sport_valueReady(enum telemetryValue val, enum fixType minFixTyp)
+uint8_t sport_valueReady(SPortSession* session, enum telemetryValue val, enum fixType minFixTyp)
 {
+
 	switch (val)
 	{
 	case tv_lon_lat:
@@ -384,6 +371,21 @@ uint8_t sport_valueReady(enum telemetryValue val, enum fixType minFixTyp)
 	case tv_speed:
 	case tv_gpsAlt:
 		return simpleTelemtryData.fixType >= minFixTyp ? 1 : 0;
+	case tv_cells:
+	case tv_current:
+		for (uint8_t i = 0; i < SPORT_ACTIVE_SENSORS; i++)
+		{
+			if (session->activeSensors[i].active > 0)
+			{
+				for (uint8_t t = 0; t < SPORT_ACTIVE_SENSOR_VALUES; t++)
+				{
+					if ((val == tv_cells && session->activeSensors[i].values[t].TypeId == SENSOR_CELLS)
+							|| (val == tv_current && session->activeSensors[i].values[t].TypeId == SENSOR_CURR))
+						return 0;
+				}
+			}
+		}
+		return 1;
 	default:
 		return 1;
 	}
@@ -404,7 +406,7 @@ static void RX_Callback(uint8_t* id)
 		else if (read == SPORT_DATAFRAME)
 		{
 			session->currentState = DATA_FRAME;
-			session->rxPacket.Header = SPORT_DATAFRAME;
+			session->rxPacketTemp.Header = SPORT_DATAFRAME;
 			session->rxPointer = 1;
 		}
 		break;
@@ -412,10 +414,11 @@ static void RX_Callback(uint8_t* id)
 		if (read == session->config->sensorId)
 			isr_SetFlag(session->flag);
 		session->currentState = WAITING_START_FRAME;
+		session->currentSensorId = read;
 		break;
 	case DATA_FRAME:
 	{
-		uint8_t* data = (uint8_t*) &session->rxPacket;
+		uint8_t* data = (uint8_t*) &session->rxPacketTemp;
 
 		data[session->rxPointer++] = read;
 		if (session->rxPointer >= SPORT_DATA_SIZE)
@@ -428,190 +431,223 @@ static void RX_Callback(uint8_t* id)
 				crc += crc >> 8;  // 0-1FF
 				crc &= 0x00ff;    // 0-FF
 			}
-			if (crc == 0x00ff || session->rxPacket.Id == SENSOR_CELLS)
+			if (crc == 0x00ff)
 			{
-				session->sensorRespsone = 1;
+				struct SPort_ActiveSensor* activeSensor = NULL;
+				struct SPort_ActiveSensorValues* activeValue = NULL;
 
-				switch (session->rxPacket.Id)
+				for (uint8_t i = 0; i < SPORT_ACTIVE_SENSORS; i++)
 				{
-				case SENSOR_CURR:
-				{
-					// mAh = current / time elapsed
+					if (activeSensor == NULL && session->activeSensors[i].active == 0)
+						activeSensor = &session->activeSensors[i];
 
-					simpleTelemtryData.current = ((float) SPORT_DATA_U32(session->rxPacket)) / 10.0f;
-
-					if (CoGetOSTime() > session->nextCurrentMeasure)
+					if (session->activeSensors[i].SensorId == session->currentSensorId)
 					{
-						session->currentElapsed += (SPORT_DATA_U32(session->rxPacket) * 10);
-
-						while (session->currentElapsed > SPORT_CAPACITY_COUNTER_LIMIT)
-						{
-							simpleTelemtryData.capacity_current++;
-							session->currentElapsed -= SPORT_CAPACITY_COUNTER_LIMIT;
-						}
-
-						session->nextCurrentMeasure = CoGetOSTime() + delay_ms(SPORT_CAPACITY_UPDATE_INTERVAL);
+						activeSensor = &session->activeSensors[i];
+						break;
 					}
 				}
-					break;
-				case SENSOR_CELLS:
+
+				if (activeSensor->SensorId != session->currentSensorId)
 				{
-					uint32_t lipo = SPORT_DATA_U32(session->rxPacket);
+					activeSensor->SensorId = session->currentSensorId;
+				}
+				activeSensor->active = SPORT_ACTIVE_SENSOR_TIMEOUT;
 
-					uint8_t startCell = 0;
-					uint8_t battnumber = lipo & 0xF;
-					uint8_t cells = (lipo & 0xF0) >> 4;
+				for (uint8_t i = 0; i < SPORT_ACTIVE_SENSOR_VALUES; i++)
+				{
+					if (activeValue == NULL && activeSensor->values[i].TypeId == 0)
+						activeValue = &activeSensor->values[i];
 
-					for (uint8_t i = 0; i < SPORT_ACTIVE_VOLTAGE_SENSORS; i++)
+					if (activeSensor->values[i].TypeId == session->rxPacketTemp.Id)
 					{
-						if (session->voltageSensors[i].active == 1)
-						{
-							if (session->voltageSensors[i].SensorId == session->currentSensorId)
-							{
-								if (cells < session->voltageSensors[i].payload[0])
-								{
-									for (uint8_t j = 0; j < session->voltageSensors[i].payload[0]; j++)
-										simpleTelemtryData.cells[startCell + j] = 0;
-								}
+						activeValue = &activeSensor->values[i];
+						break;
+					}
+				}
 
-								session->voltageSensors[i].payload[0] = cells;
+				if (activeValue != NULL)
+				{
+
+					activeValue->TypeId = session->rxPacketTemp.Id;
+					activeValue->Value = session->rxPacketTemp.Value;
+
+					switch (activeValue->TypeId)
+					{
+					case SENSOR_CURR:
+					{
+						// mAh = current / time elapsed
+						float temp = 0;
+						for (uint8_t i = 0; i < SPORT_ACTIVE_SENSORS; i++)
+						{
+							if (session->activeSensors[i].active > 0)
+							{
+								for (uint8_t t = 0; t < SPORT_ACTIVE_SENSOR_VALUES; t++)
+								{
+									if (session->activeSensors[i].values[t].TypeId == activeValue->TypeId)
+										temp += ((float) SPORT_DATA_U32(session->activeSensors[i].values[t].Value)) / 10.0f;
+								}
+							}
+						}
+
+						simpleTelemtryData.current = temp;
+
+						if (CoGetOSTime() > session->nextCurrentMeasure)
+						{
+							session->currentElapsed += (simpleTelemtryData.current * 100);
+
+							while (session->currentElapsed > SPORT_CAPACITY_COUNTER_LIMIT)
+							{
+								simpleTelemtryData.capacity_current++;
+								session->currentElapsed -= SPORT_CAPACITY_COUNTER_LIMIT;
+							}
+
+							session->nextCurrentMeasure = CoGetOSTime() + delay_ms(SPORT_CAPACITY_UPDATE_INTERVAL);
+						}
+					}
+						break;
+					case SENSOR_CELLS:
+					{
+						struct SPort_LipoData* lipoData = (struct SPort_LipoData*) &activeValue->Value;
+
+						activeValue->payload.lipo.cells = lipoData->TotalCells;
+						activeValue->payload.lipo.cell[lipoData->StartCell] = (lipoData->Cell1 / 5) * 10;
+						if (lipoData->StartCell + 1 < lipoData->TotalCells)
+							activeValue->payload.lipo.cell[lipoData->StartCell + 1] = (lipoData->Cell2 / 5) * 10;
+
+						uint8_t cells = 0;
+						uint8_t startCell = 0;
+						for (uint8_t i = 0; i < SPORT_ACTIVE_SENSORS; i++)
+						{
+							if (session->activeSensors[i].active > 0)
+							{
+								for (uint8_t t = 0; t < SPORT_ACTIVE_SENSOR_VALUES; t++)
+								{
+									if (session->activeSensors[i].values[t].TypeId == activeValue->TypeId)
+									{
+										for (startCell = 0; startCell < session->activeSensors[i].values[t].payload.lipo.cells;
+												startCell++)
+											simpleTelemtryData.cells[cells + startCell] =
+													session->activeSensors[i].values[t].payload.lipo.cell[startCell];
+
+										cells += session->activeSensors[i].values[t].payload.lipo.cells;
+									}
+								}
+							}
+						}
+
+						for(uint8_t i=cells; i<SIMPLE_TELEMETRY_CELLS; i++)
+							simpleTelemtryData.cells[i] = 0;
+
+
+						simpleTelemtryData.cellCount = cells;
+					}
+						break;
+					case SENSOR_AIR_SPEED:
+						//airSpeed = SPORT_DATA_U32(packet);
+						break;
+					case SENSOR_T1:
+						simpleTelemtryData.temp1 = SPORT_DATA_S32(activeValue->Value);
+						break;
+					case SENSOR_T2:
+						simpleTelemtryData.temp2 = SPORT_DATA_S32(activeValue->Value);
+						break;
+					case SENSOR_RPM:
+						//SPORT_DATA_U32(packet) / blades
+						break;
+					case SENSOR_FUEL:
+						//SPORT_DATA_U32(packet)
+						break;
+
+					}
+
+					if (!simpleTelemetry_isAlive())
+					{
+						switch (activeValue->TypeId)
+						{
+						case SENSOR_ALT:
+							simpleTelemtryData.alt = SPORT_DATA_S32(activeValue->Value) / 100;
+							if (!SPORT_DATA_IS_FLAG_SET(session, SPORT_DATA_FLAG_ALT_SET))
+							{
+								simpleTelemtryData.homeAltBaro = simpleTelemtryData.alt + 20;
+								SPORT_DATA_FLAG_SET(session, SPORT_DATA_FLAG_ALT_SET);
+							}
+							break;
+						case SENSOR_VARIO:
+							simpleTelemtryData.vsi = SPORT_DATA_S32(activeValue->Value) / 100;
+							break;
+						case SENSOR_VFAS:
+							simpleTelemtryData.battery = SPORT_DATA_U32(activeValue->Value) * 10;
+							break;
+						case SENSOR_GPS_SPEED:
+							simpleTelemtryData.speed = SPORT_DATA_U32(activeValue->Value) / 1943;
+							break;
+						case SENSOR_GPS_ALT:
+							simpleTelemtryData.gpsAlt = SPORT_DATA_S32(activeValue->Value) / 100;
+							break;
+						case SENSOR_GPS_LONG_LATI:
+						{
+							uint32_t val = SPORT_DATA_U32(activeValue->Value);
+							uint8_t sign = (val & 0xc0000000) >> 30;
+							float lonlat = val & 0x0FFFFFFF;
+
+							lonlat = ((lonlat / 6) * 100) / 10000000;
+
+							switch (sign)
+							{
+							case 0:
+								simpleTelemtryData.lat = lonlat;
+								break;
+							case 1:
+								simpleTelemtryData.lat = -lonlat;
+								break;
+							case 2:
+								simpleTelemtryData.lon = lonlat;
+								break;
+							case 3:
+								simpleTelemtryData.lon = -lonlat;
 								break;
 							}
-							else
-								startCell += session->voltageSensors[i].payload[0];
-						}
-						else
-						{
-							session->voltageSensors[i].active = 1;
-							session->voltageSensors[i].SensorId = session->currentSensorId;
-							session->voltageSensors[i].payload[0] = cells;
-							break;
-						}
-					}
 
-					cells = 0;
-					for (uint8_t i = 0; i < SPORT_ACTIVE_VOLTAGE_SENSORS; i++)
-					{
-						if (session->voltageSensors[i].active == 1)
-							cells += session->voltageSensors[i].payload[0];
-						else
-							break;
-					}
-
-					simpleTelemtryData.cells[startCell + battnumber] = (uint16_t) (((lipo & 0x000FFF00) >> 8) / 5) * 10;
-					if (battnumber + 1 < cells)
-						simpleTelemtryData.cells[startCell + battnumber + 1] = (uint16_t) (((lipo & 0xFFF00000) >> 20) / 5) * 10;
-
-					simpleTelemtryData.cellCount = cells;
-
-				}
-					break;
-				case SENSOR_AIR_SPEED:
-					//airSpeed = SPORT_DATA_U32(packet);
-					break;
-				case SENSOR_T1:
-					simpleTelemtryData.temp1 = SPORT_DATA_S32(session->rxPacket);
-					break;
-				case SENSOR_T2:
-					simpleTelemtryData.temp2 = SPORT_DATA_S32(session->rxPacket);
-					break;
-				case SENSOR_RPM:
-					//SPORT_DATA_U32(packet) / blades
-					break;
-				case SENSOR_FUEL:
-					//SPORT_DATA_U32(packet)
-					break;
-
-				}
-
-				if (!simpleTelemetry_isAlive())
-				{
-					switch (session->rxPacket.Id)
-					{
-					case SENSOR_ALT:
-						simpleTelemtryData.alt = SPORT_DATA_S32(session->rxPacket) / 100;
-						if (!SPORT_DATA_IS_FLAG_SET(session, SPORT_DATA_FLAG_ALT_SET))
-						{
-							simpleTelemtryData.homeAltBaro = simpleTelemtryData.alt + 20;
-							SPORT_DATA_FLAG_SET(session, SPORT_DATA_FLAG_ALT_SET);
-						}
-						break;
-					case SENSOR_VARIO:
-						simpleTelemtryData.vsi = SPORT_DATA_S32(session->rxPacket) / 100;
-						break;
-					case SENSOR_VFAS:
-						simpleTelemtryData.battery = SPORT_DATA_U32(session->rxPacket) * 10;
-						break;
-					case SENSOR_GPS_SPEED:
-						simpleTelemtryData.speed = SPORT_DATA_U32(session->rxPacket) / 1943;
-						break;
-					case SENSOR_GPS_ALT:
-						simpleTelemtryData.gpsAlt = SPORT_DATA_S32(session->rxPacket) / 100;
-						break;
-					case SENSOR_GPS_LONG_LATI:
-					{
-						uint32_t val = SPORT_DATA_U32(session->rxPacket);
-						uint8_t sign = (val & 0xc0000000) >> 30;
-						float lonlat = val & 0x0FFFFFFF;
-
-						//(((abs(simpleTelemtryData.lat * 10000000)) / 100) * 6)
-
-						lonlat = ((lonlat / 6) * 100) / 10000000;
-
-						switch (sign)
-						{
-						case 0:
-							simpleTelemtryData.lat = lonlat;
-							break;
-						case 1:
-							simpleTelemtryData.lat = -lonlat;
-							break;
-						case 2:
-							simpleTelemtryData.lon = lonlat;
-							break;
-						case 3:
-							simpleTelemtryData.lon = -lonlat;
-							break;
-						}
-
-						if (!SPORT_DATA_IS_FLAG_SET(session, SPORT_DATA_FLAG_GPS_HOME_SET))
-						{
-							if (simpleTelemtryData.lon != 0 && simpleTelemtryData.lat != 0)
+							if (!SPORT_DATA_IS_FLAG_SET(session, SPORT_DATA_FLAG_GPS_HOME_SET))
 							{
-								simpleTelemtryData.homeLat = simpleTelemtryData.lat;
-								simpleTelemtryData.homeLon = simpleTelemtryData.lon;
-								SPORT_DATA_FLAG_SET(session, SPORT_DATA_FLAG_GPS_HOME_SET);
+								if (simpleTelemtryData.lon != 0 && simpleTelemtryData.lat != 0)
+								{
+									simpleTelemtryData.homeLat = simpleTelemtryData.lat;
+									simpleTelemtryData.homeLon = simpleTelemtryData.lon;
+									SPORT_DATA_FLAG_SET(session, SPORT_DATA_FLAG_GPS_HOME_SET);
+								}
+							}
+
+						}
+							break;
+						case SENSOR_GPS_COURS:
+							simpleTelemtryData.cog = SPORT_DATA_U32(activeValue->Value) / 100;
+							break;
+						case SENSOR_GPS_TIME_DATE:
+						{
+							uint32_t gps_time_date = SPORT_DATA_U32(activeValue->Value);
+							if (gps_time_date & 0x000000ff)
+							{
+								simpleTelemtryData.year = gps_time_date >> 24;
+								simpleTelemtryData.month = gps_time_date >> 16;
+								simpleTelemtryData.day = gps_time_date >> 8;
+							}
+							else
+							{
+								simpleTelemtryData.hour = gps_time_date >> 24;
+								simpleTelemtryData.minute = gps_time_date >> 16;
+								simpleTelemtryData.second = gps_time_date >> 8;
 							}
 						}
-
-					}
-						break;
-					case SENSOR_GPS_COURS:
-						simpleTelemtryData.cog = SPORT_DATA_U32(session->rxPacket) / 100;
-						break;
-					case SENSOR_GPS_TIME_DATE:
-					{
-						uint32_t gps_time_date = SPORT_DATA_U32(session->rxPacket);
-						if (gps_time_date & 0x000000ff)
-						{
-							simpleTelemtryData.year = gps_time_date >> 24;
-							simpleTelemtryData.month = gps_time_date >> 16;
-							simpleTelemtryData.day = gps_time_date >> 8;
+							break;
+						case SENSOR_ACCX:
+							break;
+						case SENSOR_ACCY:
+							break;
+						case SENSOR_ACCZ:
+							break;
 						}
-						else
-						{
-							simpleTelemtryData.hour = gps_time_date >> 24;
-							simpleTelemtryData.minute = gps_time_date >> 16;
-							simpleTelemtryData.second = gps_time_date >> 8;
-						}
-					}
-						break;
-					case SENSOR_ACCX:
-						break;
-					case SENSOR_ACCY:
-						break;
-					case SENSOR_ACCZ:
-						break;
 					}
 				}
 			}
