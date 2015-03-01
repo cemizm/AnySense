@@ -38,7 +38,7 @@ namespace KonfigurationTool
             telemetryValue[14] = TelemetryValue.LipoTemp;
 
 
-            alarms[0] = new Alarm() { Event = EventType.A, Value = 500, Type = AlarmType.Alitutude };
+            alarms[0] = new Alarm() { Event = EventType.A, Value = 500, Type = AlarmType.Altitude };
             alarms[1] = new Alarm() { Event = EventType.D, Value = 2000, Type = AlarmType.Distance };
             alarms[2] = new Alarm() { Event = EventType.U, Value = 11500, Type = AlarmType.Battery };
             alarms[3] = new Alarm() { Event = EventType.C, Value = 4500, Type = AlarmType.Capacity };
@@ -287,7 +287,7 @@ namespace KonfigurationTool
             [Description("Disabled")]
             None = 0,
 
-            Alitutude = 1,
+            Altitude = 1,
 
             Capacity = 2,
 
@@ -431,7 +431,7 @@ namespace KonfigurationTool
 
                     if (alarm.Type == AlarmType.None)
                         return "Alarm Disabled";
-                    if (alarm.Type == AlarmType.Alitutude)
+                    if (alarm.Type == AlarmType.Altitude)
                         return string.Format("Alitutde: exeeds {0}m > Event {1}", alarm.Value, alarm.Event.GetDescription());
                     if (alarm.Type == AlarmType.Distance)
                         return string.Format("Distance: exeeds {0}m > Event {1}", alarm.Value, alarm.Event.GetDescription());
@@ -463,7 +463,7 @@ namespace KonfigurationTool
                                     case AlarmType.None:
                                         list.Add(new DisplayNamePropertyDescriptor(prop, "Condition Value", ""));
                                         break;
-                                    case AlarmType.Alitutude:
+                                    case AlarmType.Altitude:
                                         list.Add(new DisplayNamePropertyDescriptor(prop, "Condition Value", "Altitude in meters to exeed for alarm condition"));
                                         break;
                                     case AlarmType.Capacity:
