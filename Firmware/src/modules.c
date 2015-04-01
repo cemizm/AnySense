@@ -219,7 +219,7 @@ void configManager_task(void* pdata)
 				nextFCHeartbeat = ticks + delay_sec(2);
 			}
 			else
-				msg_len = mavlink_pack_nextData(&msg_tmp, &currentValue);
+				msg_len = mavlink_pack_nextData(&msg_tmp, &currentValue, 0, 0);
 		}
 		else if (isStickConfig)
 		{

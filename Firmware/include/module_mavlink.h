@@ -17,7 +17,7 @@
 
 #define MAVLINK_SYSTEM_ID						0xCE
 #define MAVLINK_COMP_ID							MAV_COMP_ID_UART_BRIDGE
-#define MAVLINK_TYPE							MAV_TYPE_GENERIC
+#define MAVLINK_TYPE							MAV_TYPE_QUADROTOR
 #define MAVLINK_AP_TYPE							MAV_AUTOPILOT_INVALID
 #define MAVLINK_SENSORS							MAV_SYS_STATUS_SENSOR_3D_GYRO | MAV_SYS_STATUS_SENSOR_3D_ACCEL | \
 												MAV_SYS_STATUS_SENSOR_3D_MAG | MAV_SYS_STATUS_SENSOR_ABSOLUTE_PRESSURE | \
@@ -30,7 +30,7 @@ struct mavlink_rx_buffer
 	uint8_t inUse;
 };
 
-uint16_t mavlink_pack_nextData(mavlink_message_t* msg, uint8_t* currentValue);
+uint16_t mavlink_pack_nextData(mavlink_message_t* msg, uint8_t* currentValue, uint8_t type, uint8_t cells);
 
 void mavlink_initializeConfig(void* config);
 void mavlink_start(const struct hardware_port_cfg* port, uint8_t* config);

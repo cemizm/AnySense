@@ -148,6 +148,11 @@ __inline__ uint8_t simpleTelemetry_getPercentage(uint16_t cellVoltage)
 	return 0;
 }
 
+__inline__ uint8_t simpleTelemetry_getCalculatedPercentage(uint8_t cellCount)
+{
+	return simpleTelemetry_getPercentage(simpleTelemetry_getLowestCell(cellCount));
+}
+
 __inline__ double simpleTelemetry_getDistance()
 {
 	if (simpleTelemetry_validGPS() && simpleTelemetry_isHomePointSet())

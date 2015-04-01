@@ -27,7 +27,7 @@ namespace KonfigurationTool
                             Configuration = null;
                             break;
                         case ProtocolType.Mavlink:
-                            Configuration = null;
+                            Configuration = new ProtocolMavlinkConfiguration();
                             break;
                         case ProtocolType.HOTT:
                             Configuration = new ProtocolHoTTConfiguration();

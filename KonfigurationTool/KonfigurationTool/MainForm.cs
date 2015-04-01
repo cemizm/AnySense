@@ -19,7 +19,7 @@ namespace KonfigurationTool
         private const int MAX_RETRY = 100;
 
         private const int MAV_SYSTEM_ID = 0xCE;
-        private const uint FIRMWARE_VERSION = 0x00010100;
+        private const uint FIRMWARE_VERSION = 0x00010102;
 
         private int retry;
         private StateMachineStep currentStep = StateMachineStep.None;
@@ -608,7 +608,6 @@ namespace KonfigurationTool
             {
                 Msg_vfr_hud vfr = (msg as Msg_vfr_hud);
                 lblClimb.Text = vfr.climb.ToString("0.00 m/s");
-                lblAltitude.Text = vfr.alt.ToString("0.00 m");
                 lblSpeed.Text = vfr.groundspeed.ToString("0.00 m/s");
                 lblHeading.Text = vfr.heading.ToString("0 °");
                 lblThrottle.Text = vfr.throttle.ToString() + " %";
@@ -631,6 +630,18 @@ namespace KonfigurationTool
                 lblRC6.Text = rc.chan9_raw.ToString();
                 lblRC7.Text = rc.chan5_raw.ToString();
                 lblRC8.Text = rc.chan10_raw.ToString();
+            }
+            else if (t == typeof(Msg_rc_channels_raw))
+            {
+                Msg_rc_channels_raw rc = (msg as Msg_rc_channels_raw);
+                lblRC1.Text = rc.chan1_raw.ToString();
+                lblRC2.Text = rc.chan2_raw.ToString();
+                lblRC3.Text = rc.chan3_raw.ToString();
+                lblRC4.Text = rc.chan4_raw.ToString();
+                lblRC5.Text = rc.chan5_raw.ToString();
+                lblRC6.Text = rc.chan6_raw.ToString();
+                lblRC7.Text = rc.chan7_raw.ToString();
+                lblRC8.Text = rc.chan8_raw.ToString();
 
             }
             else if (t == typeof(Msg_battery_status))

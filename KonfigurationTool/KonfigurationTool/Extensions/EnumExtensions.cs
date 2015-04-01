@@ -28,6 +28,9 @@ namespace KonfigurationTool
 
             string description = value.ToString();
             FieldInfo fieldInfo = value.GetType().GetField(description);
+            if (fieldInfo == null)
+                return description;
+
             DescriptionAttribute[] attributes =
                (DescriptionAttribute[])
              fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false);
