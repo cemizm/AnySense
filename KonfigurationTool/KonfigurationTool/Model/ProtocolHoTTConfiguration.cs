@@ -37,6 +37,8 @@ namespace KonfigurationTool
                 new DistanceAlarm(), };
         }
 
+        [Browsable(false)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         [Category("1. General")]
         [DisplayName("Config Version")]
         [Description("Version of Configuration for backward compability")]

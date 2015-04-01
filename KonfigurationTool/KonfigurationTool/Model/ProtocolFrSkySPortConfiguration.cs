@@ -116,68 +116,86 @@ namespace KonfigurationTool
         [Description("Defines minimum GPS Fix for transmission of GPS depending values")]
         public FixType MinFixType { get; set; }
 
+        [Browsable(false)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         [Category("1. General")]
         [DisplayName("Config Version")]
         [Description("Version of Configuration for backward compability")]
         public UInt16 Version { get; private set; }
 
-        [Category("2. GPS")]
+        [Category("2. Additional Mapping")]
+        public TelemetryValue T1 { get; set; }
+        [Category("2. Additional Mapping")]
+        public TelemetryValue T2 { get; set; }
+
+        [Category("3. Expert Mapping")]
         [DisplayName("Position (Long/Lati)")]
         public TelemetryValue GPS_LONG_LATI { get; set; }
 
-        [Category("2. GPS")]
-        [DisplayName("Altitude")]
+        [Category("3. Expert Mapping")]
+        [DisplayName("GPS Alt")]
         public TelemetryValue GPS_ALT { get; set; }
 
-        [Category("2. GPS")]
+        [Category("3. Expert Mapping")]
         [DisplayName("Speed")]
         public TelemetryValue GPS_SPEED { get; set; }
 
-        [Category("2. GPS")]
-        [DisplayName("Heading")]
+        [Category("3. Expert Mapping")]
+        [DisplayName("Alt")]
         public TelemetryValue GPS_COURS { get; set; }
 
-        [Category("2. GPS")]
-        [DisplayName("Datetime")]
+        [Category("3. Expert Mapping")]
+        [DisplayName("Time")]
         public TelemetryValue GPS_TIME_DATE { get; set; }
 
-
-        [Category("3. Mag/Acc/Baro")]
-        [DisplayName("Altitude")]
+        [Category("3. Expert Mapping")]
+        [DisplayName("Alt")]
         public TelemetryValue ALT { get; set; }
-        [Category("3. Mag/Acc/Baro")]
-        [DisplayName("Vertical Speed")]
+
+        [Category("3. Expert Mapping")]
+        [DisplayName("VSpd")]
         public TelemetryValue VARIO { get; set; }
-        [Category("3. Mag/Acc/Baro")]
-        [DisplayName("Acceleration X")]
+
+        [Category("3. Expert Mapping")]
+        [DisplayName("AccX")]
         public TelemetryValue ACCX { get; set; }
-        [Category("3. Mag/Acc/Baro")]
-        [DisplayName("Acceleration Y")]
+
+        [Category("3. Expert Mapping")]
+        [DisplayName("AccY")]
         public TelemetryValue ACCY { get; set; }
-        [Category("3. Mag/Acc/Baro")]
-        [DisplayName("Acceleration Z")]
+
+        [Category("3. Expert Mapping")]
+        [DisplayName("AccZ")]
         public TelemetryValue ACCZ { get; set; }
-        [Category("3. Mag/Acc/Baro")]
+
+        [Category("3. Expert Mapping")]
+        [DisplayName("AirSpeed")]
         public TelemetryValue AIR_SPEED { get; set; }
 
-
-        [Category("4. Others")]
-        public TelemetryValue T1 { get; set; }
-        [Category("4. Others")]
-        public TelemetryValue T2 { get; set; }
-        [Category("4. Others")]
+        [Category("3. Expert Mapping")]
+        [DisplayName("Vfas")]
         public TelemetryValue VFAS { get; set; }
-        [Category("4. Others")]
+
+        [Category("3. Expert Mapping")]
+        [DisplayName("Rpm")]
         public TelemetryValue RPM { get; set; }
-        [Category("4. Others")]
+
+        [Category("3. Expert Mapping")]
+        [DisplayName("Fuel")]
         public TelemetryValue FUEL { get; set; }
-        [Category("4. Others")]
+
+        [Category("3. Expert Mapping")]
+        [DisplayName("Curr")]
         public TelemetryValue CURR { get; set; }
-        [Category("4. Others")]
+
+        [Category("3. Expert Mapping")]
+        [DisplayName("Cells")]
         public TelemetryValue CELLS { get; set; }
-        [Category("4. Others")]
+
+        [Category("3. Expert Mapping")]
         public TelemetryValue A3 { get; set; }
-        [Category("4. Others")]
+
+        [Category("3. Expert Mapping")]
         public TelemetryValue A4 { get; set; }
 
     }
