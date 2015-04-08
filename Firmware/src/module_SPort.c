@@ -553,7 +553,7 @@ static void RX_Callback(uint8_t* id)
 						simpleTelemtryData.temp2 = SPORT_DATA_S32(activeValue->Value);
 						break;
 					case SENSOR_RPM:
-						//SPORT_DATA_U32(packet) / blades
+						simpleTelemtryData.rpm =  SPORT_DATA_U32(activeValue->Value);
 						break;
 					case SENSOR_FUEL:
 						//SPORT_DATA_U32(packet)

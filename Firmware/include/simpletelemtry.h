@@ -68,6 +68,7 @@ struct simpleTelemetry
 	uint16_t capacity_current; // current capacity (3115mAh)
 	uint8_t percentage_charge; // percentage of charge (62%)
 	uint32_t flightime; //flightime in seconds
+	uint32_t rpm;
 
 	//errors
 	uint16_t packets_drop;

@@ -220,6 +220,7 @@ void module_hott_task(void* pData)
 				msg.gam.current = simpleTelemtryData.current * 10;
 				msg.gam.temp1 = 20 + simpleTelemtryData.temp1;
 				msg.gam.temp2 = 20 + simpleTelemtryData.temp2;
+				msg.gam.rpm = simpleTelemtryData.rpm / 10;
 
 				if (simpleTelemtryData.cellCount > 0)
 				{
@@ -293,6 +294,8 @@ void module_hott_task(void* pData)
 
 				msg.eam.speed = simpleTelemtryData.speed * 3.6;
 				msg.eam.driveVoltage = simpleTelemtryData.battery / 100;
+
+				msg.eam.rpm = simpleTelemtryData.rpm / 10;
 
 				msg.eam.current = simpleTelemtryData.current * 10;
 				msg.eam.temp1 = 20 + simpleTelemtryData.temp1;
