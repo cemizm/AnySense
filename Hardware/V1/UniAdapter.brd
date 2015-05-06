@@ -116,7 +116,7 @@
 <wire x1="22.7097375" y1="19.2989625" x2="22.7097375" y2="1.53345" width="0.254" layer="49"/>
 <wire x1="22.7097375" y1="1.53345" x2="37.66655" y2="1.53345" width="0.254" layer="49"/>
 <wire x1="37.66655" y1="1.53345" x2="37.7" y2="1.5" width="0.254" layer="49" curve="-90"/>
-<text x="3.3274" y="19.2504" size="1.27" layer="25" font="vector">AnySense 1.1</text>
+<text x="3" y="19.3" size="1.27" layer="25" font="vector">AnySense V1.1</text>
 </plain>
 <libraries>
 <library name="rcl">
@@ -1856,7 +1856,7 @@ Covered vias can be set in Masks (Limit).
 <param name="psElongationLong" value="100"/>
 <param name="psElongationOffset" value="100"/>
 <param name="mvStopFrame" value="0"/>
-<param name="mvCreamFrame" value="0.1"/>
+<param name="mvCreamFrame" value="0"/>
 <param name="mlMinStopFrame" value="0.075mm"/>
 <param name="mlMaxStopFrame" value="0.2mm"/>
 <param name="mlMinCreamFrame" value="0mil"/>
@@ -2014,7 +2014,7 @@ Covered vias can be set in Masks (Limit).
 <attribute name="VALUE" x="18.034" y="16.51" size="1.27" layer="27" rot="R90"/>
 </element>
 <element name="C5" library="rcl" package="C0603" value="100nF" x="20.2184" y="2.159" smashed="yes" rot="R90">
-<attribute name="NAME" x="20.8026" y="4.4704" size="0.6096" layer="25" rot="R180"/>
+<attribute name="NAME" x="21" y="4.5" size="0.6096" layer="25" rot="R180"/>
 <attribute name="VALUE" x="22.1234" y="1.524" size="1.27" layer="27" rot="R90"/>
 <attribute name="OC_FARNELL" value="1759016" x="20.2184" y="2.159" size="1.778" layer="27" rot="R90" display="off"/>
 </element>
