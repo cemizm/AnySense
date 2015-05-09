@@ -331,6 +331,14 @@ void sport_getValue(SPortSession* session, enum telemetryValue val, enum fixType
 		result[0] = simpleTelemtryData.current * 10;
 		*len = 1;
 		break;
+	case tv_combined:
+		result[0] = simpleTelemtryData.numSat;
+		result[0] += simpleTelemtryData.fixType 		* 100;
+		result[0] += simpleTelemtryData.mode 			* 1000;
+		result[0] += simpleTelemtryData.armed 			* 10000;
+		result[0] += simpleTelemetry_isHomePointSet()	* 20000;
+		*len = 1;
+		break;
 	case tv_cells:
 	{
 		uint8_t cs = (simpleTelemtryData.cellCount / 2) + (simpleTelemtryData.cellCount % 2);

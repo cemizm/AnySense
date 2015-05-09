@@ -21,6 +21,7 @@ namespace KonfigurationTool
 
             T1 = TelemetryValue.NumSat;
             T2 = TelemetryValue.GPS_Fix;
+            FUEL = TelemetryValue.Combined;
             ALT = TelemetryValue.Altitude;
             VARIO = TelemetryValue.Vario;
             ACCX = TelemetryValue.Roll;
@@ -141,7 +142,7 @@ namespace KonfigurationTool
         public TelemetryValue GPS_SPEED { get; set; }
 
         [Category("3. Expert Mapping")]
-        [DisplayName("Alt")]
+        [DisplayName("Hdg")]
         public TelemetryValue GPS_COURS { get; set; }
 
         [Category("3. Expert Mapping")]

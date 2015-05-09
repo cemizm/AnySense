@@ -57,5 +57,7 @@ namespace KonfigurationTool
         Current = 22,
         [Description("Cells (combined)")]
         Cells = 23,
+        [Description("Combined Values (AnySense LUA Script)")]
+        Combined = 24,
     }
 }

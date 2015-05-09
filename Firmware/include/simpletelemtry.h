@@ -87,7 +87,7 @@ uint8_t simpleTelemetry_isAlive();
 
 __inline__ uint8_t simpleTelemetry_isHomePointSet()
 {
-	return simpleTelemtryData.homeLon != 0 && simpleTelemtryData.homeLat != 0;
+	return (simpleTelemtryData.homeLon != 0 && simpleTelemtryData.homeLat != 0) ? 1 : 0;
 }
 
 __inline__ uint8_t simpleTelemetry_validGPS()

@@ -112,6 +112,7 @@ enum telemetryValue
 	tv_alt_relative = 21,
 	tv_current = 22,
 	tv_cells = 23,
+	tv_combined = 24,
 };
 
 struct SPort_Config
@@ -202,7 +203,7 @@ static const struct SPort_Config sport_defaultConfig =
 	.version = SPORT_CONFIG_CURRENT_VERSION,
 	.minFix = fixType_2D,
 	.map =
-	{	tv_numSat, tv_gps_fix, tv_none, tv_none, tv_alt, tv_vsi, tv_roll, tv_pitch, tv_none, tv_current,
+	{	tv_numSat, tv_gps_fix, tv_none, tv_combined, tv_alt, tv_vsi, tv_roll, tv_pitch, tv_none, tv_current,
 		tv_battery,tv_cells, tv_lon_lat, tv_gpsAlt, tv_speed, tv_heading, tv_gpsTime, tv_none, tv_none, tv_none},
 };
 
