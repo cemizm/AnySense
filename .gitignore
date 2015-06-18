@@ -5,3 +5,5 @@
 *bin/
 *.suo
 *obj/
+*AnySense_3D*png
+/KonfigurationManager/
