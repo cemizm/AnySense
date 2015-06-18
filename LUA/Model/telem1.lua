@@ -3,7 +3,7 @@
 --  Telemetrie Skript für FrSky Taranis				--
 --  benötigt AnySense für vollen Funktionsumfang	--
 --  Erstellt von Frostie							--
---  Erweitert von cemizm							--
+--  Erweitert von Cem Basoglu						--
 --  www.multikopter-forum.de						--
 --  www.anysense.de									--
 ------------------------------------------------------
