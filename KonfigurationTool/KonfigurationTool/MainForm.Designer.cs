@@ -123,6 +123,7 @@
             this.lblPort2Label = new System.Windows.Forms.Label();
             this.lblInfo = new System.Windows.Forms.Label();
             this.linkUrl = new System.Windows.Forms.LinkLabel();
+            this.timerTimeout = new System.Windows.Forms.Timer(this.components);
             this.pnlTop.SuspendLayout();
             this.grpRC.SuspendLayout();
             this.gpGenerall.SuspendLayout();
@@ -1167,6 +1168,11 @@
             this.linkUrl.Text = "http://anysense.de/support/";
             this.linkUrl.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkUrl_LinkClicked);
             // 
+            // timerTimeout
+            // 
+            this.timerTimeout.Interval = 300;
+            this.timerTimeout.Tick += new System.EventHandler(this.timerTimeout_Tick);
+            // 
             // MainForm
             // 
             this.AcceptButton = this.btnConnect;
@@ -1312,6 +1318,7 @@
         private System.Windows.Forms.Label lbCell4;
         private System.Windows.Forms.Label lbCell1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Timer timerTimeout;
     }
 }
 

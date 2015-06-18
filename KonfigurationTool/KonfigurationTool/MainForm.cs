@@ -31,6 +31,8 @@ namespace KonfigurationTool
 
         private ManagementEventWatcher deviceChanged;
 
+        private bool showMessage;
+
         public MainForm()
         {
 
@@ -64,7 +66,7 @@ namespace KonfigurationTool
         private void btnConnect_Click(object sender, EventArgs e)
         {
             if (!serialPort.IsOpen)
-                Connect();
+                Connect(true);
             else
                 Disconnect(true);
         }
@@ -122,7 +124,7 @@ namespace KonfigurationTool
                 {
                     Enabled = false;
                     if (UpdateForm.ShowDialog(this, serialPort.PortName, String.Empty) == DialogResult.OK)
-                        Connect();
+                        Connect(false);
 
                 }
                 catch (Exception ex)
@@ -198,6 +200,25 @@ namespace KonfigurationTool
             }
         }
 
+        private void timerTimeout_Tick(object sender, EventArgs e)
+        {
+
+            if (showMessage)
+            {
+                if (retry >= 10)
+                {
+                    Disconnect(false);
+
+                    if (showMessage)
+                        MessageBox.Show(this, "Connection Timeout.\nCheck your Connection.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else if (retry >= 5)
+                Disconnect(false);
+
+            retry++;
+        }
+
         private void StateMachineUpdate(StateMachineStep step)
         {
             switch (step)
@@ -206,6 +227,7 @@ namespace KonfigurationTool
                     btnConnect.Text = "Open";
                     btnUpdate.Visible = false;
                     timer.Enabled = false;
+                    timerTimeout.Enabled = false;
                     retry = 0;
                     tsStatus.Text = "disconnected";
                     tsStatus.ForeColor = Color.FromArgb(204, 11, 16);
@@ -226,6 +248,7 @@ namespace KonfigurationTool
                     btnUpdate.Visible = false;
                     retry = 0;
                     timer.Enabled = true;
+                    timerTimeout.Enabled = false;
                     tsStatus.Text = "connecting";
                     tsStatus.ForeColor = Color.Orange;
                     Cursor = Cursors.WaitCursor;
@@ -241,9 +264,11 @@ namespace KonfigurationTool
                     lblUpdateHint.Visible = false;
                     break;
                 case StateMachineStep.Connected:
+                    retry = 0;
                     btnConnect.Text = "Close";
                     btnUpdate.Visible = false;
                     timer.Enabled = false;
+                    timerTimeout.Enabled = true;
                     tsStatus.Text = "connected";
                     tsStatus.ForeColor = Color.Green;
                     Cursor = Cursors.Default;
@@ -563,6 +588,8 @@ namespace KonfigurationTool
                         }
                     });
                 }
+
+                retry = 0;
             }
             else if (t == typeof(Msg_configuration_naza_heartbeat))
             {
@@ -663,10 +690,12 @@ namespace KonfigurationTool
 
         }
 
-        private void Connect()
+        private void Connect(bool showMessage)
         {
             try
             {
+                this.showMessage = showMessage;
+
                 serialPort.Open();
                 StateMachineUpdate(StateMachineStep.Open);
 
@@ -727,7 +756,7 @@ namespace KonfigurationTool
                 MessageBox.Show(this, "Error while communication:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             Enabled = true;
-            Connect();
+            Connect(true);
         }
 
         private void ConfigurePort(CONFIG_PORT port)
