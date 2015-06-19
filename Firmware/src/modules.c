@@ -211,7 +211,7 @@ void configManager_task(void* pdata)
 		}
 		else if (established)
 		{
-			if (ticks > nextFCHeartbeat && (simpleTelemtryData.lastHeartbeat + delay_sec(1))  > ticks)
+			if (ticks > nextFCHeartbeat && (simpleTelemtryData.lastHeartbeat + delay_sec(1)) > ticks)
 			{
 				msg_len = mavlink_msg_configuration_naza_heartbeat_pack(MAVLINK_SYSTEM_ID, MAVLINK_COMP_ID, &msg_tmp,
 						ticks - simpleTelemtryData.lastHeartbeat);
@@ -305,20 +305,23 @@ void configManager_task(void* pdata)
 		}
 		else
 		{
-			if (simpleTelemetry_isStickConfig())
+			if (configuration.port1.type != parser_jeti && configuration.port2.type != parser_jeti)
 			{
-				if (stickConfigStart == 0)
-					stickConfigStart = ticks + delay_sec(1);
-
-				if (ticks > stickConfigStart)
+				if (simpleTelemetry_isStickConfig())
 				{
-					stickConfigStart = ticks + delay_sec(30); //auto exit stick config mode
-					stickConfigDelay = ticks + delay_sec(3);
-					isStickConfig = 1;
+					if (stickConfigStart == 0)
+						stickConfigStart = ticks + delay_sec(1);
+
+					if (ticks > stickConfigStart)
+					{
+						stickConfigStart = ticks + delay_sec(30); //auto exit stick config mode
+						stickConfigDelay = ticks + delay_sec(3);
+						isStickConfig = 1;
+					}
 				}
+				else
+					stickConfigStart = 0;
 			}
-			else
-				stickConfigStart = 0;
 
 			if (ticks > exitIn)
 				exit = 1;
