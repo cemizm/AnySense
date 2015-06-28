@@ -41,6 +41,7 @@ local lastMeasure = 0
 
 local modeDesc = {[0]="Manual", [1]="GPS", [2]="Failsafe", [3]="ATTI"}
 
+local data = {}
 
 ---------------------------------
 --      Helper Functions       --
@@ -93,7 +94,7 @@ local function getCellPercent(cellVoltage)
 	return 0
 end
 
-local function tasks(data)
+local function tasks()
 
 	if lastMotor ~= data.armed then
 	
@@ -181,9 +182,7 @@ local function tasks(data)
 	
 end
 
-local function getTelemetry()
-
-	local data = {}
+local function updateTelemetry()
 	
 	data.lat = getValueOrDefault ("latitude")				-- Aktuelle Position Latitude
 	data.long = getValueOrDefault ("longitude")				-- Aktuelle Position Longitude
@@ -206,19 +205,17 @@ local function getTelemetry()
 
 	local fuel = getValueOrDefault(208)						-- Fuel enthaelt kombinierten Wert
 	data.sats = fuel % 100    						
-	fuel = (fuel - data.sats) / 100
+	fuel = math.floor((fuel - data.sats) / 100)
 
 	data.satfix = fuel % 10
-	fuel = (fuel - data.satfix) / 10						
+	fuel = math.floor((fuel - data.satfix) / 10)			
 
 	data.fmode = fuel % 10
-	fuel = (fuel - data.fmode) / 10
+	fuel = math.floor((fuel - data.fmode) / 10)
 
 	data.armed = bit32.band(fuel, 1) == 1
 	data.homeSet = bit32.band(fuel, 2) == 2
 	
-	return data
-
 end
 
 local function run ()
@@ -227,9 +224,7 @@ local function run ()
 	-- Defintion der Werte aus der Naza --
 	--------------------------------------
 
-	local data = getTelemetry()
-
-	local timer = model.getTimer(1)
+	updateTelemetry()
 	
 	---------------------------------
 	--Definition sonstige Variablen--
@@ -250,7 +245,7 @@ local function run ()
 	--              Tasks               --
 	--------------------------------------
 
-	tasks(data)
+	tasks()
 
 	--------------------
 	--Raster zeichnen --
@@ -451,9 +446,9 @@ end
 
 function background()
 
-	local data = getTelemetry()
+	updateTelemetry()
 	
-	tasks(data)
+	tasks()
 
 end
 
