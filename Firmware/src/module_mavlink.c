@@ -218,7 +218,6 @@ void module_mavlink_task(void* pData)
 	U64 loop200 = 0;
 	U64 loop500 = 0;
 	U64 loop1000 = 0;
-	U64 bootUpTime = 0;
 
 	while (1)
 	{
@@ -231,10 +230,6 @@ void module_mavlink_task(void* pData)
 
 			if (buffer->message.msgid == MAVLINK_MSG_ID_REQUEST_DATA_STREAM)
 			{
-				//Bug in MinimOSD FW leads to Hangup on Warning checking
-				//delay data transmission to simulate warnings
-				/*bootUpTime = currTime + delay_ms(5000);
-				FIFO_init(session->tx_buffer);*/
 			}
 
 			buffer->inUse = 0;
@@ -249,16 +244,6 @@ void module_mavlink_task(void* pData)
 				USART_ITConfig(session->port->port, USART_IT_TXE, ENABLE);
 			}
 		}
-		/*else if (bootUpTime > currTime)
-		{
-			if (currTime > loop1000)
-			{
-				loop1000 = currTime + delay_ms(1000); // 1Hz = every 1000 milliseconds
-
-				mavlink_pack_heartbeat(&msg_tmp, 1);
-				mavlink_sendMessage(session, &msg_tmp, mavlink_tmp_buf);
-			}
-		}*/
 		else
 		{
 
