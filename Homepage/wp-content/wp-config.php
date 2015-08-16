@@ -24,7 +24,7 @@ define('DB_USER', 'db443270');
 define('DB_PASSWORD', 'ur7Q4XAYPNFh');
 
 /** Ersetze localhost mit der MySQL-Serveradresse */
-define('DB_HOST', 'mysql5.anysense.de');
+define('DB_HOST', 'mysql5.xenic-group.de');
 
 /** Der Datenbankzeichensatz der beim Erstellen der Datenbanktabellen verwendet werden soll */
 define('DB_CHARSET', 'utf8');
@@ -76,10 +76,13 @@ define('WPLANG', 'de_DE');
  * It is strongly recommended that plugin and theme developers use WP_DEBUG
  * in their development environments.
  */
-define('WP_DEBUG', false);
-define('WP_DEBUG_LOG', false);
+define('WP_DEBUG', true);
+define('WP_DEBUG_LOG', true);
 define('WP_DEBUG_DISPLAY', false);
 
+//define('WP_SITEURL', 'http://' . $_SERVER['HTTP_HOST']);
+//define('WP_HOME', 'http://' . $_SERVER['HTTP_HOST']);
+    
 /* That's all, stop editing! Happy blogging. */
 
 /** Absolute path to the WordPress directory. */
