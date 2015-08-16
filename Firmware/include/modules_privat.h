@@ -24,7 +24,7 @@
 #include "module_mavlink.h"
 #include "module_hott.h"
 #include "module_futaba.h"
-#include "module_jeti_priv.h"
+#include "module_jeti.h"
 
 #define CONFIGMANAGER_TASK_STACK		512
 #define WAIT_RETRY						5
