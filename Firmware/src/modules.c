@@ -72,6 +72,9 @@ void modules_initialize_config(struct portParserStruct* parser)
 	case parser_futaba:
 		module_futaba_initializeConfig(parser->parserConfig);
 		break;
+	case parser_spektrum:
+		module_spektrum_initializeConfig(parser->parserConfig);
+		break;
 	default:
 		break;
 	}
@@ -146,6 +149,7 @@ void configManager_task(void* pdata)
 			else if (buffer->message.msgid == MAVLINK_MSG_ID_CONFIGURATION_CONTROL)
 			{
 				established = 1;
+				hardware_i2c_free();
 
 				CONFIG_COMMAND cmd = mavlink_msg_configuration_control_get_command(&buffer->message);
 				uint16_t param1 = mavlink_msg_configuration_control_get_param1(&buffer->message);
@@ -381,6 +385,13 @@ void configManager_start(struct portParserStruct* parser, const struct hardware_
 		break;
 	case parser_futaba:
 		module_futaba_start(port, parser->parserConfig);
+		break;
+	case parser_spektrum:
+
+		if(port != &usart_port1)
+			return;
+
+		module_spektrum_start(port, parser->parserConfig);
 		break;
 	default:
 		break;

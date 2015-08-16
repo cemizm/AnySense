@@ -19,7 +19,7 @@ namespace KonfigurationTool
         private const int MAX_RETRY = 100;
 
         private const int MAV_SYSTEM_ID = 0xCE;
-        private const uint FIRMWARE_VERSION = 0x00010103;
+        private const uint FIRMWARE_VERSION = 0x00010203;
 
         private int retry;
         private StateMachineStep currentStep = StateMachineStep.None;
@@ -452,6 +452,7 @@ namespace KonfigurationTool
                 try
                 {
                     PortConfiguration config = new PortConfiguration();
+                    config.Port = msg_config.port;
                     config.Protocol = (ProtocolType)msg_config.protocol;
                     if (config.Configuration != null)
                         config.Configuration.DeSerialize(msg_config.data);

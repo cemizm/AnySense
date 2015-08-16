@@ -38,6 +38,12 @@ namespace KonfigurationTool
                         case ProtocolType.Jeti:
                             Configuration = new ProtocolJetiConfiguration();
                             break;
+                        case ProtocolType.Spektrum:
+                            if (Port != 1)
+                                throw new NotSupportedException("Spektrum is not availible on this Port");
+
+                            Configuration = new ProtocolSpektrumConfiguration();
+                            break;
                         default:
                             throw new NotImplementedException(string.Format("Protocol {0} not implemented yet.", value));
                     }
@@ -48,9 +54,8 @@ namespace KonfigurationTool
             }
         }
 
-
-
         public ProtocolConfiguration Configuration { get; set; }
 
+        public byte Port { get; set; }
     }
 }

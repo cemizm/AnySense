@@ -22,6 +22,7 @@ namespace KonfigurationTool
         Jeti = 4,
         [Description("Futaba SBUS2")]
         Futaba = 5,
-
+        [Description("Spektrum X-Bus")]
+        Spektrum = 6,
     }
 }

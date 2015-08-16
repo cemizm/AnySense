@@ -36,6 +36,40 @@ void hardware_register_callback2(const struct hardware_port_cfg* port, IRQ_Callb
 	}
 }
 
+void hardware_register_i2c_callback(const struct hardware_port_cfg* port, IRQ_Callback callback, uint8_t* id)
+{
+	if (port == &usart_port1)
+	{
+		cbInfoPort1.i2c_callback = callback;
+		cbInfoPort1.id = id;
+	}
+}
+
+void hardware_unregister_i2c_callback(const struct hardware_port_cfg* port)
+{
+	if (port == &usart_port1)
+	{
+		cbInfoPort1.i2c_callback = NULL;
+	}
+}
+
+void hardware_register_dma_callback(const struct hardware_port_cfg* port, IRQ_Callback callback, uint8_t* id)
+{
+	if (port == &usart_port1)
+	{
+		cbInfoPort1.dma_callback = callback;
+		cbInfoPort1.id = id;
+	}
+}
+
+void hardware_unregister_dma_callback(const struct hardware_port_cfg* port)
+{
+	if (port == &usart_port1)
+	{
+		cbInfoPort1.dma_callback = NULL;
+	}
+}
+
 void hardware_unregister_callback(const struct hardware_port_cfg* port)
 {
 	if (port == &usart_port1)
@@ -81,6 +115,16 @@ void Generic_TIM_IRQHandler(struct IRQ_CallbackInfoStruct* cb)
 			cb->timer_callback(cb->id);
 	}
 
+}
+
+void Generic_I2C_IRQHandler(struct IRQ_CallbackInfoStruct* cb)
+{
+	cb->i2c_callback(cb->id);
+}
+
+void Generic_DMA_IRQHandler(struct IRQ_CallbackInfoStruct* cb)
+{
+	cb->dma_callback(cb->id);
 }
 
 #ifdef STM32F072B
@@ -129,4 +173,19 @@ void TIM17_IRQHandler(void)
 	CoEnterISR();
 	Generic_TIM_IRQHandler(&cbInfoPort2);
 	CoExitISR();
+}
+
+void I2C1_IRQHandler(void)
+{
+	CoEnterISR();
+	Generic_I2C_IRQHandler(&cbInfoPort1);
+	CoExitISR();
+}
+
+void DMA1_Channel2_3_IRQHandler(void)
+{
+	CoEnterISR();
+	Generic_DMA_IRQHandler(&cbInfoPort1);
+	CoExitISR();
+
 }

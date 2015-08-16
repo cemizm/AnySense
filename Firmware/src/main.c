@@ -12,6 +12,8 @@ int main() {
 	hardware_led_toggle_red();
 	hardware_led_toggle_green();
 
+	hardware_i2c_stretch();
+
 	//initialize
 	simpleTelemetry_initialize();
 	naza_initialize();

@@ -25,6 +25,7 @@
 #include "module_hott.h"
 #include "module_futaba.h"
 #include "module_jeti.h"
+#include "module_spektrum.h"
 
 #define CONFIGMANAGER_TASK_STACK		512
 #define WAIT_RETRY						5
