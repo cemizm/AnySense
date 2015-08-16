@@ -1,4 +1,9 @@
 
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+
+
 # BEGIN WordPress
 <IfModule mod_rewrite.c>
 RewriteEngine On
@@ -11,5 +16,8 @@ RewriteRule . /index.php [L]
 
 # END WordPress
 
+
+
+RedirectMatch 301 ^/en/(.*)$ http://anysense.org/$1
 Redirect 301 /manual.pdf /support/
 Redirect 301 /KonfigurationManager.zip /support/
