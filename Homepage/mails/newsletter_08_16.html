@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html dir="ltr">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>AnySense Shop</title>
+	<style type="text/css">
+		.sf-button.accent {
+			background: none;
+			background-image: none;
+  			color: #ffffff;
+  			background-color: #cc0b10;
+  			
+		}
+		a.sf-button, a.sf-button:hover, #footer a.sf-button:hover {
+			background-image: none;
+			color: #fff!important;
+		}		
+		a.sf-button {
+  			display: inline-block;
+			font-size: 12px;
+			line-height: 18px;
+			height: auto;
+			padding: 14px 16px;
+			margin: 0 10px 20px 0;
+			font-weight: bold;
+			border: 0;
+			position: relative;
+			overflow: hidden;
+			outline: none;
+			text-shadow: none;
+			text-decoration: none;
+			-moz-border-radius: 2px;
+			-webkit-border-radius: 2px;
+			border-radius: 2px;
+			-moz-background-clip: padding;
+			-webkit-background-clip: padding-box;
+			background-clip: padding-box;
+			vertical-align: middle;
+			max-width: 100%;
+		}
+		.alignnone {
+			vertical-align: middle;
+		}
+	</style>
+</head>
+<body leftmargin="0" marginwidth="0" topmargin="0" marginheight="0" offset="0">
+    <div id="wrapper" dir="ltr" style="background-color: #f5f5f5; margin: 0; padding: 70px 0 70px 0; -webkit-text-size-adjust: none !important; width: 100%;">
+        <table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%">
+        	<tr>
+				<td align="center" valign="top">
+					<div id="template_header_image"></div>
+                    	<table border="0" cellpadding="0" cellspacing="0" width="600" id="template_container" style="box-shadow: 0 1px 4px rgba(0,0,0,0.1) !important; background-color: #fdfdfd; border: 1px solid #dcdcdc; border-radius: 3px !important;">
+							<tr>
+								<td align="center" valign="top">
+                                    <!-- Header -->
+                                	<table border="0" cellpadding="0" cellspacing="0" width="600" id="template_header" style='background-color: #cc0b10; border-radius: 3px 3px 0 0 !important; color: #ffffff; border-bottom: 0; font-weight: bold; line-height: 100%; vertical-align: middle; font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;'>
+                                		<tr>
+                                			<td>
+                                				<a href="http://anysense.de/produkte/anysense-telemetrie-modul/">
+													<img src="http://anysense.de/wp-content/uploads/2015/08/Spekturm-970x379.jpg" width="600" height="235" />
+												</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    <!-- End Header -->
+                                </td>
+                            </tr>
+							<tr>
+								<td align="center" valign="top">
+                                	<!-- Body -->
+                                    <table border="0" cellpadding="20" cellspacing="0" width="100%">
+										<tr>
+											<td valign="top" style="padding: 48px; padding-bottom:10px;">
+												<div id="body_content_inner" style='color: #737373; font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif; font-size: 14px; line-height: 150%; text-align: left;'>
+											
+													<p>Moin %NameFirst%,</p>
+													<p>Nach nun etwas längerer Sommerpause, ist es wieder an der Zeit um über einige Neuigkeiten zu berichten. Die Firmware Version 1.2 ist nun offiziell freigegeben und wer in der Vergangenheit auf die Versionsnummern geachtet hat weiss, dass es sich bei diesem Minor Release neben einigen Erweiterungen und BugFixes, um die Unterstützung eines neuen Fernsteuerungs-System handelt.</p>
+													<h4>Spektrum Telemetrie Unterstützung</h4>
+													<p>Mit der Firmware Version 1.2 gesellt sich nun ein weiteres Telemetrie System zu den unterstützten Protokollen. Mit der Spektrum Telemetrie unterstützt der AnySense nun insgesamt 6 Telemetrie Systeme (inkl. MAVLink) und kann damit neben den Futaba, Graupner, FrSky und Jeti Telemetrie Systemen auch das Spektrum Telemetrie System bedienen.
+													
+													<center>
+														<img class="alignnone size-medium wp-image-2326" src="http://anysense.de/wp-content/uploads/2015/04/Wiring_Spektrum2-300x200.jpg" alt="AnySense Wiring Spektrum" width="250" height="166" /> 
+														<img class="alignnone size-medium wp-image-2324" src="http://anysense.de/wp-content/uploads/2015/04/Spketrum_Telemetrie3-300x200.jpg" alt="Spektrum GPS" width="250" height="166" /> 
+													</center>
+													<p>Um den AnySense mit dem Spektrum Telemetrie System zu verbinden, wird das <a href="http://anysense.de/produkte/anysense-spektrum-telemetrie-kabel/">AnySense – Spektrum Telemetrie Kabel</a> benötigt. Dies ermöglicht den unkomplizierten Plug & Play Anschluss an das Spektrum Telemetrie Modul TM1000.</p>
+													<h4>MAVLink Protokoll Ausbau (minimOSD, 433MHz Telemetry, Connex Full HD Video)</h4>
+													<p>Das MAVLink Protokoll ist weiter ausgebaut worden, um die Erweiterungen in der minimOSD Extra Firmware und die darin befindliche spezielle Behandlung für Multicopter zu unterstützen. Dazu gehört unter anderem das weiterleiteten RC-Kanäle an das minimOSD um z.B. zwischen den Ansichten (Overlays) zu wechseln, übertragen ob die Motoren aktiv sind und erweiterte Lipo Informationen (Phantom 2, FrSky Sensoren). Zudem wurde die Aktualisierungsrate erheblich erhöht.</p>
+													<h4>Weitere kleine Änderungen/Bug-Fixes</h4>
+													<ul>
+														<li>In Verbindung mit dem Jeti System kam es in der Vergangenheit dazu, dass während der Boot-Up Phase durch die Stick-Konfiguration, unbeabsichtigt ein anderes Telemetrie Protokoll gewählt wurde. Behoben wurde das Problem in dem die Stick Konfiguration deaktiviert wird, wenn für einen der beiden AnySense Anschlüsse das Jeti Duplex EX Protokoll eingestellt ist.</li>
+														<li>Neben der bisherigen FrSky Sensor Unterstützung, wurde nun auch nach mehrfachem Wunsch der Temperatur/RPM Sensor aufgenommen. Der RPM Sensor macht bei einem Multikopter zwar weniger Sinn, aber in etwas „professionelleren“ Anwendungsgebieten ist eine Temperatur Messung doch sehr Wünschenswert.</li>
+														<li>Neuer Telemetrie Wert für FrSky verfügbar, mit dem 5 Werte kombiniert in einem Wert übertragen werden.</li>
+														<li>Unterstützung der neuen Jeti REX Empfänger Serie.</li>
+													</ul>
+													<p>Dein AnySense Team</p>
+													<p style="text-align: center;">
+														<a class="sf-button standard accent standard " href="http://anysense.de/produkte/anysense-telemetrie-modul/">
+															<span class="text">Zum Produkt</span>
+														</a>
+														<a class="sf-button standard accent standard " href="http://anysense.de/support/">
+															<span class="text">Download</span>
+														</a>
+													</p>
+												</div>
+											</td>
+										</tr>
+                                	</table>
+									<!-- End Body -->
+								</td>
+                            </tr>
+							<tr>
+								<td align="center" valign="top">
+                                    <!-- Footer -->
+                                	<table border="0" cellpadding="4" cellspacing="0" width="600" id="template_footer">
+                                		<tr>
+											<td valign="top" style='background-color: #cc0b10; border-radius: 3px 3px 0 0 !important;'>
+                                                <table border="0" cellpadding="4" cellspacing="0" width="100%">
+                                                	<tr>
+														<td style="padding-left:15px; padding-top:20px;">
+															<img src="http://anysense.de/wp-content/uploads/2014/11/Logo_AnySense1.png" width="250" Height="59" />
+														</td>
+														<td style='color: #ffffff; border-bottom: 0; line-height: 100%; vertical-align: middle; font-size:12px; font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;'>
+															<p>
+																xeniC UG (haftungsbeschränkt)</br>
+																Poelchaukamp 7b</br>
+																D-22301 Hamburg</br>
+															</p>
+															<p>
+																Tel:. +49 (0) 40 32 59 23 68</br>
+															</p>
+															<p>
+																Internet: <a href="http://www.xenic-group.de/" style="color: #ffffff;">www.xenic-group.de</a></br>
+															</p>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+									<!-- End Footer -->
+								</td>
+                            </tr>
+                        </table>
+					</td>
+                </tr>
+            </table>
+            <p style='text-align: center; color: #737373; font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif; font-size: 12px;'>Sollten Sie keinen Newsletter empfangen wollen, so antworten Sie uns bitte formlos.</p>
+		</div>
+    </body>
+</html>
