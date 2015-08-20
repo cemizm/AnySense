@@ -16,6 +16,9 @@ void modules_initialize()
 
 	config_save();
 
+	if(configuration.port1.type == parser_spektrum)
+		hardware_i2c_stretch();
+
 	USART_InitTypeDef USART_InitStructure;
 
 	usart_port2.rx.clock.cmd(usart_port2.rx.clock.periph, ENABLE);
