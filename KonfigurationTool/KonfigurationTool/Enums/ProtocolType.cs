@@ -24,5 +24,7 @@ namespace KonfigurationTool
         Futaba = 5,
         [Description("Spektrum X-Bus")]
         Spektrum = 6,
+        [Description("Multiplex MSB")]
+        Multiplex = 7,
     }
 }

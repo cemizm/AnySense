@@ -308,6 +308,7 @@ struct IRQ_CallbackInfoStruct
 	const struct hardware_port_cfg* port;
 	IRQ_Callback rx_callback;
 	IRQ_Callback tx_callback;
+	IRQ_Callback rto_callback;
 	IRQ_Callback timer_callback;
 	IRQ_Callback dma_callback;
 	IRQ_Callback i2c_callback;

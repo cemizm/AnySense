@@ -78,6 +78,9 @@ void modules_initialize_config(struct portParserStruct* parser)
 	case parser_spektrum:
 		module_spektrum_initializeConfig(parser->parserConfig);
 		break;
+	case parser_multiplex:
+		module_multiplex_initializeConfig(parser->parserConfig);
+		break;
 	default:
 		break;
 	}
@@ -391,10 +394,13 @@ void configManager_start(struct portParserStruct* parser, const struct hardware_
 		break;
 	case parser_spektrum:
 
-		if(port != &usart_port1)
+		if (port != &usart_port1)
 			return;
 
 		module_spektrum_start(port, parser->parserConfig);
+		break;
+	case parser_multiplex:
+		module_multiplex_start(port, parser->parserConfig);
 		break;
 	default:
 		break;

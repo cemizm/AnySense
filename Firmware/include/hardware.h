@@ -172,6 +172,9 @@ void hardware_unregister_i2c_callback(const struct hardware_port_cfg* port);
 void hardware_register_dma_callback(const struct hardware_port_cfg* port, IRQ_Callback callback, uint8_t* id);
 void hardware_unregister_dma_callback(const struct hardware_port_cfg* port);
 
+void hardware_register_timeout_callback(const struct hardware_port_cfg* port, IRQ_Callback callback, uint8_t* id);
+void hardware_unregister_timeout_callback(const struct hardware_port_cfg* port);
+
 inline void hardware_led_init()
 {
 	GPIO_InitTypeDef GPIO_InitStructure;

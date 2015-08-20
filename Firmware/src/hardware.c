@@ -70,6 +70,32 @@ void hardware_unregister_dma_callback(const struct hardware_port_cfg* port)
 	}
 }
 
+void hardware_register_timeout_callback(const struct hardware_port_cfg* port, IRQ_Callback callback, uint8_t* id)
+{
+	if (port == &usart_port1)
+	{
+		cbInfoPort1.rto_callback = callback;
+		cbInfoPort1.id = id;
+	}
+	else if (port == &usart_port2)
+	{
+		cbInfoPort2.rto_callback = callback;
+		cbInfoPort2.id = id;
+	}
+}
+
+void hardware_unregister_timeout_callback(const struct hardware_port_cfg* port)
+{
+	if (port == &usart_port1)
+	{
+		cbInfoPort2.rto_callback = NULL;
+	}
+	else if (port == &usart_port2)
+	{
+		cbInfoPort2.rto_callback = NULL;
+	}
+}
+
 void hardware_unregister_callback(const struct hardware_port_cfg* port)
 {
 	if (port == &usart_port1)
@@ -103,6 +129,10 @@ void Generic_USART_IRQHandler(struct IRQ_CallbackInfoStruct* cb)
 			USART_RequestCmd(cb->port->port, USART_Request_TXFRQ, ENABLE);
 		else
 			cb->tx_callback(cb->id);
+	}
+	if (USART_GetITStatus(cb->port->port, USART_IT_RTO) != RESET)
+	{
+		cb->rto_callback(cb->id);
 	}
 }
 void Generic_TIM_IRQHandler(struct IRQ_CallbackInfoStruct* cb)

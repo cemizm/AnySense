@@ -44,6 +44,9 @@ namespace KonfigurationTool
 
                             Configuration = new ProtocolSpektrumConfiguration();
                             break;
+                        case ProtocolType.Multiplex:
+                            Configuration = new ProtocolMultiplexConfiguration();
+                            break;
                         default:
                             throw new NotImplementedException(string.Format("Protocol {0} not implemented yet.", value));
                     }
